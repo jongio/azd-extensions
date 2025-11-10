@@ -30,7 +30,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node scripts/update-registry.js
-          
+
           # Check if there are changes
           if git diff --quiet registry.json; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
@@ -50,12 +50,12 @@ jobs:
           title: 'Update extension registry with latest versions'
           body: |
             This PR updates the extension registry with the latest versions from the extension repositories.
-            
+
             The workflow automatically fetched the latest releases from:
             - jongio/azd-app
             - jongio/azd-rest
             - jongio/azd-script
-            
+
             Please review the changes and merge if everything looks correct.
           branch: update-registry
           delete-branch: true
