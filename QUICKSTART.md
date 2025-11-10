@@ -110,6 +110,7 @@ Save and refresh the browser - your extension will appear!
 ## Deployment to GitHub Pages
 
 1. Push your code to GitHub:
+
    ```bash
    git add .
    git commit -m "Initial commit"
@@ -131,6 +132,7 @@ If port 5173 is already in use, Vite will automatically use the next available p
 ### Module Not Found
 
 Make sure all dependencies are installed:
+
 ```bash
 rm -rf node_modules pnpm-lock.yaml
 pnpm install
@@ -139,6 +141,7 @@ pnpm install
 ### Tests Failing
 
 Ensure you're using Node.js 20 or later:
+
 ```bash
 node --version
 ```
@@ -146,6 +149,7 @@ node --version
 ### Build Errors
 
 Clear the build cache:
+
 ```bash
 rm -rf dist
 pnpm build

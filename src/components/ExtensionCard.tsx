@@ -42,16 +42,16 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
   const Icon = index === 0 ? Rocket : index === 1 ? Zap : Sparkles
 
   return (
-    <Card className="group relative overflow-hidden transition-all hover:shadow-xl hover:border-primary/50">
-      <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-primary/5 blur-2xl transition-all group-hover:bg-primary/10" />
-      
+    <Card className="group hover:border-primary/50 relative overflow-hidden transition-all hover:shadow-xl">
+      <div className="bg-primary/5 group-hover:bg-primary/10 absolute -top-8 -right-8 h-24 w-24 rounded-full blur-2xl transition-all" />
+
       <CardHeader className="relative pb-3">
         <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3 flex-1">
-            <div className="rounded-lg bg-primary/10 p-2">
-              <Icon className="h-5 w-5 text-primary" />
+          <div className="flex flex-1 items-center gap-3">
+            <div className="bg-primary/10 rounded-lg p-2">
+              <Icon className="text-primary h-5 w-5" />
             </div>
-            <div className="flex-1 min-w-0">
+            <div className="min-w-0 flex-1">
               <CardTitle className="text-lg">{extension.displayName}</CardTitle>
               <CardDescription className="mt-0.5 text-xs">{data.tagline}</CardDescription>
             </div>
@@ -61,17 +61,17 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
               href={extension.repository}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-lg p-2 text-muted-foreground transition-all hover:bg-primary/10 hover:text-primary shrink-0"
+              className="text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 rounded-lg p-2 transition-all"
               aria-label={`View ${extension.displayName} on GitHub`}
             >
               <ExternalLink className="h-4 w-4" />
             </a>
           )}
         </div>
-        
+
         <div className="mt-2 flex flex-wrap gap-1.5">
           {extension.tags?.map((tag) => (
-            <Badge key={tag} variant="secondary" className="text-xs px-2 py-0">
+            <Badge key={tag} variant="secondary" className="px-2 py-0 text-xs">
               {tag}
             </Badge>
           ))}
@@ -82,7 +82,9 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
         {/* Examples */}
         {data.examples.length > 0 && (
           <div>
-            <h4 className="mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Examples</h4>
+            <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
+              Examples
+            </h4>
             <div className="space-y-1.5">
               {data.examples.map((example, i) => (
                 <TerminalCode key={i} code={example} className="text-xs" />
@@ -93,7 +95,9 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
 
         {/* Installation */}
         <div className="border-t pt-3">
-          <h4 className="mb-2 text-xs font-semibold text-muted-foreground uppercase tracking-wide">Install</h4>
+          <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
+            Install
+          </h4>
           <TerminalCode code={`azd extension install ${extension.id}`} className="text-xs" />
         </div>
       </CardContent>

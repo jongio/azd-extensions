@@ -7,6 +7,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 ## ✅ Completed Features
 
 ### 1. Core Functionality
+
 - ✅ **Registry System**: Created `registry.json` following the official azd extension schema
 - ✅ **Modern Website**: Built with React 19, TypeScript, Vite, Tailwind CSS 4, and shadcn/ui
 - ✅ **Extension Cards**: Beautiful, responsive cards for each extension with:
@@ -19,6 +20,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 - ✅ **Getting Started Guide**: Step-by-step instructions for users
 
 ### 2. Design & UX
+
 - ✅ **Modern Startup Design**: Clean, professional design with gradient accents
 - ✅ **Fully Responsive**: Works perfectly on mobile, tablet, and desktop
 - ✅ **Dark Mode Support**: Built-in dark mode using CSS variables
@@ -27,6 +29,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 - ✅ **Professional Typography**: Clear hierarchy and readability
 
 ### 3. Testing Suite
+
 - ✅ **Unit Tests**: 9 comprehensive test files covering all components
 - ✅ **Integration Tests**: Tests for component interactions
 - ✅ **Code Coverage**: Configured with Vitest coverage reporting
@@ -34,6 +37,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 - ✅ **Coverage Targets**: Set to maintain 80%+ coverage
 
 ### 4. GitHub Actions Workflows
+
 - ✅ **CI Pipeline** (`ci.yml`):
   - Linting and formatting checks
   - TypeScript type checking
@@ -53,6 +57,7 @@ I've successfully created a comprehensive azd extensions registry website with a
   - Custom dictionary support
 
 ### 5. Documentation
+
 - ✅ **README.md**: Comprehensive guide with:
   - Project overview and features
   - Installation instructions
@@ -66,6 +71,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 - ✅ **LICENSE**: MIT License
 
 ### 6. Developer Experience
+
 - ✅ **TypeScript**: Strict mode with comprehensive types
 - ✅ **ESLint**: Modern flat config with React hooks rules
 - ✅ **Prettier**: Consistent code formatting
@@ -74,6 +80,7 @@ I've successfully created a comprehensive azd extensions registry website with a
 - ✅ **VS Code Extensions**: Recommended extensions list
 
 ### 7. Build & Deployment
+
 - ✅ **Vite Configuration**: Optimized for GitHub Pages
 - ✅ **Path Aliases**: `@/` for clean imports
 - ✅ **PostCSS & Tailwind**: Modern CSS processing
@@ -134,16 +141,19 @@ azd-extensions/
 ## 🚀 Getting Started
 
 1. **Install Dependencies**:
+
    ```bash
    pnpm install
    ```
 
 2. **Start Development Server**:
+
    ```bash
    pnpm dev
    ```
 
 3. **Run Tests**:
+
    ```bash
    pnpm test
    ```
@@ -156,18 +166,21 @@ azd-extensions/
 ## 📝 Next Steps
 
 ### To Deploy:
+
 1. Push this code to GitHub (jongio/azd-extensions)
 2. Enable GitHub Pages in repository settings
 3. Set source to "GitHub Actions"
 4. The deploy workflow will automatically build and deploy the site
 
 ### To Add Extensions:
+
 1. Update `registry.json` with new extension details
 2. Follow the official schema format
 3. Test locally
 4. Commit and push to trigger deployment
 
 ### To Configure Codecov:
+
 1. Sign up at codecov.io
 2. Add the repository
 3. Add `CODECOV_TOKEN` to GitHub secrets
@@ -176,12 +189,14 @@ azd-extensions/
 ## 🎯 Key Features Implemented
 
 ### Registry Management
+
 - Centralized registry.json following official schema
 - Support for multiple extensions
 - Version management
 - Release tracking
 
 ### Modern UI/UX
+
 - React 19 with latest features
 - TypeScript for type safety
 - Tailwind CSS 4 for styling
@@ -191,6 +206,7 @@ azd-extensions/
 - Accessibility features
 
 ### Quality Assurance
+
 - Comprehensive test coverage
 - Automated linting
 - Type checking
@@ -199,6 +215,7 @@ azd-extensions/
 - Code quality monitoring
 
 ### DevOps
+
 - Automated CI/CD
 - GitHub Pages deployment
 - Code coverage reporting
@@ -217,6 +234,7 @@ azd-extensions/
 ## 🔧 Configuration Files
 
 All configuration files are properly set up:
+
 - TypeScript (tsconfig.json, tsconfig.node.json)
 - Vite (vite.config.ts)
 - Tailwind (tailwind.config.js)
@@ -225,7 +243,7 @@ All configuration files are properly set up:
 - Prettier (.prettierrc)
 - Spell Check (.cspell.json)
 - Editor (.editorconfig)
-- VS Code (.vscode/*)
+- VS Code (.vscode/\*)
 
 ## 🎨 Design Highlights
 

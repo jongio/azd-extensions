@@ -1,32 +1,32 @@
 {
-  "version": "0.2",
-  "language": "en",
-  "words": [
-    "azd",
-    "jongio",
-    "Gallant",
-    "shadcn",
-    "vite",
-    "vitest",
-    "codeql",
-    "Codecov",
-    "buildinfo",
-    "lcov",
-    "pnpm",
-    "webp",
-    "webm",
-    "radix",
-    "clsx"
-  ],
-  "ignorePaths": [
-    "node_modules/**",
-    "dist/**",
-    "coverage/**",
-    "package-lock.json",
-    ".git/**",
-    "*.svg",
-    "*.png",
-    "*.jpg",
-    "*.jpeg"
-  ]
+    "version": "0.2",
+    "language": "en",
+    "words": [
+        "azd",
+        "jongio",
+        "Gallant",
+        "shadcn",
+        "vite",
+        "vitest",
+        "codeql",
+        "Codecov",
+        "buildinfo",
+        "lcov",
+        "pnpm",
+        "webp",
+        "webm",
+        "radix",
+        "clsx"
+    ],
+    "ignorePaths": [
+        "node_modules/**",
+        "dist/**",
+        "coverage/**",
+        "package-lock.json",
+        ".git/**",
+        "*.svg",
+        "*.png",
+        "*.jpg",
+        "*.jpeg"
+    ]
 }

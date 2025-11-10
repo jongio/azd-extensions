@@ -10,7 +10,9 @@ describe('AlphaNotice', () => {
 
   it('contains information about alpha status', () => {
     render(<AlphaNotice />)
-    expect(screen.getByText(/Azure Developer CLI \(azd\) extensions are currently an/i)).toBeInTheDocument()
+    expect(
+      screen.getByText(/Azure Developer CLI \(azd\) extensions are currently an/i)
+    ).toBeInTheDocument()
   })
 
   it('displays the configuration command', () => {

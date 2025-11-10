@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
 - Initial release of azd extensions registry website
 - React 19 with TypeScript
 - Vite build system
@@ -23,6 +24,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Responsive design for all screen sizes
 
 ### Features
+
 - Display extensions from registry.json
 - Installation instructions for each extension
 - Links to GitHub repositories
@@ -32,6 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [1.0.0] - 2024-XX-XX
 
 ### Added
+
 - Initial project setup
 - Website deployment to GitHub Pages
 - Extension registry following official schema

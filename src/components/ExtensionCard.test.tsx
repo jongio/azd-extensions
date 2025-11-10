@@ -27,9 +27,11 @@ describe('ExtensionCard', () => {
   it('renders extension ID', () => {
     render(<ExtensionCard extension={mockExtension} />)
     expect(screen.getByText(/ID:/i)).toBeInTheDocument()
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === 'ID: test.extension'
-    })).toBeInTheDocument()
+    expect(
+      screen.getByText((content, element) => {
+        return element?.textContent === 'ID: test.extension'
+      })
+    ).toBeInTheDocument()
   })
 
   it('renders extension version', () => {
@@ -40,9 +42,11 @@ describe('ExtensionCard', () => {
   it('renders extension namespace', () => {
     render(<ExtensionCard extension={mockExtension} />)
     expect(screen.getByText(/Namespace:/i)).toBeInTheDocument()
-    expect(screen.getByText((content, element) => {
-      return element?.textContent === 'Namespace: test'
-    })).toBeInTheDocument()
+    expect(
+      screen.getByText((content, element) => {
+        return element?.textContent === 'Namespace: test'
+      })
+    ).toBeInTheDocument()
   })
 
   it('renders extension tags', () => {

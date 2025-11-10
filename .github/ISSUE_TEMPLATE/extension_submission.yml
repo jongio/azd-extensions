@@ -1,7 +1,7 @@
 name: Extension Submission
 description: Submit a new extension to the registry
-title: "[Extension]: "
-labels: ["extension"]
+title: '[Extension]: '
+labels: ['extension']
 body:
   - type: markdown
     attributes:

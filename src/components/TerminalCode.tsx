@@ -18,13 +18,13 @@ export function TerminalCode({ code, showPrompt = true, className = '' }: Termin
 
   return (
     <div
-      className={`group relative flex items-center gap-3 rounded-lg border border-border/60 bg-gradient-to-br from-muted/80 to-muted/40 px-4 py-3 font-mono text-sm shadow-sm backdrop-blur-sm transition-all hover:border-primary/40 hover:shadow-md hover:from-muted hover:to-muted/60 ${className}`}
+      className={`group border-border/60 from-muted/80 to-muted/40 hover:border-primary/40 hover:from-muted hover:to-muted/60 relative flex items-center gap-3 rounded-lg border bg-gradient-to-br px-4 py-3 font-mono text-sm shadow-sm backdrop-blur-sm transition-all hover:shadow-md ${className}`}
     >
-      {showPrompt && <span className="select-none text-primary font-semibold">❯</span>}
-      <span className="flex-1 text-foreground/90">{code}</span>
+      {showPrompt && <span className="text-primary font-semibold select-none">❯</span>}
+      <span className="text-foreground/90 flex-1">{code}</span>
       <button
         onClick={handleCopy}
-        className="opacity-0 transition-all hover:text-primary group-hover:opacity-100"
+        className="hover:text-primary opacity-0 transition-all group-hover:opacity-100"
         aria-label="Copy to clipboard"
         title="Copy to clipboard"
       >
