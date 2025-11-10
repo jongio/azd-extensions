@@ -9,24 +9,6 @@
       "version": "0.5.1",
       "tags": ["developer", "productivity", "app"],
       "repository": "https://github.com/jongio/azd-app"
-    },
-    {
-      "id": "jongio.azd.rest",
-      "namespace": "rest",
-      "displayName": "REST API Extension",
-      "description": "Execute REST APIs with azd context and authentication",
-      "version": "0.1.0",
-      "tags": ["rest", "api", "http", "developer"],
-      "repository": "https://github.com/jongio/azd-rest"
-    },
-    {
-      "id": "jongio.azd.script",
-      "namespace": "script",
-      "displayName": "Script Extension",
-      "description": "Execute scripts with Azure Developer CLI context and environment variables",
-      "version": "0.1.0",
-      "tags": ["script", "automation", "shell", "developer"],
-      "repository": "https://github.com/jongio/azd-script"
     }
   ]
 }

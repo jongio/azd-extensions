@@ -1,4 +1,4 @@
-# azd Extensions by Jon Gallant
+# azd extensions by Jon Gallant
 
 [![Deploy to GitHub Pages](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml)
 [![Update Registry](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml)
