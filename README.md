@@ -1,10 +1,17 @@
-# azd extensions by Jon Gallant
+<div align="center">
+  <img src="public/logo.png" alt="Jon Gallant" width="200" height="100">
+  <h1>azd extensions by Jon Gallant</h1>
+</div>
+
+<div align="center">
 
 [![Deploy to GitHub Pages](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml)
 [![Update Registry](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml)
 [![CI](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jongio/azd-extensions/actions/workflows/codeql.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/codeql.yml)
 [![codecov](https://codecov.io/gh/jongio/azd-extensions/branch/main/graph/badge.svg)](https://codecov.io/gh/jongio/azd-extensions)
+
+</div>
 
 A centralized registry and showcase website for Azure Developer CLI (azd) extensions created by Jon Gallant.
 

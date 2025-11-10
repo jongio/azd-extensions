@@ -5,9 +5,12 @@ export function Header() {
   return (
     <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-2">
-          <h1 className="text-2xl font-bold">azd Extensions</h1>
-          <span className="text-muted-foreground text-sm">by Jon Gallant</span>
+        <div className="flex items-center gap-4">
+          <img src="/azd-extensions/logo.png" alt="Jon Gallant" className="h-10 w-20" />
+          <div>
+            <h1 className="text-xl leading-tight font-bold">azd extensions</h1>
+            <p className="text-muted-foreground text-xs">by Jon Gallant</p>
+          </div>
         </div>
         <a
           href="https://github.com/jongio/azd-extensions"
