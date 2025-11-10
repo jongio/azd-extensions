@@ -1,6 +1,7 @@
 # azd Extensions by Jon Gallant
 
 [![Deploy to GitHub Pages](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml)
+[![Update Registry](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/update-registry.yml)
 [![CI](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml)
 [![CodeQL](https://github.com/jongio/azd-extensions/actions/workflows/codeql.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/codeql.yml)
 [![codecov](https://codecov.io/gh/jongio/azd-extensions/branch/main/graph/badge.svg)](https://codecov.io/gh/jongio/azd-extensions)
@@ -164,6 +165,38 @@ This project maintains high code quality standards:
 - ✅ Formatted with Prettier
 - ✅ Spell checked
 
+## Maintaining the Registry
+
+### Automatic Updates
+
+The registry is automatically updated daily by the `update-registry.yml` workflow. This workflow:
+
+1. Checks each extension repository for new releases
+2. Updates version numbers, release URLs, and checksums
+3. Creates a pull request with the changes
+4. Keeps up to 5 most recent releases for each extension
+
+### Manual Updates
+
+You can manually trigger a registry update:
+
+```bash
+# Via GitHub CLI
+gh workflow run update-registry.yml
+
+# Or run the script locally
+export GITHUB_TOKEN=your_token_here
+node scripts/update-registry.js
+```
+
+### Adding New Extensions
+
+To add a new extension to the registry:
+
+1. Add the extension entry to `registry.json`
+2. Update the `EXTENSIONS` array in `scripts/update-registry.js`
+3. The workflow will automatically maintain it going forward
+
 ## GitHub Actions Workflows
 
 ### CI Pipeline (`ci.yml`)
@@ -197,6 +230,16 @@ Automatic deployment to GitHub Pages:
 - Builds the site
 - Deploys to GitHub Pages
 - Runs on main branch pushes
+
+### Registry Update (`update-registry.yml`)
+
+Automatic registry maintenance:
+
+- Runs daily at 2 AM UTC (or on manual trigger)
+- Fetches latest releases from all extension repositories
+- Updates `registry.json` with new versions, URLs, and checksums
+- Creates a PR with the changes for review
+- Keeps the registry synchronized with extension releases
 
 ## Project Structure
 
