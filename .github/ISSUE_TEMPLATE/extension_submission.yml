@@ -1,0 +1,93 @@
+name: Extension Submission
+description: Submit a new extension to the registry
+title: "[Extension]: "
+labels: ["extension"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Submit your azd extension to be added to the registry.
+
+  - type: input
+    id: extension-id
+    attributes:
+      label: Extension ID
+      description: The unique identifier for your extension
+      placeholder: e.g., your.extension.id
+    validations:
+      required: true
+
+  - type: input
+    id: display-name
+    attributes:
+      label: Display Name
+      description: Human-readable name for your extension
+      placeholder: e.g., My Awesome Extension
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: A clear and concise description of your extension
+      placeholder: This extension provides...
+    validations:
+      required: true
+
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      description: Current version (semantic versioning)
+      placeholder: e.g., 1.0.0
+    validations:
+      required: true
+
+  - type: input
+    id: namespace
+    attributes:
+      label: Namespace
+      description: Command namespace for your extension
+      placeholder: e.g., myext
+
+  - type: input
+    id: repository
+    attributes:
+      label: Repository URL
+      description: GitHub repository URL
+      placeholder: https://github.com/username/extension-repo
+    validations:
+      required: true
+
+  - type: input
+    id: tags
+    attributes:
+      label: Tags
+      description: Comma-separated tags for categorization
+      placeholder: e.g., ai, deployment, testing
+
+  - type: checkboxes
+    id: capabilities
+    attributes:
+      label: Capabilities
+      description: What capabilities does your extension provide?
+      options:
+        - label: custom-commands
+        - label: lifecycle-events
+        - label: service-target-provider
+        - label: framework-service-provider
+        - label: mcp-server
+
+  - type: input
+    id: release-url
+    attributes:
+      label: Release Download URL
+      description: URL to the release zip file
+      placeholder: https://github.com/username/repo/releases/download/v1.0.0/extension.zip
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Information
+      description: Any other details about your extension

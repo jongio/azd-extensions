@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Azure Developer CLI Documentation
+    url: https://learn.microsoft.com/azure/developer/azure-developer-cli/overview
+    about: Official documentation for Azure Developer CLI
+  - name: Extension Framework Documentation
+    url: https://github.com/Azure/azure-dev/blob/main/cli/azd/docs/extension-framework.md
+    about: Learn how to create azd extensions
