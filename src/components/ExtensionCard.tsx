@@ -10,6 +10,14 @@ interface ExtensionCardProps {
 }
 
 const extensionExamples: Record<string, { tagline: string; examples: string[] }> = {
+  'jongio.azd.exec': {
+    tagline: 'Run any script with Azure context',
+    examples: [
+      'azd exec ./my-script.sh',
+      'azd exec --shell pwsh ./deploy.ps1',
+      'azd exec version  # Show extension version',
+    ],
+  },
   'jongio.azd.app': {
     tagline: 'Zero-config development environment',
     examples: [
@@ -17,22 +25,6 @@ const extensionExamples: Record<string, { tagline: string; examples: string[] }>
       'azd app deps  # Install dependencies',
       'azd app run   # Start dev environment',
       'azd app info  # Monitor running services',
-    ],
-  },
-  'jongio.azd.rest': {
-    tagline: 'Test APIs instantly with zero auth config',
-    examples: [
-      'azd rest GET /api/users',
-      'azd rest POST /api/data -d {...}',
-      'azd rest GET $API_URL/health',
-    ],
-  },
-  'jongio.azd.script': {
-    tagline: 'Run scripts with full Azure context',
-    examples: [
-      'azd script run ./deploy.sh',
-      'azd script exec setup.ps1',
-      'azd script run migration.sh --verbose',
     ],
   },
 }

@@ -12,9 +12,8 @@ const REGISTRY_FILE = 'registry.json';
 
 // Extension repository mapping
 const EXTENSIONS = [
+  { id: 'jongio.azd.exec', repo: 'jongio/azd-exec' },
   { id: 'jongio.azd.app', repo: 'jongio/azd-app' },
-  // { id: 'jongio.azd.rest', repo: 'jongio/azd-rest' },
-  // { id: 'jongio.azd.script', repo: 'jongio/azd-script' },
 ];
 
 /**

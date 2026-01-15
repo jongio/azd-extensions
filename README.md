@@ -17,6 +17,13 @@ A centralized registry and showcase website for Azure Developer CLI (azd) extens
 
 🌐 **Live Site**: [https://jongio.github.io/azd-extensions/](https://jongio.github.io/azd-extensions/)
 
+## Extensions
+
+This registry currently showcases two production-ready extensions:
+
+- **[azd-exec](https://github.com/jongio/azd-exec)** - Run any script with azd environment and Azure credentials
+- **[azd-app](https://github.com/jongio/azd-app)** - Developer productivity commands for Azure Developer CLI
+
 ## About
 
 This repository serves as a central registry for all azd extensions I create. The site provides:
@@ -127,18 +134,17 @@ Example structure:
   "$schema": "https://raw.githubusercontent.com/Azure/azure-dev/refs/heads/main/cli/azd/extensions/registry.schema.json",
   "extensions": [
     {
-      "id": "example.extension",
-      "displayName": "Example Extension",
-      "description": "An example azd extension",
-      "version": "1.0.0",
-      "namespace": "example",
-      "tags": ["demo", "example"],
-      "capabilities": ["custom-commands"],
-      "repository": "https://github.com/user/extension",
+      "id": "jongio.azd.exec",
+      "displayName": "Exec Extension",
+      "description": "Run any script with azd environment and Azure credentials",
+      "version": "0.2.33",
+      "namespace": "exec",
+      "tags": ["scripting", "automation", "developer-tools"],
+      "repository": "https://github.com/jongio/azd-exec",
       "releases": [
         {
-          "version": "1.0.0",
-          "url": "https://github.com/user/extension/releases/download/v1.0.0/extension.zip",
+          "version": "0.2.33",
+          "url": "https://github.com/jongio/azd-exec/releases/download/v0.2.33/extension.zip",
           "checksum": "sha256:...",
           "publishedAt": "2024-01-01T00:00:00Z"
         }
@@ -178,7 +184,7 @@ This project maintains high code quality standards:
 
 The registry is automatically updated daily by the `update-registry.yml` workflow. This workflow:
 
-1. Checks each extension repository for new releases
+1. Checks extension repositories (jongio/azd-exec and jongio/azd-app) for new releases
 2. Updates version numbers, release URLs, and checksums
 3. Creates a pull request with the changes
 4. Keeps up to 5 most recent releases for each extension

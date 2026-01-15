@@ -2,13 +2,38 @@
   "$schema": "https://raw.githubusercontent.com/Azure/azure-dev/refs/heads/main/cli/azd/extensions/registry.schema.json",
   "extensions": [
     {
+      "id": "jongio.azd.exec",
+      "namespace": "exec",
+      "displayName": "Exec Extension",
+      "description": "azd exec - Run any script with azd environment and Azure credentials. Database migrations, setup automation, CI/CD workflows - with seamless Key Vault integration.",
+      "version": "azd-ext-jongio-azd-exec_0.2.33",
+      "tags": ["scripting", "automation", "developer-tools"],
+      "repository": "https://github.com/jongio/azd-exec",
+      "releases": [
+        {
+          "version": "azd-ext-jongio-azd-exec_0.2.33",
+          "url": "https://github.com/jongio/azd-exec/releases/download/azd-ext-jongio-azd-exec_0.2.33/jongio-azd-exec-darwin-amd64.zip",
+          "checksum": "sha256:afc254b35d89d89eb663a11dcab8e32722757021b6073755b2b03729b9b2aa0e",
+          "publishedAt": "2026-01-14T23:16:33Z"
+        }
+      ]
+    },
+    {
       "id": "jongio.azd.app",
       "namespace": "app",
       "displayName": "App Extension",
       "description": "A collection of developer productivity commands for Azure Developer CLI",
-      "version": "0.5.1",
+      "version": "azd-ext-jongio-azd-app_0.11.0",
       "tags": ["developer", "productivity", "app"],
-      "repository": "https://github.com/jongio/azd-app"
+      "repository": "https://github.com/jongio/azd-app",
+      "releases": [
+        {
+          "version": "azd-ext-jongio-azd-app_0.11.0",
+          "url": "https://github.com/jongio/azd-app/releases/download/azd-ext-jongio-azd-app_0.11.0/jongio-azd-app-darwin-amd64.zip",
+          "checksum": "sha256:f1a802bb3e34194a03d320bf4b91065eaa16770c3e2714e00816ed328e2732d2",
+          "publishedAt": "2026-01-13T22:39:43Z"
+        }
+      ]
     }
   ]
 }

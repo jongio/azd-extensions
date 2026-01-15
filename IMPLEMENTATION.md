@@ -2,7 +2,21 @@
 
 ## Overview
 
-I've successfully created a comprehensive azd extensions registry website with all requested features and more. This is a production-ready project with modern tooling, comprehensive testing, and automated workflows.
+Comprehensive azd extensions registry website showcasing two production-ready extensions: **azd-exec** and **azd-app**. Built with modern tooling, comprehensive testing, and automated workflows.
+
+## Extensions
+
+### 1. azd-exec
+
+- **Repository**: [jongio/azd-exec](https://github.com/jongio/azd-exec)
+- **Purpose**: Run any script with azd environment and Azure credentials
+- **Key Features**: Database migrations, setup automation, CI/CD workflows, Key Vault integration
+
+### 2. azd-app
+
+- **Repository**: [jongio/azd-app](https://github.com/jongio/azd-app)
+- **Purpose**: Developer productivity commands for Azure Developer CLI
+- **Key Features**: Service management, prerequisites verification, testing, MCP server support
 
 ## ✅ Completed Features
 
