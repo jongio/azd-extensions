@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tag-based filtering (planned)
 - Search functionality (planned)
 
-## [1.0.0] - 2024-XX-XX
+## [1.0.0] - 2026-01-30
 
 ### Added
 
