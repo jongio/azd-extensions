@@ -32,7 +32,7 @@ jobs:
           node scripts/update-registry.js
 
           # Check if there are changes
-          if git diff --quiet registry.json; then
+          if git diff --quiet public/registry.json; then
             echo "has_changes=false" >> $GITHUB_OUTPUT
             echo "No changes to registry.json"
           else

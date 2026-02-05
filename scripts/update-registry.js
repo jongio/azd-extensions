@@ -8,7 +8,7 @@ import { readFileSync, writeFileSync } from 'fs';
 import { createHash } from 'crypto';
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
-const REGISTRY_FILE = 'registry.json';
+const REGISTRY_FILE = 'public/registry.json';
 
 // Extension repository mapping
 const EXTENSIONS = [
