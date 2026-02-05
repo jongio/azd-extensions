@@ -14,12 +14,17 @@ export function Header() {
   return (
     <header className="glass-strong fixed top-0 right-0 left-0 z-50">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <a href="#" className="flex items-center gap-3 transition-opacity hover:opacity-80">
-          <div className="from-primary to-accent flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br">
+        <div className="flex items-center gap-3">
+          <a
+            href="#"
+            className="from-primary to-accent flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br transition-opacity hover:opacity-80"
+          >
             <SparklesIcon size={20} color="white" strokeWidth={2} />
-          </div>
-          <h1 className="text-lg font-bold tracking-tight">
-            Azure Developer CLI Extensions <span className="text-muted-foreground font-normal">by</span>{' '}
+          </a>
+          <span className="text-sm font-bold tracking-tight sm:text-base lg:text-lg">
+            <span className="hidden sm:inline">Azure Developer CLI Extensions</span>
+            <span className="sm:hidden">azd extensions</span>
+            <span className="text-muted-foreground font-normal"> by </span>
             <a
               href="https://github.com/jongio"
               target="_blank"
@@ -28,8 +33,8 @@ export function Header() {
             >
               Jon Gallant
             </a>
-          </h1>
-        </a>
+          </span>
+        </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <a

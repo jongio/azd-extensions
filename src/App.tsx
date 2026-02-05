@@ -59,16 +59,16 @@ function App() {
       <main className="relative flex-1 pt-16">
         {/* Hero Section - Focused on Jon's extensions */}
         <div className="hero-gradient relative overflow-hidden">
-          <div className="container mx-auto px-4 py-16 sm:py-24 lg:py-32">
+          <div className="container mx-auto px-4 py-20 sm:py-28 lg:py-36">
             <div className="mx-auto max-w-4xl text-center">
-              {/* Badge */}
+              {/* Badge - More prominent */}
               <a
                 href="https://github.com/jongio"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-glow-cyan)]/30 bg-[var(--color-glow-cyan)]/10 px-4 py-1.5 text-sm font-medium text-[var(--color-glow-cyan)] transition-all hover:border-[var(--color-glow-cyan)]/50 hover:bg-[var(--color-glow-cyan)]/20"
+                className="animate-fade-up mb-8 inline-flex items-center gap-2.5 rounded-full border border-[var(--color-glow-cyan)]/30 bg-[var(--color-glow-cyan)]/10 px-5 py-2 text-base font-medium text-[var(--color-glow-cyan)] transition-all hover:border-[var(--color-glow-cyan)]/50 hover:bg-[var(--color-glow-cyan)]/20 sm:px-6 sm:py-2.5 sm:text-lg"
               >
-                <SparklesIcon size={16} color="var(--color-glow-cyan)" />
+                <SparklesIcon size={20} color="var(--color-glow-cyan)" />
                 Azure Developer CLI Extensions by Jon Gallant
               </a>
 
@@ -77,11 +77,12 @@ function App() {
                 className="animate-fade-up mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
                 style={{ animationDelay: '0.1s' }}
               >
-                Supercharge your <span className="text-gradient-animated">Azure workflow</span>
+                Supercharge your{' '}
+                <span className="text-gradient-animated">Azure workflow</span>
               </h1>
 
               <p
-                className="animate-fade-up text-muted-foreground mx-auto mb-8 max-w-2xl text-lg sm:text-xl"
+                className="animate-fade-up text-muted-foreground mx-auto mb-10 max-w-2xl text-lg sm:text-xl"
                 style={{ animationDelay: '0.2s' }}
               >
                 <strong className="text-foreground">azd app</strong> runs your entire app locally.{' '}
@@ -97,7 +98,7 @@ function App() {
                 <a href="#extensions">
                   <Button
                     size="lg"
-                    className="glow-cyan group bg-primary shadow-lg transition-all hover:scale-105 hover:bg-primary/90 hover:shadow-xl"
+                    className="glow-cyan group bg-primary hover:bg-primary/90 shadow-lg transition-all hover:scale-105 hover:shadow-xl"
                   >
                     See the Extensions
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -122,7 +123,7 @@ function App() {
           <div className="animate-float-delayed pointer-events-none absolute top-40 right-20 h-3 w-3 rounded-full bg-[var(--color-glow-violet)] opacity-50" />
         </div>
 
-        <div className="container mx-auto px-4 py-8">
+        <div className="container mx-auto px-4 py-12 sm:py-16">
           {/* Loading State */}
           {loading && (
             <div className="py-20 text-center">
@@ -143,18 +144,18 @@ function App() {
           {/* Extensions - Front and Center */}
           {!loading && !error && extensions.length > 0 && (
             <section id="extensions" className="scroll-mt-24">
-              <div className="mb-10 text-center">
-                <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+              <div className="mb-12 text-center">
+                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
                   The <span className="text-gradient">Extensions</span>
                 </h2>
-                <p className="text-muted-foreground mx-auto max-w-2xl">
+                <p className="text-muted-foreground mx-auto max-w-2xl text-lg">
                   Built to solve real problems. Battle-tested with comprehensive security scanning,
                   cross-platform support, and extensive documentation.
                 </p>
               </div>
 
               {/* Extension Cards - 2 column for both extensions */}
-              <div className="mb-16 grid gap-8 lg:grid-cols-2">
+              <div className="mb-20 grid gap-8 lg:grid-cols-2">
                 {extensions.map((extension, index) => (
                   <ExtensionCard key={extension.id} extension={extension} index={index} />
                 ))}
@@ -235,11 +236,15 @@ function App() {
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <p className="text-muted-foreground mb-2 text-sm font-medium">Install all</p>
+                          <p className="text-muted-foreground mb-2 text-sm font-medium">
+                            Install all
+                          </p>
                           <TerminalCode code="azd extension install jongio.azd.app jongio.azd.exec" />
                         </div>
                         <div className="border-muted border-t pt-4">
-                          <p className="text-muted-foreground mb-2 text-sm font-medium">Or install individually</p>
+                          <p className="text-muted-foreground mb-2 text-sm font-medium">
+                            Or install individually
+                          </p>
                           <div className="space-y-2">
                             <TerminalCode code="azd extension install jongio.azd.app" />
                             <TerminalCode code="azd extension install jongio.azd.exec" />

@@ -29,7 +29,7 @@ export function TerminalCode({ code, showPrompt = true, className = '' }: Termin
       <code className="flex-1 overflow-x-auto">{code}</code>
       <button
         onClick={handleCopy}
-        className="shrink-0 text-slate-400 opacity-0 transition-all hover:text-slate-200 group-hover:opacity-100"
+        className="shrink-0 text-slate-400 opacity-0 transition-all group-hover:opacity-100 hover:text-slate-200"
         aria-label="Copy to clipboard"
         title="Copy to clipboard"
       >

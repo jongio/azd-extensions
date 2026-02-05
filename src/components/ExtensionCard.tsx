@@ -156,7 +156,10 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
         {data.features.length > 0 && (
           <div className="mb-6 grid grid-cols-2 gap-3">
             {data.features.map((feature, i) => (
-              <div key={i} className="flex items-start gap-2 rounded-lg bg-black/5 p-3 dark:bg-white/5">
+              <div
+                key={i}
+                className="flex items-start gap-2 rounded-lg bg-black/5 p-3 dark:bg-white/5"
+              >
                 <feature.icon
                   className="mt-0.5 h-4 w-4 shrink-0"
                   style={{ color: data.highlight }}

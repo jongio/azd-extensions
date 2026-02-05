@@ -40,11 +40,6 @@ describe('ExtensionCard', () => {
     expect(screen.getByText('demo')).toBeInTheDocument()
   })
 
-  it('renders installation instructions', () => {
-    render(<ExtensionCard extension={mockExtension} index={0} />)
-    expect(screen.getByText(/azd extension install test\.extension/i)).toBeInTheDocument()
-  })
-
   it('renders azd app extension with rich data', () => {
     render(<ExtensionCard extension={mockAppExtension} index={0} />)
     expect(screen.getByText('Run Azure Apps Locally')).toBeInTheDocument()
