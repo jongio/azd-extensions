@@ -1,161 +1,164 @@
 # Contributing to azd Extensions
 
-Thank you for your interest in contributing to this project! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing!
 
-## Code of Conduct
+## Quick Start
 
-By participating in this project, you agree to abide by our code of conduct which promotes a respectful and inclusive community.
-
-## How to Contribute
-
-### Reporting Bugs
-
-If you find a bug, please create an issue with:
-
-- A clear, descriptive title
-- Steps to reproduce the issue
-- Expected behavior
-- Actual behavior
-- Screenshots (if applicable)
-- Your environment (OS, Node version, etc.)
-
-### Suggesting Enhancements
-
-Enhancement suggestions are welcome! Please create an issue with:
-
-- A clear, descriptive title
-- Detailed description of the proposed feature
-- Rationale for why this would be useful
-- Any relevant examples or mockups
-
-### Pull Requests
-
-1. **Fork the repository** and create your branch from `main`
-2. **Make your changes** following our coding standards
-3. **Add tests** for any new functionality
-4. **Update documentation** as needed
-5. **Ensure all tests pass** (`npm test`)
-6. **Ensure code is formatted** (`npm run format`)
-7. **Ensure no lint errors** (`npm run lint`)
-8. **Submit your pull request**
-
-## Development Setup
+```bash
+git clone https://github.com/YOUR-USERNAME/azd-extensions.git
+cd azd-extensions
+pnpm install
+pnpm dev
+```
 
 ### Prerequisites
 
-- Node.js 20 or later
-- npm or pnpm
-- Git
+- Node.js 20+
+- pnpm 9+
 
-### Getting Started
+## Development Commands
 
-```bash
-# Clone your fork
-git clone https://github.com/YOUR-USERNAME/azd-extensions.git
-cd azd-extensions
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start dev server |
+| `pnpm build` | Build for production |
+| `pnpm preview` | Preview production build |
+| `pnpm test` | Run tests |
+| `pnpm test:watch` | Watch mode |
+| `pnpm test:coverage` | Coverage report |
+| `pnpm lint` | Lint code |
+| `pnpm lint:fix` | Fix lint issues |
+| `pnpm type-check` | TypeScript check |
+| `pnpm format` | Format with Prettier |
+| `pnpm format:check` | Check formatting |
 
-# Install dependencies
-pnpm install
+## Pull Request Process
 
-# Start development server
-pnpm dev
-```
+1. Fork and create branch from `main`
+2. Make changes following coding standards
+3. Add tests for new functionality
+4. Ensure all checks pass:
+   ```bash
+   pnpm lint && pnpm type-check && pnpm test
+   ```
+5. Submit PR
+
+### Quality Standards
+
+- ✅ All tests pass
+- ✅ Coverage ≥80%
+- ✅ No lint errors
+- ✅ TypeScript strict mode
+- ✅ Formatted with Prettier
 
 ## Coding Standards
 
 ### TypeScript
-
-- Use TypeScript strict mode
-- Define proper types for all functions and variables
-- Avoid using `any` type
-- Use meaningful variable and function names
+- Strict mode enabled
+- No `any` types
+- Proper type definitions
 
 ### React
-
-- Use functional components with hooks
-- Keep components small and focused
-- Extract reusable logic into custom hooks
-- Use proper prop types
+- Functional components with hooks
+- Small, focused components
+- Custom hooks for reusable logic
 
 ### Styling
-
-- Use Tailwind CSS utilities
-- Follow the existing design system
-- Ensure responsive design for all screen sizes
-- Use semantic HTML
-
-### Testing
-
-- Write tests for all new features
-- Maintain or improve code coverage
-- Use descriptive test names
-- Follow the AAA pattern (Arrange, Act, Assert)
+- Tailwind CSS utilities
+- Responsive design
+- Semantic HTML
 
 ### Commits
 
-- Use clear, descriptive commit messages
-- Follow conventional commits format:
-  - `feat: add new feature`
-  - `fix: resolve bug`
-  - `docs: update documentation`
-  - `test: add tests`
-  - `refactor: code improvement`
-  - `style: formatting changes`
-  - `chore: maintenance tasks`
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
 
-## Testing
-
-Run the full test suite:
-
-```bash
-# Run all tests
-pnpm test
-
-# Run tests in watch mode
-pnpm test:watch
-
-# Generate coverage report
-pnpm test:coverage
+```
+feat: add new feature
+fix: resolve bug
+docs: update documentation
+test: add tests
+refactor: code improvement
+chore: maintenance
 ```
 
-Ensure coverage remains above 80%.
+## Registry Maintenance
 
-## Code Review Process
+### Automatic Updates
 
-1. All PRs require at least one review
-2. CI checks must pass
-3. Code coverage must not decrease
-4. Documentation must be updated
-5. Tests must pass
+The registry auto-updates daily via `update-registry.yml`:
+1. Fetches latest releases from extension repos
+2. Updates versions, URLs, and checksums
+3. Creates PR for review
 
-## Adding a New Extension to the Registry
+### Manual Update
 
-To add a new extension:
+```bash
+gh workflow run update-registry.yml
 
-1. Update `registry.json` with extension details
-2. Follow the official schema
-3. Include all required fields:
-   - `id`: Unique identifier
-   - `displayName`: Human-readable name
-   - `description`: Clear description
-   - `version`: Semantic version
-   - `repository`: GitHub repository URL
-4. Test locally before submitting
-5. Submit a PR with the changes
+# Or locally
+export GITHUB_TOKEN=your_token
+node scripts/update-registry.js
+```
 
-## Documentation
+### Adding New Extensions
 
-- Update README.md for significant changes
-- Add JSDoc comments for complex functions
-- Update component documentation
-- Keep examples up to date
+1. Add entry to `public/registry.json`:
+   ```json
+   {
+     "id": "author.azd.extension-name",
+     "namespace": "extension-name",
+     "displayName": "Extension Name",
+     "description": "What it does",
+     "versions": [...]
+   }
+   ```
+2. Update `scripts/update-registry.js` with the repo
+3. Workflow maintains it automatically
+
+## CI/CD Workflows
+
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `ci.yml` | Push/PR | Lint, type-check, test, build |
+| `deploy.yml` | Push to main | Deploy to GitHub Pages |
+| `update-registry.yml` | Daily / Manual | Sync extension releases |
+| `codeql.yml` | Weekly / PR | Security scanning |
+| `spellcheck.yml` | Push/PR | Spell checking |
+| `dependency-review.yml` | PR | Dependency vulnerability check |
+
+## Project Structure
+
+```
+├── src/
+│   ├── components/        # React components
+│   │   ├── ui/           # shadcn/ui components
+│   │   └── icons/        # Custom icons
+│   ├── lib/              # Utility functions
+│   ├── test/             # Test setup
+│   ├── types/            # TypeScript types
+│   ├── App.tsx           # Main app
+│   ├── main.tsx          # Entry point
+│   └── index.css         # Global styles
+├── public/
+│   └── registry.json     # Extension registry
+├── scripts/
+│   └── update-registry.js
+└── .github/workflows/    # CI/CD
+```
+
+## Reporting Issues
+
+Include:
+- Clear title
+- Steps to reproduce
+- Expected vs actual behavior
+- Environment (OS, Node version)
+- Screenshots if applicable
 
 ## Questions?
 
-If you have questions, feel free to:
+- Open an issue
+- Check existing issues/PRs
+- Review [azd documentation](https://learn.microsoft.com/azure/developer/azure-developer-cli/)
 
-- Open an issue for discussion
-- Check existing issues and PRs
-- Review the Azure Developer CLI documentation
-
-Thank you for contributing! 🎉
+Thanks for contributing! 🎉
