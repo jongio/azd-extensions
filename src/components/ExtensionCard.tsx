@@ -121,13 +121,13 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
               <p className="text-muted-foreground mt-1 text-sm font-medium">{data.tagline}</p>
             </div>
           </div>
-          <div className="flex shrink-0 gap-1">
+          <div className="flex shrink-0 items-center gap-1">
             {data.website && (
               <a
                 href={data.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary rounded-lg p-2 transition-all hover:bg-white/5"
+                className="text-muted-foreground hover:text-primary flex h-9 w-9 items-center justify-center rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5"
                 aria-label={`Visit ${extension.displayName} website`}
                 title="Website"
               >
@@ -139,7 +139,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
                 href={data.repository}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-primary rounded-lg p-2 transition-all hover:bg-white/5"
+                className="text-muted-foreground hover:text-primary flex h-9 w-9 items-center justify-center rounded-lg transition-all hover:bg-black/5 dark:hover:bg-white/5"
                 aria-label={`View ${extension.displayName} on GitHub`}
                 title="GitHub"
               >
@@ -156,7 +156,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
         {data.features.length > 0 && (
           <div className="mb-6 grid grid-cols-2 gap-3">
             {data.features.map((feature, i) => (
-              <div key={i} className="flex items-start gap-2 rounded-lg bg-white/5 p-3">
+              <div key={i} className="flex items-start gap-2 rounded-lg bg-black/5 p-3 dark:bg-white/5">
                 <feature.icon
                   className="mt-0.5 h-4 w-4 shrink-0"
                   style={{ color: data.highlight }}
@@ -203,14 +203,6 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
               {tag}
             </Badge>
           ))}
-        </div>
-
-        {/* Install */}
-        <div className="border-t border-white/5 pt-4">
-          <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
-            Install
-          </h4>
-          <TerminalCode code={`azd extension install ${extension.id}`} className="text-xs" />
         </div>
       </div>
     </div>

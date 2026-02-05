@@ -69,7 +69,7 @@ function App() {
                 className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-glow-cyan)]/30 bg-[var(--color-glow-cyan)]/10 px-4 py-1.5 text-sm font-medium text-[var(--color-glow-cyan)] transition-all hover:border-[var(--color-glow-cyan)]/50 hover:bg-[var(--color-glow-cyan)]/20"
               >
                 <SparklesIcon size={16} color="var(--color-glow-cyan)" />
-                By Jon Gallant
+                Azure Developer CLI Extensions by Jon Gallant
               </a>
 
               {/* Main heading */}
@@ -97,7 +97,7 @@ function App() {
                 <a href="#extensions">
                   <Button
                     size="lg"
-                    className="from-primary to-accent glow-cyan group bg-gradient-to-r text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+                    className="glow-cyan group bg-primary shadow-lg transition-all hover:scale-105 hover:bg-primary/90 hover:shadow-xl"
                   >
                     See the Extensions
                     <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
@@ -221,11 +221,30 @@ function App() {
                         <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
                           3
                         </span>
-                        <h4 className="font-semibold">Add Registry &amp; Install</h4>
+                        <h4 className="font-semibold">Add Extension Registry</h4>
                       </div>
                       <TerminalCode code='azd extension source add jongio "https://jongio.github.io/azd-extensions/registry.json"' />
-                      <div className="mt-2">
-                        <TerminalCode code="azd extension install jongio.azd.app jongio.azd.exec" />
+                    </div>
+
+                    <div className="group">
+                      <div className="mb-2 flex items-center gap-3">
+                        <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
+                          4
+                        </span>
+                        <h4 className="font-semibold">Install Extensions</h4>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <p className="text-muted-foreground mb-2 text-sm font-medium">Install all</p>
+                          <TerminalCode code="azd extension install jongio.azd.app jongio.azd.exec" />
+                        </div>
+                        <div className="border-muted border-t pt-4">
+                          <p className="text-muted-foreground mb-2 text-sm font-medium">Or install individually</p>
+                          <div className="space-y-2">
+                            <TerminalCode code="azd extension install jongio.azd.app" />
+                            <TerminalCode code="azd extension install jongio.azd.exec" />
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

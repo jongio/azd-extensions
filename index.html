@@ -71,6 +71,13 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   </head>
   <body>
+    <script>
+      // Prevent flash of wrong theme - default to dark
+      (function() {
+        const theme = localStorage.getItem('azd-extensions-theme') || 'dark';
+        document.documentElement.classList.add(theme);
+      })();
+    </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

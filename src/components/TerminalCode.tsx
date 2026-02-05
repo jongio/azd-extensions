@@ -23,14 +23,13 @@ export function TerminalCode({ code, showPrompt = true, className = '' }: Termin
 
   return (
     <div
-      className={`glass group relative flex items-center gap-3 rounded-xl border-[var(--color-primary)]/10 px-4 py-3 font-mono text-sm transition-all hover:border-[var(--color-primary)]/30 hover:shadow-lg ${className}`}
-      style={{ background: 'rgba(15, 23, 42, 0.6)' }}
+      className={`group relative flex items-center gap-3 rounded-xl border border-[var(--color-border)] bg-[#0f172a] px-4 py-3 font-mono text-sm text-slate-100 transition-all hover:border-[var(--color-primary)]/30 hover:shadow-lg ${className}`}
     >
       {showPrompt && <Terminal className="h-4 w-4 shrink-0 text-[var(--color-glow-cyan)]" />}
-      <code className="text-foreground/90 flex-1 overflow-x-auto">{code}</code>
+      <code className="flex-1 overflow-x-auto">{code}</code>
       <button
         onClick={handleCopy}
-        className="text-muted-foreground hover:text-primary shrink-0 opacity-0 transition-all group-hover:opacity-100"
+        className="shrink-0 text-slate-400 opacity-0 transition-all hover:text-slate-200 group-hover:opacity-100"
         aria-label="Copy to clipboard"
         title="Copy to clipboard"
       >

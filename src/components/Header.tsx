@@ -1,5 +1,6 @@
 import { GithubIcon, SparklesIcon } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { ThemeToggle } from './ThemeToggle'
 
 function XIcon({ className }: { className?: string }) {
   return (
@@ -18,10 +19,19 @@ export function Header() {
             <SparklesIcon size={20} color="white" strokeWidth={2} />
           </div>
           <h1 className="text-lg font-bold tracking-tight">
-            jongio/<span className="text-gradient">azd-extensions</span>
+            Azure Developer CLI Extensions <span className="text-muted-foreground font-normal">by</span>{' '}
+            <a
+              href="https://github.com/jongio"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-gradient hover:opacity-80"
+            >
+              Jon Gallant
+            </a>
           </h1>
         </a>
         <div className="flex items-center gap-2">
+          <ThemeToggle />
           <a
             href="https://x.com/jongallant"
             target="_blank"
