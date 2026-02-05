@@ -3,22 +3,16 @@ import { describe, it, expect } from 'vitest'
 import { Footer } from '@/components/Footer'
 
 describe('Footer', () => {
-  it('renders technology stack information', () => {
+  it('renders the built with message', () => {
     render(<Footer />)
-    expect(screen.getByText(/Built with React 19/i)).toBeInTheDocument()
-  })
-
-  it('mentions all key technologies', () => {
-    render(<Footer />)
-    const footerText = screen.getByText(/React 19.*Vite.*TypeScript.*Tailwind CSS 4.*shadcn\/ui/i)
-    expect(footerText).toBeInTheDocument()
+    expect(screen.getByText(/Built with/i)).toBeInTheDocument()
   })
 
   it('renders Jon Gallant link', () => {
     render(<Footer />)
-    const links = screen.getAllByRole('link', { name: /Jon Gallant/i })
-    expect(links[0]).toHaveAttribute('href', 'https://github.com/jongio')
-    expect(links[0]).toHaveAttribute('target', '_blank')
+    const link = screen.getByRole('link', { name: /Jon Gallant/i })
+    expect(link).toHaveAttribute('href', 'https://github.com/jongio')
+    expect(link).toHaveAttribute('target', '_blank')
   })
 
   it('renders Azure Developer CLI link', () => {
@@ -29,5 +23,11 @@ describe('Footer', () => {
       'https://learn.microsoft.com/azure/developer/azure-developer-cli/overview'
     )
     expect(azdLink).toHaveAttribute('target', '_blank')
+  })
+
+  it('renders Source link to GitHub', () => {
+    render(<Footer />)
+    const sourceLink = screen.getByRole('link', { name: /Source/i })
+    expect(sourceLink).toHaveAttribute('href', 'https://github.com/jongio/azd-extensions')
   })
 })

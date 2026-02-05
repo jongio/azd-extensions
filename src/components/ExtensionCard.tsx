@@ -1,98 +1,218 @@
 import { Extension } from '@/types/registry'
 import { Badge } from '@/components/ui/badge'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { TerminalCode } from '@/components/TerminalCode'
-import { ExternalLink, Rocket, Zap, Sparkles } from 'lucide-react'
+import { TerminalIcon, PlayerIcon, GithubIcon } from '@/components/icons'
+import {
+  Key,
+  Shield,
+  Layers,
+  Monitor,
+  Bot,
+  FolderCode,
+  Play,
+  Terminal,
+  LucideIcon,
+  Globe,
+} from 'lucide-react'
 
 interface ExtensionCardProps {
   extension: Extension
   index: number
 }
 
-const extensionExamples: Record<string, { tagline: string; examples: string[] }> = {
-  'jongio.azd.exec': {
-    tagline: 'Run any script with Azure context',
-    examples: [
-      'azd exec ./my-script.sh',
-      'azd exec --shell pwsh ./deploy.ps1',
-      'azd exec version  # Show extension version',
+// Rich extension data with features and scenarios
+const extensionData: Record<
+  string,
+  {
+    tagline: string
+    description: string
+    website: string
+    repository: string
+    features: { icon: LucideIcon; title: string; desc: string }[]
+    scenarios: { title: string; command: string }[]
+    highlight: string
+  }
+> = {
+  'jongio.azd.app': {
+    tagline: 'Run Azure Apps Locally',
+    description:
+      'One command starts all your services with auto-dependencies, real-time dashboard, and AI-powered debugging via GitHub Copilot MCP integration.',
+    highlight: 'var(--color-glow-cyan)',
+    website: 'https://jongio.github.io/azd-app/',
+    repository: 'https://github.com/jongio/azd-app',
+    features: [
+      { icon: Play, title: 'One-Command Start', desc: 'All services, auto-dependencies' },
+      { icon: Monitor, title: 'Real-time Dashboard', desc: 'Live status & health checks' },
+      { icon: Bot, title: 'Copilot MCP', desc: '10 AI tools for debugging' },
+      { icon: Layers, title: 'Multi-Language', desc: 'Node, Python, .NET, Go, Java' },
+    ],
+    scenarios: [
+      { title: 'Start Everything', command: 'azd app run' },
+      { title: 'Check Prerequisites', command: 'azd app reqs' },
+      { title: 'View Service Logs', command: 'azd app logs api' },
+      { title: 'Run Tests', command: 'azd app test --coverage' },
     ],
   },
-  'jongio.azd.app': {
-    tagline: 'Zero-config development environment',
-    examples: [
-      'azd app reqs  # Verify prerequisites',
-      'azd app deps  # Install dependencies',
-      'azd app run   # Start dev environment',
-      'azd app info  # Monitor running services',
+  'jongio.azd.exec': {
+    tagline: 'Execute Scripts with Azure Context',
+    description:
+      'Run any script with full access to your Azure credentials, environment variables, and Key Vault secrets. Perfect for automation, migrations, and CI/CD.',
+    highlight: 'var(--color-glow-violet)',
+    website: 'https://jongio.github.io/azd-exec/',
+    repository: 'https://github.com/jongio/azd-exec',
+    features: [
+      { icon: Key, title: 'Key Vault Integration', desc: 'Auto-resolve secrets at runtime' },
+      { icon: Terminal, title: 'Multi-Shell Support', desc: 'Bash, PowerShell, zsh, cmd' },
+      { icon: Shield, title: 'Security Scanned', desc: '0 vulnerabilities, 86%+ coverage' },
+      { icon: FolderCode, title: 'Working Directory', desc: 'Run from any location' },
+    ],
+    scenarios: [
+      { title: 'Database Migration', command: 'azd exec ./migrate.sh' },
+      { title: 'PowerShell Deploy', command: 'azd exec --shell pwsh ./deploy.ps1' },
+      { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
     ],
   },
 }
 
 export function ExtensionCard({ extension, index }: ExtensionCardProps) {
-  const data = extensionExamples[extension.id] || { tagline: '', examples: [] }
-  const Icon = index === 0 ? Rocket : index === 1 ? Zap : Sparkles
+  const data = extensionData[extension.id] || {
+    tagline: extension.displayName,
+    description: '',
+    highlight: index === 0 ? 'var(--color-glow-cyan)' : 'var(--color-glow-violet)',
+    features: [],
+    scenarios: [],
+    website: '',
+    repository: '',
+  }
+
+  const isApp = extension.id === 'jongio.azd.app'
 
   return (
-    <Card className="group hover:border-primary/50 relative overflow-hidden transition-all hover:shadow-xl">
-      <div className="bg-primary/5 group-hover:bg-primary/10 absolute -top-8 -right-8 h-24 w-24 rounded-full blur-2xl transition-all" />
+    <div
+      className="glass group relative overflow-hidden rounded-2xl transition-all duration-300 hover:scale-[1.01]"
+      style={{
+        boxShadow: `0 0 0 1px rgba(148, 163, 184, 0.1)`,
+      }}
+    >
+      {/* Hover glow effect */}
+      <div
+        className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full opacity-0 blur-[80px] transition-opacity duration-500 group-hover:opacity-20"
+        style={{ background: data.highlight }}
+      />
 
-      <CardHeader className="relative pb-3">
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex flex-1 items-center gap-3">
-            <div className="bg-primary/10 rounded-lg p-2">
-              <Icon className="text-primary h-5 w-5" />
+      <div className="relative p-6 sm:p-8">
+        {/* Header */}
+        <div className="mb-6 flex items-start justify-between gap-4">
+          <div className="flex items-start gap-4">
+            <div
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
+              style={{
+                background: `linear-gradient(135deg, ${data.highlight}30, ${data.highlight}10)`,
+              }}
+            >
+              {isApp ? (
+                <PlayerIcon size={28} color={data.highlight} />
+              ) : (
+                <TerminalIcon size={28} color={data.highlight} />
+              )}
             </div>
-            <div className="min-w-0 flex-1">
-              <CardTitle className="text-lg">{extension.displayName}</CardTitle>
-              <CardDescription className="mt-0.5 text-xs">{data.tagline}</CardDescription>
+            <div>
+              <h3 className="text-xl font-bold sm:text-2xl">{extension.displayName}</h3>
+              <p className="text-muted-foreground mt-1 text-sm font-medium">{data.tagline}</p>
             </div>
           </div>
-          {extension.repository && (
-            <a
-              href={extension.repository}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="text-muted-foreground hover:bg-primary/10 hover:text-primary shrink-0 rounded-lg p-2 transition-all"
-              aria-label={`View ${extension.displayName} on GitHub`}
-            >
-              <ExternalLink className="h-4 w-4" />
-            </a>
-          )}
+          <div className="flex shrink-0 gap-1">
+            {data.website && (
+              <a
+                href={data.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary rounded-lg p-2 transition-all hover:bg-white/5"
+                aria-label={`Visit ${extension.displayName} website`}
+                title="Website"
+              >
+                <Globe className="h-5 w-5" />
+              </a>
+            )}
+            {data.repository && (
+              <a
+                href={data.repository}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-primary rounded-lg p-2 transition-all hover:bg-white/5"
+                aria-label={`View ${extension.displayName} on GitHub`}
+                title="GitHub"
+              >
+                <GithubIcon size={20} />
+              </a>
+            )}
+          </div>
         </div>
 
-        <div className="mt-2 flex flex-wrap gap-1.5">
-          {extension.tags?.map((tag) => (
-            <Badge key={tag} variant="secondary" className="px-2 py-0 text-xs">
-              {tag}
-            </Badge>
-          ))}
-        </div>
-      </CardHeader>
+        {/* Description */}
+        <p className="text-muted-foreground mb-6 text-sm leading-relaxed">{data.description}</p>
 
-      <CardContent className="relative space-y-3 pt-0">
-        {/* Examples */}
-        {data.examples.length > 0 && (
-          <div>
-            <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
-              Examples
+        {/* Features Grid */}
+        {data.features.length > 0 && (
+          <div className="mb-6 grid grid-cols-2 gap-3">
+            {data.features.map((feature, i) => (
+              <div key={i} className="flex items-start gap-2 rounded-lg bg-white/5 p-3">
+                <feature.icon
+                  className="mt-0.5 h-4 w-4 shrink-0"
+                  style={{ color: data.highlight }}
+                />
+                <div>
+                  <p className="text-xs font-semibold">{feature.title}</p>
+                  <p className="text-muted-foreground text-xs">{feature.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Scenarios */}
+        {data.scenarios.length > 0 && (
+          <div className="mb-6">
+            <h4 className="text-muted-foreground mb-3 text-xs font-semibold tracking-wider uppercase">
+              Try It
             </h4>
-            <div className="space-y-1.5">
-              {data.examples.map((example, i) => (
-                <TerminalCode key={i} code={example} className="text-xs" />
+            <div className="space-y-2">
+              {data.scenarios.map((scenario, i) => (
+                <div key={i}>
+                  <p className="text-muted-foreground mb-1 text-xs">{scenario.title}</p>
+                  <TerminalCode code={scenario.command} className="text-xs" />
+                </div>
               ))}
             </div>
           </div>
         )}
 
-        {/* Installation */}
-        <div className="border-t pt-3">
-          <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wide uppercase">
+        {/* Tags */}
+        <div className="mb-4 flex flex-wrap gap-1.5">
+          {extension.tags?.map((tag) => (
+            <Badge
+              key={tag}
+              variant="secondary"
+              className="border px-2 py-0.5 text-xs"
+              style={{
+                borderColor: `${data.highlight}30`,
+                background: `${data.highlight}10`,
+                color: data.highlight,
+              }}
+            >
+              {tag}
+            </Badge>
+          ))}
+        </div>
+
+        {/* Install */}
+        <div className="border-t border-white/5 pt-4">
+          <h4 className="text-muted-foreground mb-2 text-xs font-semibold tracking-wider uppercase">
             Install
           </h4>
           <TerminalCode code={`azd extension install ${extension.id}`} className="text-xs" />
         </div>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   )
 }

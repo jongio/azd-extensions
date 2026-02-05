@@ -1,28 +1,52 @@
-import { Github } from 'lucide-react'
+import { GithubIcon, SparklesIcon } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+
+function XIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+    </svg>
+  )
+}
 
 export function Header() {
   return (
-    <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 border-b backdrop-blur">
+    <header className="glass-strong fixed top-0 right-0 left-0 z-50">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
-        <div className="flex items-center gap-4">
-          <img src="/azd-extensions/logo.png" alt="Jon Gallant" className="h-10 w-20" />
-          <div>
-            <h1 className="text-xl leading-tight font-bold">azd extensions</h1>
-            <p className="text-muted-foreground text-xs">by Jon Gallant</p>
+        <a href="#" className="flex items-center gap-3 transition-opacity hover:opacity-80">
+          <div className="from-primary to-accent flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br">
+            <SparklesIcon size={20} color="white" strokeWidth={2} />
           </div>
-        </div>
-        <a
-          href="https://github.com/jongio/azd-extensions"
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="azd Extensions on GitHub"
-        >
-          <Button variant="outline" size="sm">
-            <Github className="h-4 w-4" />
-            GitHub
-          </Button>
+          <h1 className="text-lg font-bold tracking-tight">
+            jongio/<span className="text-gradient">azd-extensions</span>
+          </h1>
         </a>
+        <div className="flex items-center gap-2">
+          <a
+            href="https://x.com/jongallant"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Jon Gallant on X"
+            className="text-muted-foreground hover:text-foreground rounded-lg p-2 transition-colors"
+          >
+            <XIcon className="h-5 w-5" />
+          </a>
+          <a
+            href="https://github.com/jongio"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Jon Gallant on GitHub"
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className="glass border-primary/20 hover:border-primary/50 hover:glow-cyan"
+            >
+              <GithubIcon size={16} />
+              <span className="hidden sm:inline">jongio</span>
+            </Button>
+          </a>
+        </div>
       </div>
     </header>
   )

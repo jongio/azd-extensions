@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import { Header } from '@/components/Header'
 import { Footer } from '@/components/Footer'
-import { AlphaNotice } from '@/components/AlphaNotice'
 import { ExtensionCard } from '@/components/ExtensionCard'
 import { TerminalCode } from '@/components/TerminalCode'
 import { Extension, Registry } from '@/types/registry'
+import { ArrowRight, Terminal } from 'lucide-react'
+import { SparklesIcon } from '@/components/icons'
+import { Button } from '@/components/ui/button'
 
 function App() {
   const [extensions, setExtensions] = useState<Extension[]>([])
@@ -20,7 +22,15 @@ function App() {
         return response.json()
       })
       .then((data: Registry) => {
-        setExtensions(data.extensions || [])
+        // Sort extensions: azd-app first, then azd-exec, then others
+        const sorted = (data.extensions || []).sort((a, b) => {
+          const order: Record<string, number> = {
+            'jongio.azd.app': 0,
+            'jongio.azd.exec': 1,
+          }
+          return (order[a.id] ?? 99) - (order[b.id] ?? 99)
+        })
+        setExtensions(sorted)
         setLoading(false)
       })
       .catch((err) => {
@@ -30,105 +40,198 @@ function App() {
   }, [])
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="relative flex min-h-screen flex-col">
+      {/* Animated background elements */}
+      <div className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div className="animate-pulse-glow absolute -top-40 -left-40 h-80 w-80 rounded-full bg-[var(--color-glow-cyan)] opacity-20 blur-[100px]" />
+        <div
+          className="animate-pulse-glow absolute top-1/3 -right-40 h-96 w-96 rounded-full bg-[var(--color-glow-violet)] opacity-15 blur-[120px]"
+          style={{ animationDelay: '2s' }}
+        />
+        <div
+          className="animate-pulse-glow absolute -bottom-40 left-1/3 h-72 w-72 rounded-full bg-[var(--color-glow-emerald)] opacity-10 blur-[100px]"
+          style={{ animationDelay: '4s' }}
+        />
+      </div>
+
       <Header />
-      <main className="flex-1">
-        {/* Hero Section */}
-        <div className="from-primary/5 to-background bg-gradient-to-b">
-          <div className="container mx-auto px-4 py-6 sm:py-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <h1 className="mb-2 text-3xl font-bold tracking-tight sm:text-4xl">
-                Supercharge Your Azure Workflow
+
+      <main className="relative flex-1 pt-16">
+        {/* Hero Section - Focused on Jon's extensions */}
+        <div className="hero-gradient relative overflow-hidden">
+          <div className="container mx-auto px-4 py-16 sm:py-24 lg:py-32">
+            <div className="mx-auto max-w-4xl text-center">
+              {/* Badge */}
+              <a
+                href="https://github.com/jongio"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="animate-fade-up mb-6 inline-flex items-center gap-2 rounded-full border border-[var(--color-glow-cyan)]/30 bg-[var(--color-glow-cyan)]/10 px-4 py-1.5 text-sm font-medium text-[var(--color-glow-cyan)] transition-all hover:border-[var(--color-glow-cyan)]/50 hover:bg-[var(--color-glow-cyan)]/20"
+              >
+                <SparklesIcon size={16} color="var(--color-glow-cyan)" />
+                By Jon Gallant
+              </a>
+
+              {/* Main heading */}
+              <h1
+                className="animate-fade-up mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
+                style={{ animationDelay: '0.1s' }}
+              >
+                Supercharge your <span className="text-gradient-animated">Azure workflow</span>
               </h1>
-              <p className="text-muted-foreground mx-auto max-w-2xl text-sm sm:text-base">
-                Powerful extensions that transform how you build, deploy, and manage Azure
-                applications.
+
+              <p
+                className="animate-fade-up text-muted-foreground mx-auto mb-8 max-w-2xl text-lg sm:text-xl"
+                style={{ animationDelay: '0.2s' }}
+              >
+                <strong className="text-foreground">azd app</strong> runs your entire app locally.{' '}
+                <strong className="text-foreground">azd exec</strong> runs scripts with Azure
+                credentials. Powerful extensions that transform your development experience.
               </p>
-              <div className="mt-4">
-                <a
-                  href="https://learn.microsoft.com/azure/developer/azure-developer-cli/azd-extensibility"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="bg-primary/10 text-primary hover:bg-primary/20 inline-flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-medium transition-all hover:shadow-md"
-                >
-                  Learn about azd extensions →
+
+              {/* CTA Buttons */}
+              <div
+                className="animate-fade-up flex flex-col items-center justify-center gap-4 sm:flex-row"
+                style={{ animationDelay: '0.3s' }}
+              >
+                <a href="#extensions">
+                  <Button
+                    size="lg"
+                    className="from-primary to-accent glow-cyan group bg-gradient-to-r text-white shadow-lg transition-all hover:scale-105 hover:shadow-xl"
+                  >
+                    See the Extensions
+                    <ArrowRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                  </Button>
+                </a>
+                <a href="#getting-started">
+                  <Button
+                    size="lg"
+                    variant="outline"
+                    className="glass border-primary/30 hover:border-primary/50 hover:bg-primary/10"
+                  >
+                    <Terminal className="mr-2 h-4 w-4" />
+                    Quick Start
+                  </Button>
                 </a>
               </div>
             </div>
           </div>
+
+          {/* Decorative floating elements */}
+          <div className="animate-float pointer-events-none absolute top-20 left-10 h-2 w-2 rounded-full bg-[var(--color-glow-cyan)] opacity-60" />
+          <div className="animate-float-delayed pointer-events-none absolute top-40 right-20 h-3 w-3 rounded-full bg-[var(--color-glow-violet)] opacity-50" />
         </div>
 
         <div className="container mx-auto px-4 py-8">
-          {/* Alpha Notice */}
-          <div className="mb-8">
-            <AlphaNotice />
-          </div>
-
           {/* Loading State */}
           {loading && (
-            <div className="py-12 text-center">
-              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+            <div className="py-20 text-center">
+              <div className="from-primary to-accent inline-block h-10 w-10 animate-spin rounded-full bg-gradient-to-r p-1">
+                <div className="bg-background h-full w-full rounded-full" />
+              </div>
               <p className="text-muted-foreground mt-4">Loading extensions...</p>
             </div>
           )}
 
           {/* Error State */}
           {error && (
-            <div className="border-destructive/50 bg-destructive/10 rounded-lg border p-4 text-center">
+            <div className="glass rounded-2xl border-red-500/20 p-6 text-center">
               <p className="text-destructive">Error loading extensions: {error}</p>
             </div>
           )}
 
-          {/* Extensions Grid - Above the fold */}
+          {/* Extensions - Front and Center */}
+          {!loading && !error && extensions.length > 0 && (
+            <section id="extensions" className="scroll-mt-24">
+              <div className="mb-10 text-center">
+                <h2 className="mb-3 text-3xl font-bold sm:text-4xl">
+                  The <span className="text-gradient">Extensions</span>
+                </h2>
+                <p className="text-muted-foreground mx-auto max-w-2xl">
+                  Built to solve real problems. Battle-tested with comprehensive security scanning,
+                  cross-platform support, and extensive documentation.
+                </p>
+              </div>
+
+              {/* Extension Cards - 2 column for both extensions */}
+              <div className="mb-16 grid gap-8 lg:grid-cols-2">
+                {extensions.map((extension, index) => (
+                  <ExtensionCard key={extension.id} extension={extension} index={index} />
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Empty State */}
           {!loading && !error && extensions.length === 0 && (
-            <div className="rounded-lg border border-dashed p-12 text-center">
+            <div className="glass rounded-2xl border-dashed p-16 text-center">
               <p className="text-muted-foreground text-lg">
                 No extensions available yet. Check back soon!
               </p>
             </div>
           )}
 
-          {!loading && !error && extensions.length > 0 && (
-            <>
-              <div className="mb-8 text-center">
-                <h2 className="text-2xl font-bold sm:text-3xl">Available Extensions</h2>
-                <p className="text-muted-foreground mt-2">
-                  Click any extension to learn more and get started
-                </p>
-              </div>
-              <div className="mb-16 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-                {extensions.map((extension, index) => (
-                  <ExtensionCard key={extension.id} extension={extension} index={index} />
-                ))}
-              </div>
-            </>
-          )}
-
           {/* Getting Started CTA */}
           {!loading && !error && extensions.length > 0 && (
-            <div className="border-primary/20 from-primary/5 via-background to-background rounded-2xl border-2 bg-gradient-to-br p-8 shadow-lg sm:p-12">
-              <div className="mx-auto max-w-3xl text-center">
-                <h2 className="mb-4 text-3xl font-bold sm:text-4xl">Ready to Get Started?</h2>
-                <p className="text-muted-foreground mb-8 text-lg">
-                  Install any extension in seconds and start boosting your Azure development
-                  productivity.
-                </p>
-                <div className="space-y-4">
-                  <div className="text-left">
-                    <h4 className="text-foreground mb-2 font-semibold">1. Enable Extensions</h4>
-                    <TerminalCode code="azd config set alpha.extensions on" />
+            <section id="getting-started" className="scroll-mt-24">
+              <div className="glass glow-violet relative overflow-hidden rounded-3xl border-[var(--color-glow-violet)]/20 p-8 sm:p-12">
+                {/* Background glow */}
+                <div className="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full bg-[var(--color-glow-violet)] opacity-10 blur-[80px]" />
+
+                <div className="relative mx-auto max-w-3xl">
+                  <div className="mb-8 text-center">
+                    <h2 className="mb-4 text-3xl font-bold sm:text-4xl">
+                      Get Started in <span className="text-gradient">30 Seconds</span>
+                    </h2>
+                    <p className="text-muted-foreground text-lg">
+                      Install Jon's extensions and supercharge your Azure workflow
+                    </p>
                   </div>
-                  <div className="text-left">
-                    <h4 className="text-foreground mb-2 font-semibold">2. Add Registry</h4>
-                    <TerminalCode code='azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-extensions/registry.json"' />
-                  </div>
-                  <div className="text-left">
-                    <h4 className="text-foreground mb-2 font-semibold">3. Install Extension</h4>
-                    <TerminalCode code="azd extension install jongio.azd.app" />
+
+                  <div className="space-y-6">
+                    <div className="group">
+                      <div className="mb-2 flex items-center gap-3">
+                        <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
+                          1
+                        </span>
+                        <h4 className="font-semibold">Install Azure Developer CLI</h4>
+                      </div>
+                      <div className="space-y-2">
+                        <p className="text-muted-foreground text-xs">Windows (winget)</p>
+                        <TerminalCode code="winget install microsoft.azd" />
+                        <p className="text-muted-foreground mt-2 text-xs">macOS (Homebrew)</p>
+                        <TerminalCode code="brew install azd" />
+                        <p className="text-muted-foreground mt-2 text-xs">Linux</p>
+                        <TerminalCode code="curl -fsSL https://aka.ms/install-azd.sh | bash" />
+                      </div>
+                    </div>
+
+                    <div className="group">
+                      <div className="mb-2 flex items-center gap-3">
+                        <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
+                          2
+                        </span>
+                        <h4 className="font-semibold">Enable Extensions</h4>
+                      </div>
+                      <TerminalCode code="azd config set alpha.extensions on" />
+                    </div>
+
+                    <div className="group">
+                      <div className="mb-2 flex items-center gap-3">
+                        <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
+                          3
+                        </span>
+                        <h4 className="font-semibold">Add Registry &amp; Install</h4>
+                      </div>
+                      <TerminalCode code='azd extension source add jongio "https://jongio.github.io/azd-extensions/registry.json"' />
+                      <div className="mt-2">
+                        <TerminalCode code="azd extension install jongio.azd.app jongio.azd.exec" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            </section>
           )}
         </div>
       </main>

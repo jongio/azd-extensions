@@ -5,24 +5,20 @@ import { Header } from '@/components/Header'
 describe('Header', () => {
   it('renders the site title', () => {
     render(<Header />)
-    expect(screen.getByText('azd extensions')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
   })
 
-  it('renders the author name', () => {
+  it('renders X link', () => {
     render(<Header />)
-    expect(screen.getByText('by Jon Gallant')).toBeInTheDocument()
+    const xLink = screen.getByRole('link', { name: /Jon Gallant on X/i })
+    expect(xLink).toHaveAttribute('href', 'https://x.com/jongallant')
+    expect(xLink).toHaveAttribute('target', '_blank')
   })
 
-  it('renders GitHub link', () => {
+  it('renders GitHub profile link', () => {
     render(<Header />)
-    const githubLink = screen.getByRole('link', { name: /azd Extensions on GitHub/i })
-    expect(githubLink).toHaveAttribute('href', 'https://github.com/jongio/azd-extensions')
+    const githubLink = screen.getByRole('link', { name: /Jon Gallant on GitHub/i })
+    expect(githubLink).toHaveAttribute('href', 'https://github.com/jongio')
     expect(githubLink).toHaveAttribute('target', '_blank')
-    expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer')
-  })
-
-  it('renders GitHub button with icon', () => {
-    render(<Header />)
-    expect(screen.getByText('GitHub')).toBeInTheDocument()
   })
 })
