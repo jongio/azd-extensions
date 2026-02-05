@@ -26,8 +26,6 @@ jobs:
 
       - name: Update registry with latest releases
         id: update
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           node scripts/update-registry.js
 
@@ -39,7 +37,6 @@ jobs:
             echo "has_changes=true" >> $GITHUB_OUTPUT
             echo "Registry updated with new versions"
           fi
-        continue-on-error: true
 
       - name: Create Pull Request
         if: steps.update.outputs.has_changes == 'true'
