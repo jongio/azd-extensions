@@ -77,8 +77,7 @@ function App() {
                 className="animate-fade-up mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl"
                 style={{ animationDelay: '0.1s' }}
               >
-                Supercharge your{' '}
-                <span className="text-gradient-animated">Azure workflow</span>
+                Supercharge your <span className="text-gradient-animated">Azure workflow</span>
               </h1>
 
               <p
@@ -224,7 +223,7 @@ function App() {
                         </span>
                         <h4 className="font-semibold">Add Extension Registry</h4>
                       </div>
-                      <TerminalCode code='azd extension source add jongio "https://jongio.github.io/azd-extensions/registry.json"' />
+                      <TerminalCode code="azd extension source add -n jongio -t url -l https://jongio.github.io/azd-extensions/registry.json" />
                     </div>
 
                     <div className="group">

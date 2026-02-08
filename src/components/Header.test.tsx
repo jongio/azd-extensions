@@ -5,7 +5,7 @@ import { Header } from '@/components/Header'
 describe('Header', () => {
   it('renders the site title', () => {
     render(<Header />)
-    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument()
+    expect(screen.getByText('Azure Developer CLI Extensions')).toBeInTheDocument()
   })
 
   it('renders X link', () => {

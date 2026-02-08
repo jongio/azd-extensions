@@ -36,7 +36,7 @@ azd config set alpha.extensions on
 ### 2. Add This Registry
 
 ```bash
-azd extension source add jongio --type url --location "https://jongio.github.io/azd-extensions/registry.json"
+azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-extensions/registry.json"
 ```
 
 ### 3. Install Extensions
