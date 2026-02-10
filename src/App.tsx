@@ -86,10 +86,9 @@ function App() {
                 style={{ animationDelay: '0.2s' }}
               >
                 <strong className="text-foreground">azd copilot</strong> is your AI-powered Azure
-                assistant.{' '}
-                <strong className="text-foreground">azd app</strong> runs your entire app locally.{' '}
-                <strong className="text-foreground">azd exec</strong> runs scripts with Azure
-                credentials. Powerful extensions that transform your development experience.
+                assistant. <strong className="text-foreground">azd app</strong> runs your entire app
+                locally. <strong className="text-foreground">azd exec</strong> runs scripts with
+                Azure credentials. Powerful extensions that transform your development experience.
               </p>
 
               {/* CTA Buttons */}
