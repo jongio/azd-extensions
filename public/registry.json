@@ -8,9 +8,7 @@
       "versions": [
         {
           "version": "0.1.0",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -37,9 +35,7 @@
         },
         {
           "version": "0.1.18",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -103,9 +99,7 @@
         },
         {
           "version": "0.2.24",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -177,9 +171,7 @@
         },
         {
           "version": "0.2.25",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -251,9 +243,7 @@
         },
         {
           "version": "0.2.26",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -325,9 +315,7 @@
         },
         {
           "version": "0.2.27",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -399,9 +387,7 @@
         },
         {
           "version": "0.2.28",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -473,9 +459,7 @@
         },
         {
           "version": "0.2.29",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -547,9 +531,7 @@
         },
         {
           "version": "0.2.30",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -621,9 +603,7 @@
         },
         {
           "version": "0.2.31",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -695,9 +675,7 @@
         },
         {
           "version": "0.2.32",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -769,9 +747,7 @@
         },
         {
           "version": "0.2.33",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -843,9 +819,7 @@
         },
         {
           "version": "0.3.0",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -917,9 +891,7 @@
         },
         {
           "version": "0.3.1",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -991,9 +963,7 @@
         },
         {
           "version": "0.3.2",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd exec <command> [options]",
           "examples": [
             {
@@ -1064,11 +1034,7 @@
           }
         }
       ],
-      "tags": [
-        "scripting",
-        "automation",
-        "developer-tools"
-      ]
+      "tags": ["scripting", "automation", "developer-tools"]
     },
     {
       "id": "jongio.azd.app",
@@ -1078,9 +1044,7 @@
       "versions": [
         {
           "version": "0.1.2",
-          "capabilities": [
-            "custom-commands"
-          ],
+          "capabilities": ["custom-commands"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1152,11 +1116,7 @@
         },
         {
           "version": "0.3.1",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1223,11 +1183,7 @@
         },
         {
           "version": "0.3.2",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1294,11 +1250,7 @@
         },
         {
           "version": "0.3.3",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1365,11 +1317,7 @@
         },
         {
           "version": "0.3.7",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1436,11 +1384,7 @@
         },
         {
           "version": "0.4.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1507,11 +1451,7 @@
         },
         {
           "version": "0.5.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1578,11 +1518,7 @@
         },
         {
           "version": "0.5.1",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1649,11 +1585,7 @@
         },
         {
           "version": "0.5.2",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1720,11 +1652,7 @@
         },
         {
           "version": "0.5.5",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1791,11 +1719,7 @@
         },
         {
           "version": "0.5.6",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1862,11 +1786,7 @@
         },
         {
           "version": "0.5.7",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -1933,11 +1853,7 @@
         },
         {
           "version": "0.5.8",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2004,11 +1920,7 @@
         },
         {
           "version": "0.5.10",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2075,11 +1987,7 @@
         },
         {
           "version": "0.5.11",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2146,11 +2054,7 @@
         },
         {
           "version": "0.6.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2217,11 +2121,7 @@
         },
         {
           "version": "0.6.1",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2288,11 +2188,7 @@
         },
         {
           "version": "0.7.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2359,11 +2255,7 @@
         },
         {
           "version": "0.8.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2430,11 +2322,7 @@
         },
         {
           "version": "0.8.1",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -2501,11 +2389,7 @@
         },
         {
           "version": "0.9.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server"],
           "usage": "azd app <command> [options]",
           "examples": [
             {
@@ -3332,27 +3216,17 @@
           }
         }
       ],
-      "tags": [
-        "developer",
-        "productivity",
-        "app",
-        "testing"
-      ]
+      "tags": ["developer", "productivity", "app", "testing"]
     },
     {
       "id": "jongio.azd.copilot",
       "namespace": "copilot",
-      "displayName": "Azure Copilot",
+      "displayName": "Azure Copilot CLI",
       "description": "AI-powered Azure development assistant. Describe what you want to build, and Copilot builds and deploys it to Azure. Includes 16 specialized agents and 29 Azure skills.",
       "versions": [
         {
           "version": "0.1.0",
-          "capabilities": [
-            "custom-commands",
-            "lifecycle-events",
-            "mcp-server",
-            "metadata"
-          ],
+          "capabilities": ["custom-commands", "lifecycle-events", "mcp-server", "metadata"],
           "usage": "azd copilot <command> [options]",
           "examples": [
             {
@@ -3443,14 +3317,7 @@
           }
         }
       ],
-      "tags": [
-        "ai",
-        "copilot",
-        "development",
-        "productivity",
-        "github-copilot",
-        "azure"
-      ]
+      "tags": ["ai", "copilot", "development", "productivity", "github-copilot", "azure"]
     }
   ]
 }
