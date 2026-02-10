@@ -13,6 +13,10 @@ import {
   Terminal,
   LucideIcon,
   Globe,
+  Sparkles,
+  Cpu,
+  MessageSquare,
+  Zap,
 } from 'lucide-react'
 
 interface ExtensionCardProps {
@@ -72,6 +76,26 @@ const extensionData: Record<
       { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
     ],
   },
+  'jongio.azd.copilot': {
+    tagline: 'AI-Powered Azure Assistant',
+    description:
+      'Describe what you want to build, and Copilot builds and deploys it to Azure. Includes 16 specialized agents and 29 Azure skills with GitHub Copilot integration.',
+    highlight: 'var(--color-glow-emerald)',
+    website: 'https://github.com/jongio/azd-copilot',
+    repository: 'https://github.com/jongio/azd-copilot',
+    features: [
+      { icon: Bot, title: '16 Agents', desc: 'Specialized AI agents for Azure tasks' },
+      { icon: Sparkles, title: '29 Azure Skills', desc: 'Deep Azure service integration' },
+      { icon: MessageSquare, title: 'Interactive Mode', desc: 'Chat or single-prompt execution' },
+      { icon: Cpu, title: 'MCP Server', desc: 'GitHub Copilot MCP integration' },
+    ],
+    scenarios: [
+      { title: 'Interactive Session', command: 'azd copilot' },
+      { title: 'Single Prompt', command: "azd copilot -p 'build a REST API'" },
+      { title: 'Use Specific Agent', command: 'azd copilot --agent azure-security' },
+      { title: 'List Agents', command: 'azd copilot agents' },
+    ],
+  },
 }
 
 export function ExtensionCard({ extension, index }: ExtensionCardProps) {
@@ -86,6 +110,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
   }
 
   const isApp = extension.id === 'jongio.azd.app'
+  const isCopilot = extension.id === 'jongio.azd.copilot'
 
   return (
     <div
@@ -112,6 +137,8 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
             >
               {isApp ? (
                 <PlayerIcon size={28} color={data.highlight} />
+              ) : isCopilot ? (
+                <Zap size={28} color={data.highlight} />
               ) : (
                 <TerminalIcon size={28} color={data.highlight} />
               )}

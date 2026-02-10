@@ -25,8 +25,9 @@ function App() {
         // Sort extensions: azd-app first, then azd-exec, then others
         const sorted = (data.extensions || []).sort((a, b) => {
           const order: Record<string, number> = {
-            'jongio.azd.app': 0,
-            'jongio.azd.exec': 1,
+            'jongio.azd.copilot': 0,
+            'jongio.azd.app': 1,
+            'jongio.azd.exec': 2,
           }
           return (order[a.id] ?? 99) - (order[b.id] ?? 99)
         })
@@ -84,9 +85,10 @@ function App() {
                 className="animate-fade-up text-muted-foreground mx-auto mb-10 max-w-2xl text-lg sm:text-xl"
                 style={{ animationDelay: '0.2s' }}
               >
-                <strong className="text-foreground">azd app</strong> runs your entire app locally.{' '}
-                <strong className="text-foreground">azd exec</strong> runs scripts with Azure
-                credentials. Powerful extensions that transform your development experience.
+                <strong className="text-foreground">azd copilot</strong> is your AI-powered Azure
+                assistant. <strong className="text-foreground">azd app</strong> runs your entire app
+                locally. <strong className="text-foreground">azd exec</strong> runs scripts with
+                Azure credentials. Powerful extensions that transform your development experience.
               </p>
 
               {/* CTA Buttons */}
@@ -154,7 +156,7 @@ function App() {
               </div>
 
               {/* Extension Cards - 2 column for both extensions */}
-              <div className="mb-20 grid gap-8 lg:grid-cols-2">
+              <div className="mb-20 grid gap-8 lg:grid-cols-3">
                 {extensions.map((extension, index) => (
                   <ExtensionCard key={extension.id} extension={extension} index={index} />
                 ))}
@@ -238,13 +240,14 @@ function App() {
                           <p className="text-muted-foreground mb-2 text-sm font-medium">
                             Install all
                           </p>
-                          <TerminalCode code="azd extension install jongio.azd.app jongio.azd.exec" />
+                          <TerminalCode code="azd extension install jongio.azd.copilot jongio.azd.app jongio.azd.exec" />
                         </div>
                         <div className="border-muted border-t pt-4">
                           <p className="text-muted-foreground mb-2 text-sm font-medium">
                             Or install individually
                           </p>
                           <div className="space-y-2">
+                            <TerminalCode code="azd extension install jongio.azd.copilot" />
                             <TerminalCode code="azd extension install jongio.azd.app" />
                             <TerminalCode code="azd extension install jongio.azd.exec" />
                           </div>
