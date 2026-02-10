@@ -14,6 +14,7 @@ const REGISTRY_FILE = 'public/registry.json';
 const EXTENSION_SOURCES = [
   'https://raw.githubusercontent.com/jongio/azd-exec/refs/heads/main/registry.json',
   'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
+  'https://raw.githubusercontent.com/jongio/azd-copilot/refs/heads/main/registry.json',
 ];
 
 /**
