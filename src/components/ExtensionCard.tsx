@@ -81,7 +81,7 @@ const extensionData: Record<
     description:
       'Describe what you want to build, and Copilot builds and deploys it to Azure. Includes 16 specialized agents and 29 Azure skills with GitHub Copilot integration.',
     highlight: 'var(--color-glow-emerald)',
-    website: 'https://github.com/jongio/azd-copilot',
+    website: 'https://jongio.github.io/azd-copilot/',
     repository: 'https://github.com/jongio/azd-copilot',
     features: [
       { icon: Bot, title: '16 Agents', desc: 'Specialized AI agents for Azure tasks' },
@@ -91,7 +91,7 @@ const extensionData: Record<
     ],
     scenarios: [
       { title: 'Interactive Session', command: 'azd copilot' },
-      { title: 'Single Prompt', command: "azd copilot -p 'build a REST API'" },
+      { title: 'Single Prompt', command: "azd copilot 'build a REST API'" },
       { title: 'Use Specific Agent', command: 'azd copilot --agent azure-security' },
       { title: 'List Agents', command: 'azd copilot agents' },
     ],
