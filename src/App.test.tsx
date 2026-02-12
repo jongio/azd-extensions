@@ -101,7 +101,12 @@ describe('App', () => {
         Promise.resolve({
           extensions: [
             { id: 'jongio.azd.exec', displayName: 'azd exec', description: '', version: '1.0.0' },
-            { id: 'jongio.azd.copilot', displayName: 'azd copilot', description: '', version: '1.0.0' },
+            {
+              id: 'jongio.azd.copilot',
+              displayName: 'azd copilot',
+              description: '',
+              version: '1.0.0',
+            },
             { id: 'jongio.azd.app', displayName: 'azd app', description: '', version: '1.0.0' },
           ],
         }),
