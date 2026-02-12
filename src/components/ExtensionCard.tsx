@@ -57,25 +57,6 @@ const extensionData: Record<
       { title: 'Run Tests', command: 'azd app test --coverage' },
     ],
   },
-  'jongio.azd.exec': {
-    tagline: 'Execute Scripts with Azure Context',
-    description:
-      'Run any script with full access to your Azure credentials, environment variables, and Key Vault secrets. Perfect for automation, migrations, and CI/CD.',
-    highlight: 'var(--color-glow-violet)',
-    website: 'https://jongio.github.io/azd-exec/',
-    repository: 'https://github.com/jongio/azd-exec',
-    features: [
-      { icon: Key, title: 'Key Vault Integration', desc: 'Auto-resolve secrets at runtime' },
-      { icon: Terminal, title: 'Multi-Shell Support', desc: 'Bash, PowerShell, zsh, cmd' },
-      { icon: Shield, title: 'Security Scanned', desc: '0 vulnerabilities, 86%+ coverage' },
-      { icon: FolderCode, title: 'Working Directory', desc: 'Run from any location' },
-    ],
-    scenarios: [
-      { title: 'Database Migration', command: 'azd exec ./migrate.sh' },
-      { title: 'PowerShell Deploy', command: 'azd exec --shell pwsh ./deploy.ps1' },
-      { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
-    ],
-  },
   'jongio.azd.copilot': {
     tagline: 'AI-Powered Azure Assistant',
     description:
@@ -94,6 +75,25 @@ const extensionData: Record<
       { title: 'Single Prompt', command: "azd copilot 'build a REST API'" },
       { title: 'Use Specific Agent', command: 'azd copilot --agent azure-security' },
       { title: 'List Agents', command: 'azd copilot agents' },
+    ],
+  },
+  'jongio.azd.exec': {
+    tagline: 'Execute Scripts with Azure Context',
+    description:
+      'Run any script with full access to your Azure credentials, environment variables, and Key Vault secrets. Perfect for automation, migrations, and CI/CD.',
+    highlight: 'var(--color-glow-violet)',
+    website: 'https://jongio.github.io/azd-exec/',
+    repository: 'https://github.com/jongio/azd-exec',
+    features: [
+      { icon: Key, title: 'Key Vault Integration', desc: 'Auto-resolve secrets at runtime' },
+      { icon: Terminal, title: 'Multi-Shell Support', desc: 'Bash, PowerShell, zsh, cmd' },
+      { icon: Shield, title: 'Security Scanned', desc: '0 vulnerabilities, 86%+ coverage' },
+      { icon: FolderCode, title: 'Working Directory', desc: 'Run from any location' },
+    ],
+    scenarios: [
+      { title: 'Database Migration', command: 'azd exec ./migrate.sh' },
+      { title: 'PowerShell Deploy', command: 'azd exec --shell pwsh ./deploy.ps1' },
+      { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
     ],
   },
 }

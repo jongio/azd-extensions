@@ -19,9 +19,9 @@ $parentDir = Split-Path -Parent $repoDir
 
 # Extension repos relative to the parent directory
 $extensions = @(
-    @{ Name = "exec";    Color = "Cyan";    Path = Join-Path $parentDir "azd-exec\cli" },
-    @{ Name = "app";     Color = "Green";   Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "copilot"; Color = "Magenta"; Path = Join-Path $parentDir "azd-copilot\cli" }
+    @{ Name = "app";     Color = "Cyan";    Path = Join-Path $parentDir "azd-app\cli" },
+    @{ Name = "copilot"; Color = "Magenta"; Path = Join-Path $parentDir "azd-copilot\cli" },
+    @{ Name = "exec";    Color = "Green";   Path = Join-Path $parentDir "azd-exec\cli" }
 )
 
 # Validate all repos exist before starting

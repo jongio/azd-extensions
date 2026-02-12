@@ -15,7 +15,9 @@
     "lint:fix": "eslint . --ext ts,tsx --fix",
     "type-check": "tsc --noEmit",
     "format": "prettier --write \"src/**/*.{ts,tsx,json,css,md}\"",
-    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css,md}\""
+    "format:check": "prettier --check \"src/**/*.{ts,tsx,json,css,md}\"",
+    "validate-registry": "node scripts/validate-registry.js",
+    "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {
     "@radix-ui/react-slot": "^1.2.4",
