@@ -97,6 +97,13 @@ async function main() {
           console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: missing required platforms`);
           return false;
         }
+        // All artifact URLs must be valid HTTPS URLs
+        for (const [, artifact] of Object.entries(artifacts)) {
+          if (!artifact.url || !artifact.url.startsWith('https://')) {
+            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: non-HTTPS or missing artifact URL`);
+            return false;
+          }
+        }
         // Must not have zero/placeholder checksums
         for (const [, artifact] of Object.entries(artifacts)) {
           const value = artifact.checksum?.value || '';

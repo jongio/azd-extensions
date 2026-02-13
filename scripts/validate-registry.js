@@ -161,13 +161,18 @@ function validateAllVersions(extId, versions) {
       }
     }
     for (const [platform, artifact] of Object.entries(artifacts)) {
+      if (!artifact.url || !artifact.url.startsWith('https://')) {
+        fail(
+          `[${extId}@${ver.version}] ${platform}: non-HTTPS or missing URL — ${artifact.url || '(none)'}`
+        );
+      }
       const value = artifact.checksum?.value || '';
       if (/^0+$/.test(value)) {
         fail(`[${extId}@${ver.version}] ${platform}: placeholder checksum (all zeros)`);
       }
     }
   }
-  pass(`[${extId}] All ${versions.length} version(s) have valid platforms and checksums`);
+  pass(`[${extId}] All ${versions.length} version(s) have valid platforms, URLs, and checksums`);
 }
 
 async function validateUrls(extId, latestVersion) {
