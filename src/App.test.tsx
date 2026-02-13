@@ -69,6 +69,13 @@ describe('App', () => {
               tags: ['app'],
             },
             {
+              id: 'jongio.azd.copilot',
+              displayName: 'azd copilot',
+              description: 'AI-powered Azure assistant',
+              version: '1.0.0',
+              tags: ['copilot'],
+            },
+            {
               id: 'jongio.azd.exec',
               displayName: 'azd exec',
               description: 'Execute scripts',
@@ -87,13 +94,19 @@ describe('App', () => {
     })
   })
 
-  it('sorts extensions with azd-app first', async () => {
+  it('sorts extensions in correct order: app, copilot, exec', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       json: () =>
         Promise.resolve({
           extensions: [
             { id: 'jongio.azd.exec', displayName: 'azd exec', description: '', version: '1.0.0' },
+            {
+              id: 'jongio.azd.copilot',
+              displayName: 'azd copilot',
+              description: '',
+              version: '1.0.0',
+            },
             { id: 'jongio.azd.app', displayName: 'azd app', description: '', version: '1.0.0' },
           ],
         }),
@@ -104,8 +117,11 @@ describe('App', () => {
     await waitFor(() => {
       const headings = screen.getAllByRole('heading', { level: 3 })
       const displayNames = headings.map((h) => h.textContent)
-      expect(displayNames).toContain('azd app')
-      expect(displayNames).toContain('azd exec')
+      const appIndex = displayNames.indexOf('azd app')
+      const copilotIndex = displayNames.indexOf('azd copilot')
+      const execIndex = displayNames.indexOf('azd exec')
+      expect(appIndex).toBeLessThan(copilotIndex)
+      expect(copilotIndex).toBeLessThan(execIndex)
     })
   })
 

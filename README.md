@@ -20,8 +20,9 @@
 
 | Extension | Description | Latest |
 |-----------|-------------|--------|
-| [**azd-exec**](https://github.com/jongio/azd-exec) | Execute scripts with azd environment context, Azure credentials, and Key Vault integration | v0.3.0 |
-| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.11.4 |
+| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.11.7 |
+| [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.1.4 |
+| [**azd-exec**](https://github.com/jongio/azd-exec) | Execute scripts with azd environment context, Azure credentials, and Key Vault integration | v0.3.3 |
 
 ## Quick Start
 
@@ -45,39 +46,19 @@ azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-exten
 # List available extensions
 azd extension list --source jongio
 
-# Install extensions
-azd extension install jongio.azd.exec
+# Install all extensions
+azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec
+
+# Or install individually
 azd extension install jongio.azd.app
+azd extension install jongio.azd.copilot
+azd extension install jongio.azd.exec
 
 # View installed
 azd extension list --installed
 ```
 
 ## Usage Examples
-
-### azd-exec
-
-Run any script with full access to your azd environment variables, Azure credentials, and Key Vault secrets:
-
-```bash
-# Execute a script file with azd context
-azd exec ./deploy.sh
-
-# Execute an inline command
-azd exec 'echo "Deploying to $AZURE_ENV_NAME"'
-
-# Specify shell explicitly
-azd exec --shell pwsh ./deploy.ps1
-
-# Run in interactive mode
-azd exec --interactive ./setup.sh
-
-# Pass arguments to a script
-azd exec ./build.sh --verbose --config release
-
-# Key Vault secrets are resolved automatically from azd env references
-azd exec ./deploy-with-secrets.sh
-```
 
 ### azd-app
 
@@ -107,6 +88,42 @@ azd app info
 
 # Start the MCP server for AI debugging with GitHub Copilot
 azd app mcp serve
+```
+
+### azd-copilot
+
+AI-powered Azure development assistant with agents, skills, and MCP server:
+
+```bash
+# Start the MCP server for GitHub Copilot integration
+azd copilot mcp serve
+
+# Use Azure agents for architecture, development, deployment, and more
+azd copilot agent list
+```
+
+### azd-exec
+
+Run any script with full access to your azd environment variables, Azure credentials, and Key Vault secrets:
+
+```bash
+# Execute a script file with azd context
+azd exec ./deploy.sh
+
+# Execute an inline command
+azd exec 'echo "Deploying to $AZURE_ENV_NAME"'
+
+# Specify shell explicitly
+azd exec --shell pwsh ./deploy.ps1
+
+# Run in interactive mode
+azd exec --interactive ./setup.sh
+
+# Pass arguments to a script
+azd exec ./build.sh --verbose --config release
+
+# Key Vault secrets are resolved automatically from azd env references
+azd exec ./deploy-with-secrets.sh
 ```
 
 ## Development
@@ -172,7 +189,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
 ├── public/
 │   └── registry.json  # Extension registry (served to azd)
 └── scripts/
-    └── update-registry.js
+    ├── update-registry.js    # Aggregates extension registries
+    └── validate-registry.js  # Validates registry URLs and structure
 ```
 
 ## Resources
