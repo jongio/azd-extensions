@@ -7,6 +7,7 @@
  */
 
 import { writeFileSync } from 'fs';
+import https from 'https';
 
 const REGISTRY_FILE = 'public/registry.json';
 
@@ -22,6 +23,27 @@ function compareSemver(a, b) {
     if (diff !== 0) return diff;
   }
   return 0;
+}
+
+/**
+ * HEAD request with redirect following. Returns HTTP status code.
+ */
+function headRequest(url, redirectCount = 0) {
+  return new Promise((resolve, reject) => {
+    if (redirectCount > 5) return resolve(0);
+    const req = https.request(url, { method: 'HEAD', timeout: 10_000 }, (res) => {
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return headRequest(res.headers.location, redirectCount + 1).then(resolve).catch(reject);
+      }
+      resolve(res.statusCode);
+    });
+    req.on('error', () => resolve(0));
+    req.on('timeout', () => {
+      req.destroy();
+      resolve(0);
+    });
+    req.end();
+  });
 }
 
 // Extension source registries to aggregate
@@ -116,6 +138,35 @@ async function main() {
       });
       if (ext.versions.length < before) {
         console.log(`  Filtered ${ext.id}: ${before} → ${ext.versions.length} versions`);
+      }
+    }
+
+    // Filter out versions with unreachable artifact URLs (404, deleted releases)
+    for (const ext of aggregatedRegistry.extensions) {
+      if (!ext.versions) continue;
+      const before = ext.versions.length;
+      const kept = [];
+      for (const ver of ext.versions) {
+        const artifacts = ver.artifacts || {};
+        // Check one representative URL per version (windows/amd64 or first available)
+        const checkPlatform = artifacts['windows/amd64']
+          ? 'windows/amd64'
+          : Object.keys(artifacts)[0];
+        const url = artifacts[checkPlatform]?.url;
+        if (url) {
+          const status = await headRequest(url);
+          if (status !== 200) {
+            console.log(
+              `  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL returned ${status} — ${url}`
+            );
+            continue;
+          }
+        }
+        kept.push(ver);
+      }
+      ext.versions = kept;
+      if (ext.versions.length < before) {
+        console.log(`  URL-filtered ${ext.id}: ${before} → ${ext.versions.length} versions`);
       }
     }
 

@@ -175,6 +175,32 @@ function validateAllVersions(extId, versions) {
   pass(`[${extId}] All ${versions.length} version(s) have valid platforms, URLs, and checksums`);
 }
 
+async function validateAllUrls(extId, versions) {
+  for (const ver of versions) {
+    const artifacts = ver.artifacts || {};
+    // Check one representative URL per version
+    const checkPlatform = artifacts['windows/amd64']
+      ? 'windows/amd64'
+      : Object.keys(artifacts)[0];
+    const url = artifacts[checkPlatform]?.url;
+    if (!url) continue;
+    try {
+      const status = await headRequest(url);
+      if (status === 200) {
+        pass(`[${extId}@${ver.version}] ${checkPlatform}: URL reachable`);
+      } else {
+        fail(
+          `[${extId}@${ver.version}] ${checkPlatform}: URL returned ${status} — ${url}`,
+        );
+      }
+    } catch (err) {
+      fail(
+        `[${extId}@${ver.version}] ${checkPlatform}: URL error — ${err.message}`,
+      );
+    }
+  }
+}
+
 async function validateUrls(extId, latestVersion) {
   const artifacts = latestVersion.artifacts || {};
   for (const [platform, artifact] of Object.entries(artifacts)) {
@@ -253,7 +279,10 @@ async function main() {
     // 4. Checksums (latest)
     validateChecksums(extId, latestVersion);
 
-    // 5. URL reachability (latest)
+    // 5. URL reachability (all versions, one platform each)
+    await validateAllUrls(extId, versions);
+
+    // 6. URL reachability (latest, all platforms)
     await validateUrls(extId, latestVersion);
 
     console.log();
