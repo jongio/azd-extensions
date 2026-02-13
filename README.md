@@ -6,7 +6,7 @@
 
 <div align="center">
 
-[![Deploy](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/deploy.yml)
+[![Publish](https://github.com/jongio/azd-extensions/actions/workflows/publish.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/publish.yml)
 [![CI](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/jongio/azd-extensions/branch/main/graph/badge.svg)](https://codecov.io/gh/jongio/azd-extensions)
 
