@@ -141,10 +141,33 @@ function validateChecksums(extId, latestVersion) {
       fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing algorithm`);
     } else if (!checksum.value) {
       fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing value`);
+    } else if (/^0+$/.test(checksum.value)) {
+      fail(`[${extId}@${latestVersion.version}] ${platform}: placeholder checksum (all zeros)`);
     } else {
       pass(`[${extId}@${latestVersion.version}] ${platform}: checksum OK (${checksum.algorithm})`);
     }
   }
+}
+
+function validateAllVersions(extId, versions) {
+  for (const ver of versions) {
+    const artifacts = ver.artifacts || {};
+    const platforms = Object.keys(artifacts);
+    // Every version must have at least windows/amd64, darwin/amd64, linux/amd64
+    const minPlatforms = ['windows/amd64', 'darwin/amd64', 'linux/amd64'];
+    for (const p of minPlatforms) {
+      if (!platforms.includes(p)) {
+        fail(`[${extId}@${ver.version}] Missing platform ${p} — will break installs on that OS`);
+      }
+    }
+    for (const [platform, artifact] of Object.entries(artifacts)) {
+      const value = artifact.checksum?.value || '';
+      if (/^0+$/.test(value)) {
+        fail(`[${extId}@${ver.version}] ${platform}: placeholder checksum (all zeros)`);
+      }
+    }
+  }
+  pass(`[${extId}] All ${versions.length} version(s) have valid platforms and checksums`);
 }
 
 async function validateUrls(extId, latestVersion) {
@@ -216,13 +239,16 @@ async function main() {
     // 1. Semver order
     validateSemverOrder(extId, versions);
 
-    // 2. Required platforms
+    // 2. All versions basic validity
+    validateAllVersions(extId, versions);
+
+    // 3. Required platforms (latest)
     validatePlatforms(extId, latestVersion);
 
-    // 3. Checksums
+    // 4. Checksums (latest)
     validateChecksums(extId, latestVersion);
 
-    // 4. URL reachability
+    // 5. URL reachability (latest)
     await validateUrls(extId, latestVersion);
 
     console.log();

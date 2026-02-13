@@ -2594,35 +2594,6 @@
       "description": "azd exec - Run any script with azd environment and Azure credentials. Database migrations, setup automation, CI/CD workflows - with seamless Key Vault integration.",
       "versions": [
         {
-          "version": "0.1.0",
-          "capabilities": [
-            "custom-commands"
-          ],
-          "usage": "azd exec <command> [options]",
-          "examples": [
-            {
-              "name": "script",
-              "description": "Execute a script file with azd context",
-              "usage": "azd exec ./my-script.sh"
-            },
-            {
-              "name": "version",
-              "description": "Display extension version",
-              "usage": "azd exec version"
-            }
-          ],
-          "artifacts": {
-            "windows/amd64": {
-              "checksum": {
-                "algorithm": "sha256",
-                "value": "0000000000000000000000000000000000000000000000000000000000000000"
-              },
-              "entryPoint": "jongio-azd-exec-windows-amd64.exe",
-              "url": "https://github.com/jongio/azd-exec/releases/download/v0.1.0/jongio-azd-exec-windows-amd64.exe"
-            }
-          }
-        },
-        {
           "version": "0.1.18",
           "capabilities": [
             "custom-commands"

@@ -84,6 +84,34 @@ async function main() {
       }
     }
 
+    // Filter out broken versions (missing required platforms, zero checksums)
+    const REQUIRED_PLATFORMS = ['windows/amd64', 'darwin/amd64', 'linux/amd64'];
+    for (const ext of aggregatedRegistry.extensions) {
+      if (!ext.versions) continue;
+      const before = ext.versions.length;
+      ext.versions = ext.versions.filter((ver) => {
+        const artifacts = ver.artifacts || {};
+        const platforms = Object.keys(artifacts);
+        // Must have all required platforms
+        if (!REQUIRED_PLATFORMS.every((p) => platforms.includes(p))) {
+          console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: missing required platforms`);
+          return false;
+        }
+        // Must not have zero/placeholder checksums
+        for (const [, artifact] of Object.entries(artifacts)) {
+          const value = artifact.checksum?.value || '';
+          if (/^0+$/.test(value)) {
+            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: placeholder checksum`);
+            return false;
+          }
+        }
+        return true;
+      });
+      if (ext.versions.length < before) {
+        console.log(`  Filtered ${ext.id}: ${before} → ${ext.versions.length} versions`);
+      }
+    }
+
     // Write aggregated registry
     console.log(`\nWriting ${REGISTRY_FILE}...`);
     writeFileSync(REGISTRY_FILE, JSON.stringify(aggregatedRegistry, null, 2) + '\n', 'utf8');
