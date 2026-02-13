@@ -59,6 +59,21 @@ jobs:
       - name: Update README versions
         run: node scripts/update-readme-versions.js
 
+      - name: Type check
+        run: pnpm run type-check
+
+      - name: Lint
+        run: pnpm run lint
+
+      - name: Check formatting
+        run: pnpm run format:check
+
+      - name: Run tests
+        run: pnpm run test
+
+      - name: Build
+        run: pnpm run build
+
       - name: Commit registry changes
         run: |
           git config user.name "github-actions[bot]"
@@ -70,15 +85,6 @@ jobs:
             git commit -m "chore: update extension registry"
             git push
           fi
-
-      - name: Type check
-        run: pnpm run type-check
-
-      - name: Lint
-        run: pnpm run lint
-
-      - name: Build
-        run: pnpm run build
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
