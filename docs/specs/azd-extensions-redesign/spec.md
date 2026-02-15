@@ -39,7 +39,7 @@
 
 ## Pages / Sections
 
-- **Home** (landing): Hero, key value props (registry + consistency), extension grid, “How it works” (enable alpha, add source, install), CTA to GitHub.
+- **Home** (landing): Hero, key value props (registry + consistency), extension grid, “How it works” (add source, install), CTA to GitHub.
 - **Extensions** (single page or anchored section): grid of extensions sourced from registry.json with capability tags and examples.
 - **Docs link-outs**: Buttons to azd-exec and azd-app docs; optional “All extensions” link.
 - **Status/updates**: Small strip linking to latest release or changelog PRs (optional).
