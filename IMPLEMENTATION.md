@@ -30,7 +30,6 @@ Comprehensive azd extensions registry website showcasing two production-ready ex
   - GitHub repository links
   - Installation instructions
   - Usage examples
-- ✅ **Alpha Feature Notice**: Prominent warning with configuration instructions
 - ✅ **Getting Started Guide**: Step-by-step instructions for users
 
 ### 2. Design & UX
@@ -120,7 +119,6 @@ azd-extensions/
 │   │   │   ├── badge.tsx       # Badge component
 │   │   │   ├── button.tsx      # Button component
 │   │   │   └── card.tsx        # Card component
-│   │   ├── AlphaNotice.tsx     # Alpha warning component
 │   │   ├── ExtensionCard.tsx   # Extension display card
 │   │   ├── Footer.tsx          # Site footer
 │   │   └── Header.tsx          # Site header
@@ -263,7 +261,6 @@ All configuration files are properly set up:
 
 - Modern gradient hero section
 - Card-based extension layout
-- Prominent alpha feature warning
 - Clear installation instructions
 - GitHub integration
 - Professional footer with attribution

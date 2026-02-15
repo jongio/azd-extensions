@@ -35,7 +35,6 @@ The site will be available at `http://localhost:5173`
 
 - View the extension cards (currently empty - add your extensions to registry.json)
 - Check the responsive design on different screen sizes
-- Read the alpha feature notice
 - Review the getting started instructions
 
 ## 5. Run Tests

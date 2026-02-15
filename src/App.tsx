@@ -213,16 +213,6 @@ function App() {
                         <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
                           2
                         </span>
-                        <h4 className="font-semibold">Enable Extensions</h4>
-                      </div>
-                      <TerminalCode code="azd config set alpha.extensions on" />
-                    </div>
-
-                    <div className="group">
-                      <div className="mb-2 flex items-center gap-3">
-                        <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
-                          3
-                        </span>
                         <h4 className="font-semibold">Add Extension Registry</h4>
                       </div>
                       <TerminalCode code="azd extension source add -n jongio -t url -l https://jongio.github.io/azd-extensions/registry.json" />
@@ -231,7 +221,7 @@ function App() {
                     <div className="group">
                       <div className="mb-2 flex items-center gap-3">
                         <span className="from-primary to-accent flex h-7 w-7 items-center justify-center rounded-full bg-gradient-to-br text-sm font-bold text-white">
-                          4
+                          3
                         </span>
                         <h4 className="font-semibold">Install Extensions</h4>
                       </div>
