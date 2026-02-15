@@ -21,7 +21,7 @@
 | Extension | Description | Latest |
 |-----------|-------------|--------|
 | [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.12.0 |
-| [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.1.4 |
+| [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.1.5 |
 | [**azd-exec**](https://github.com/jongio/azd-exec) | Execute scripts with azd environment context, Azure credentials, and Key Vault integration | v0.3.4 |
 
 ## Quick Start
