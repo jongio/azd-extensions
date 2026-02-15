@@ -26,21 +26,13 @@
 
 ## Quick Start
 
-### 1. Enable Extensions
-
-Extensions are an alpha feature in Azure Developer CLI:
-
-```bash
-azd config set alpha.extensions on
-```
-
-### 2. Add This Registry
+### 1. Add This Registry
 
 ```bash
 azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-extensions/registry.json"
 ```
 
-### 3. Install Extensions
+### 2. Install Extensions
 
 ```bash
 # List available extensions

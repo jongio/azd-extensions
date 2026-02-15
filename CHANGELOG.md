@@ -19,7 +19,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - CodeQL security scanning
 - Spell checking workflow
 - Extension card components
-- Alpha feature notice
 - Getting started guide
 - Responsive design for all screen sizes
 
