@@ -25,6 +25,7 @@
     --color-glow-cyan: #06b6d4;
     --color-glow-violet: #8b5cf6;
     --color-glow-emerald: #10b981;
+    --color-glow-amber: #f59e0b;
 
     --radius: 0.75rem;
   }
@@ -50,6 +51,7 @@
     --color-glow-cyan: #0891b2;
     --color-glow-violet: #7c3aed;
     --color-glow-emerald: #059669;
+    --color-glow-amber: #d97706;
   }
 
   /* Dark theme (explicit) */
