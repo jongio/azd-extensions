@@ -23,6 +23,7 @@
 | [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.12.6 |
 | [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.1.9 |
 | [**azd-exec**](https://github.com/jongio/azd-exec) | Execute scripts with azd environment context, Azure credentials, and Key Vault integration | v0.3.8 |
+| [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.1.1 |
 
 ## Quick Start
 
@@ -39,12 +40,13 @@ azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-exten
 azd extension list --source jongio
 
 # Install all extensions
-azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec
+azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec jongio.azd.rest
 
 # Or install individually
 azd extension install jongio.azd.app
 azd extension install jongio.azd.copilot
 azd extension install jongio.azd.exec
+azd extension install jongio.azd.rest
 
 # View installed
 azd extension list --installed
@@ -92,6 +94,27 @@ azd copilot mcp serve
 
 # Use Azure agents for architecture, development, deployment, and more
 azd copilot agent list
+```
+
+### azd-rest
+
+Make authenticated REST API calls to any Azure service — automatic OAuth scope detection, token management, and MCP server for AI integration:
+
+```bash
+# GET request to Azure Resource Manager
+azd rest get "https://management.azure.com/subscriptions?api-version=2022-12-01"
+
+# POST with a JSON body
+azd rest post "https://management.azure.com/..." --body '{"key": "value"}'
+
+# Use any HTTP method
+azd rest put "https://..." --body @payload.json
+azd rest patch "https://..." --body '{"update": true}'
+azd rest delete "https://..."
+azd rest head "https://..."
+
+# Start the MCP server for AI-powered Azure API exploration
+azd rest mcp serve
 ```
 
 ### azd-exec
