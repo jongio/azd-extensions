@@ -96,6 +96,31 @@ const extensionData: Record<
       { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
     ],
   },
+  'jongio.azd.rest': {
+    tagline: 'Authenticated REST API Calls',
+    description:
+      'Make REST API calls to Azure services with automatic authentication and scope detection. No manual token management — just point at a URL and go.',
+    highlight: 'var(--color-glow-amber)',
+    website: 'https://jongio.github.io/azd-rest/',
+    repository: 'https://github.com/jongio/azd-rest',
+    features: [
+      { icon: Globe, title: 'Auto Auth', desc: 'Automatic scope detection & tokens' },
+      { icon: Zap, title: 'All HTTP Methods', desc: 'GET, POST, PUT, PATCH, DELETE' },
+      { icon: Key, title: '20+ Services', desc: 'Management, Graph, Key Vault, more' },
+      { icon: Shield, title: 'Secure by Default', desc: 'HTTPS, credential chain, retries' },
+    ],
+    scenarios: [
+      {
+        title: 'List Subscriptions',
+        command: 'azd rest get https://management.azure.com/subscriptions?api-version=2020-01-01',
+      },
+      {
+        title: 'Key Vault Secret',
+        command: 'azd rest get https://myvault.vault.azure.net/secrets/mysecret?api-version=7.4',
+      },
+      { title: 'Microsoft Graph', command: 'azd rest get https://graph.microsoft.com/v1.0/me' },
+    ],
+  },
 }
 
 export function ExtensionCard({ extension, index }: ExtensionCardProps) {
@@ -111,6 +136,7 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
 
   const isApp = extension.id === 'jongio.azd.app'
   const isCopilot = extension.id === 'jongio.azd.copilot'
+  const isRest = extension.id === 'jongio.azd.rest'
 
   return (
     <div
@@ -139,6 +165,8 @@ export function ExtensionCard({ extension, index }: ExtensionCardProps) {
                 <PlayerIcon size={28} color={data.highlight} />
               ) : isCopilot ? (
                 <Zap size={28} color={data.highlight} />
+              ) : isRest ? (
+                <Globe size={28} color={data.highlight} />
               ) : (
                 <TerminalIcon size={28} color={data.highlight} />
               )}

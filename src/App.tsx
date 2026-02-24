@@ -28,6 +28,7 @@ function App() {
             'jongio.azd.app': 0,
             'jongio.azd.copilot': 1,
             'jongio.azd.exec': 2,
+            'jongio.azd.rest': 3,
           }
           return (order[a.id] ?? 99) - (order[b.id] ?? 99)
         })
@@ -88,7 +89,9 @@ function App() {
                 <strong className="text-foreground">azd app</strong> runs your entire app locally.{' '}
                 <strong className="text-foreground">azd copilot</strong> is your AI-powered Azure
                 assistant. <strong className="text-foreground">azd exec</strong> runs scripts with
-                Azure credentials. Powerful extensions that transform your development experience.
+                Azure credentials. <strong className="text-foreground">azd rest</strong> makes
+                authenticated REST API calls. Powerful extensions that transform your development
+                experience.
               </p>
 
               {/* CTA Buttons */}
@@ -156,7 +159,7 @@ function App() {
               </div>
 
               {/* Extension Cards - 2 column for both extensions */}
-              <div className="mb-20 grid gap-8 lg:grid-cols-3">
+              <div className="mb-20 grid gap-8 lg:grid-cols-4">
                 {extensions.map((extension, index) => (
                   <ExtensionCard key={extension.id} extension={extension} index={index} />
                 ))}
@@ -230,7 +233,7 @@ function App() {
                           <p className="text-muted-foreground mb-2 text-sm font-medium">
                             Install all
                           </p>
-                          <TerminalCode code="azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec" />
+                          <TerminalCode code="azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec jongio.azd.rest" />
                         </div>
                         <div className="border-muted border-t pt-4">
                           <p className="text-muted-foreground mb-2 text-sm font-medium">
@@ -240,6 +243,7 @@ function App() {
                             <TerminalCode code="azd extension install jongio.azd.app" />
                             <TerminalCode code="azd extension install jongio.azd.copilot" />
                             <TerminalCode code="azd extension install jongio.azd.exec" />
+                            <TerminalCode code="azd extension install jongio.azd.rest" />
                           </div>
                         </div>
                       </div>
