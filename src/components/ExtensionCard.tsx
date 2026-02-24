@@ -110,8 +110,14 @@ const extensionData: Record<
       { icon: Shield, title: 'Secure by Default', desc: 'HTTPS, credential chain, retries' },
     ],
     scenarios: [
-      { title: 'List Subscriptions', command: 'azd rest get https://management.azure.com/subscriptions?api-version=2020-01-01' },
-      { title: 'Key Vault Secret', command: 'azd rest get https://myvault.vault.azure.net/secrets/mysecret?api-version=7.4' },
+      {
+        title: 'List Subscriptions',
+        command: 'azd rest get https://management.azure.com/subscriptions?api-version=2020-01-01',
+      },
+      {
+        title: 'Key Vault Secret',
+        command: 'azd rest get https://myvault.vault.azure.net/secrets/mysecret?api-version=7.4',
+      },
       { title: 'Microsoft Graph', command: 'azd rest get https://graph.microsoft.com/v1.0/me' },
     ],
   },
