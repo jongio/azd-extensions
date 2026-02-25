@@ -158,8 +158,8 @@ function App() {
                 </p>
               </div>
 
-              {/* Extension Cards - 2 column for both extensions */}
-              <div className="mb-20 grid gap-8 lg:grid-cols-4">
+              {/* Extension Cards - 2x2 grid */}
+              <div className="mb-20 grid gap-8 md:grid-cols-2">
                 {extensions.map((extension, index) => (
                   <ExtensionCard key={extension.id} extension={extension} index={index} />
                 ))}
