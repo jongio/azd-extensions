@@ -42,13 +42,21 @@
   <text x="280" y="350" font-family="system-ui, -apple-system, sans-serif" font-size="32" fill="#a1a1aa">Azure Developer CLI Extensions</text>
   
   <!-- Extension badges -->
-  <g transform="translate(280, 400)">
-    <rect width="180" height="50" rx="25" fill="#06b6d4" fill-opacity="0.15" stroke="#06b6d4" stroke-width="2"/>
-    <text x="90" y="33" font-family="monospace" font-size="22" fill="#06b6d4" text-anchor="middle">azd app</text>
+  <g transform="translate(280, 390)">
+    <rect width="170" height="50" rx="25" fill="#06b6d4" fill-opacity="0.15" stroke="#06b6d4" stroke-width="2"/>
+    <text x="85" y="33" font-family="monospace" font-size="22" fill="#06b6d4" text-anchor="middle">azd app</text>
   </g>
-  <g transform="translate(480, 400)">
-    <rect width="180" height="50" rx="25" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" stroke-width="2"/>
-    <text x="90" y="33" font-family="monospace" font-size="22" fill="#8b5cf6" text-anchor="middle">azd exec</text>
+  <g transform="translate(470, 390)">
+    <rect width="195" height="50" rx="25" fill="#10b981" fill-opacity="0.15" stroke="#10b981" stroke-width="2"/>
+    <text x="97" y="33" font-family="monospace" font-size="22" fill="#10b981" text-anchor="middle">azd copilot</text>
+  </g>
+  <g transform="translate(685, 390)">
+    <rect width="170" height="50" rx="25" fill="#8b5cf6" fill-opacity="0.15" stroke="#8b5cf6" stroke-width="2"/>
+    <text x="85" y="33" font-family="monospace" font-size="22" fill="#8b5cf6" text-anchor="middle">azd exec</text>
+  </g>
+  <g transform="translate(875, 390)">
+    <rect width="170" height="50" rx="25" fill="#f59e0b" fill-opacity="0.15" stroke="#f59e0b" stroke-width="2"/>
+    <text x="85" y="33" font-family="monospace" font-size="22" fill="#f59e0b" text-anchor="middle">azd rest</text>
   </g>
   
   <!-- Author -->
