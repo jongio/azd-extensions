@@ -11,6 +11,9 @@ coverage
 dist
 build
 
+# Astro
+.astro
+
 # Misc
 .DS_Store
 *.pem
