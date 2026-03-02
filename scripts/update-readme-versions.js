@@ -3,6 +3,7 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
+import { compareSemver } from './lib/semver.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, '..');
@@ -19,18 +20,10 @@ for (const ext of registry.extensions) {
   const parts = ext.id.split('.');
   const repoName = parts.slice(1).join('-');
 
-  // Find highest version using semver-style comparison
+  // Find highest version using shared semver comparison
   const latest = ext.versions
     .map((v) => v.version)
-    .sort((a, b) => {
-      const pa = a.split('.').map(Number);
-      const pb = b.split('.').map(Number);
-      for (let i = 0; i < Math.max(pa.length, pb.length); i++) {
-        const diff = (pa[i] || 0) - (pb[i] || 0);
-        if (diff !== 0) return diff;
-      }
-      return 0;
-    })
+    .sort(compareSemver)
     .pop();
 
   if (latest) {
@@ -43,9 +36,12 @@ let readme = readFileSync(readmePath, 'utf8');
 let updated = readme;
 
 for (const [repoName, version] of latestVersions) {
+  // Escape regex special characters in repoName to prevent injection,
+  // then allow dash to also match dots (azd-app matches azd.app in table)
+  const escapedName = repoName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/-/g, '[-.]');
   // Match table rows containing the repo name and update the version at the end
   const pattern = new RegExp(
-    `(\\|[^|]*${repoName.replace(/-/g, '[-\\\\.]')}[^|]*\\|[^|]*\\|)\\s*v?[0-9]+\\.[0-9]+\\.[0-9]+\\s*(\\|)`,
+    `(\\|[^|]*${escapedName}[^|]*\\|[^|]*\\|)\\s*v?[0-9]+\\.[0-9]+\\.[0-9]+\\s*(\\|)`,
     'g',
   );
   updated = updated.replace(pattern, `$1 v${version} $2`);

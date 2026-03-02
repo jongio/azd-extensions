@@ -13,7 +13,7 @@ We release patches for security vulnerabilities for the following versions:
 If you discover a security vulnerability, please do the following:
 
 1. **Do NOT** open a public issue
-2. Email security details to: [your-email@example.com]
+2. Use [GitHub Security Advisories](https://github.com/jongio/azd-extensions/security/advisories/new) to privately report a vulnerability
 3. Include:
    - Description of the vulnerability
    - Steps to reproduce
