@@ -25,7 +25,8 @@ $registryUrl = "https://jongio.github.io/azd-extensions/registry.json"
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
     @{ Name = "azd-copilot"; Id = "jongio.azd.copilot"; Path = Join-Path $parentDir "azd-copilot\cli" },
-    @{ Name = "azd-exec";    Id = "jongio.azd.exec";    Path = Join-Path $parentDir "azd-exec\cli" }
+    @{ Name = "azd-exec";    Id = "jongio.azd.exec";    Path = Join-Path $parentDir "azd-exec\cli" },
+    @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" }
 )
 
 # Ensure the jongio extension source is registered

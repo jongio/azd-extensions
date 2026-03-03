@@ -16,7 +16,7 @@ import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
 import https from 'https';
-import http from 'http';
+import { compareSemver } from './lib/semver.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -31,34 +31,32 @@ const REQUIRED_PLATFORMS = [
   'linux/arm64',
 ];
 
-const OPTIONAL_PLATFORMS = ['windows/arm64'];
+// Allowed hostname for artifact download URLs
+const ALLOWED_ARTIFACT_HOST = 'github.com';
+
+// Acceptable checksum algorithms (reject weak hashes like MD5, SHA1)
+const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
 
 const URL_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
-function compareSemver(a, b) {
-  const pa = a.split('.').map(Number);
-  const pb = b.split('.').map(Number);
-  for (let i = 0; i < 3; i++) {
-    const diff = (pa[i] || 0) - (pb[i] || 0);
-    if (diff !== 0) return diff;
-  }
-  return 0;
-}
-
 /**
- * Perform an HTTP(S) HEAD request, following redirects up to `maxRedirects`.
+ * Perform an HTTPS HEAD request, following redirects up to `maxRedirects`.
+ * Rejects redirects to non-HTTPS URLs to prevent downgrade attacks.
  * Resolves with the final status code or rejects on error / timeout.
  */
 function headRequest(url, maxRedirects = MAX_REDIRECTS) {
   return new Promise((resolvePromise, reject) => {
     const doRequest = (targetUrl, redirectsLeft) => {
       const parsedUrl = new URL(targetUrl);
-      const lib = parsedUrl.protocol === 'https:' ? https : http;
+      if (parsedUrl.protocol !== 'https:') {
+        reject(new Error(`Refusing non-HTTPS URL: ${targetUrl}`));
+        return;
+      }
 
-      const req = lib.request(
+      const req = https.request(
         targetUrl,
         { method: 'HEAD', timeout: URL_TIMEOUT_MS },
         (res) => {
@@ -139,6 +137,8 @@ function validateChecksums(extId, latestVersion) {
       fail(`[${extId}@${latestVersion.version}] ${platform}: missing checksum`);
     } else if (!checksum.algorithm) {
       fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing algorithm`);
+    } else if (!ALLOWED_HASH_ALGORITHMS.includes(checksum.algorithm.toLowerCase())) {
+      fail(`[${extId}@${latestVersion.version}] ${platform}: weak checksum algorithm "${checksum.algorithm}" (allowed: ${ALLOWED_HASH_ALGORITHMS.join(', ')})`);
     } else if (!checksum.value) {
       fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing value`);
     } else if (/^0+$/.test(checksum.value)) {
@@ -165,6 +165,17 @@ function validateAllVersions(extId, versions) {
         fail(
           `[${extId}@${ver.version}] ${platform}: non-HTTPS or missing URL — ${artifact.url || '(none)'}`
         );
+      } else {
+        try {
+          const parsed = new URL(artifact.url);
+          if (!parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST)) {
+            fail(
+              `[${extId}@${ver.version}] ${platform}: URL from disallowed domain — ${artifact.url}`
+            );
+          }
+        } catch {
+          fail(`[${extId}@${ver.version}] ${platform}: malformed URL — ${artifact.url}`);
+        }
       }
       const value = artifact.checksum?.value || '';
       if (/^0+$/.test(value)) {

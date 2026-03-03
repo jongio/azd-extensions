@@ -8,36 +8,36 @@
 
 import { writeFileSync } from 'fs';
 import https from 'https';
+import { compareSemver } from './lib/semver.js';
 
 const REGISTRY_FILE = 'public/registry.json';
 
 /**
- * Compare two semver strings (major.minor.patch) for sorting ascending.
- * Returns negative if a < b, positive if a > b, 0 if equal.
- */
-function compareSemver(a, b) {
-  const pa = a.split('.').map(Number);
-  const pb = b.split('.').map(Number);
-  for (let i = 0; i < 3; i++) {
-    const diff = (pa[i] || 0) - (pb[i] || 0);
-    if (diff !== 0) return diff;
-  }
-  return 0;
-}
-
-/**
  * HEAD request with redirect following. Returns HTTP status code.
+ * Only follows redirects to HTTPS URLs to prevent downgrade attacks.
  */
 function headRequest(url, redirectCount = 0) {
   return new Promise((resolve, reject) => {
     if (redirectCount > 5) return resolve(0);
+    if (!url.startsWith('https://')) {
+      console.warn(`  ⚠ Refusing non-HTTPS URL: ${url}`);
+      return resolve(0);
+    }
     const req = https.request(url, { method: 'HEAD', timeout: 10_000 }, (res) => {
       if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        return headRequest(res.headers.location, redirectCount + 1).then(resolve).catch(reject);
+        const redirectTarget = new URL(res.headers.location, url).href;
+        if (!redirectTarget.startsWith('https://')) {
+          console.warn(`  ⚠ Refusing redirect to non-HTTPS URL: ${redirectTarget}`);
+          return resolve(0);
+        }
+        return headRequest(redirectTarget, redirectCount + 1).then(resolve).catch(reject);
       }
       resolve(res.statusCode);
     });
-    req.on('error', () => resolve(0));
+    req.on('error', (err) => {
+      console.warn(`  ⚠ HEAD request failed for ${url}: ${err.message}`);
+      resolve(0);
+    });
     req.on('timeout', () => {
       req.destroy();
       resolve(0);
@@ -54,8 +54,26 @@ const EXTENSION_SOURCES = [
   'https://raw.githubusercontent.com/jongio/azd-rest/refs/heads/main/registry.json',
 ];
 
+// Allowed hostname for artifact download URLs (GitHub releases only)
+const ALLOWED_ARTIFACT_HOST = 'github.com';
+
 /**
- * Fetch registry JSON from a URL
+ * Validate that an artifact URL points to an allowed domain.
+ * Prevents a compromised upstream registry from redirecting downloads
+ * to attacker-controlled infrastructure.
+ */
+function isAllowedArtifactUrl(url) {
+  try {
+    const parsed = new URL(url);
+    return parsed.protocol === 'https:' && parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Fetch registry JSON from a URL.
+ * Enforces a 5 MB size limit to prevent DoS from oversized responses.
  */
 async function fetchRegistry(url) {
   console.log(`Fetching ${url}...`);
@@ -65,7 +83,18 @@ async function fetchRegistry(url) {
     throw new Error(`Failed to fetch ${url}: ${response.statusText}`);
   }
 
-  return await response.json();
+  const MAX_REGISTRY_SIZE = 5 * 1024 * 1024; // 5 MB
+  const contentLength = response.headers.get('content-length');
+  if (contentLength && parseInt(contentLength, 10) > MAX_REGISTRY_SIZE) {
+    throw new Error(`Registry at ${url} exceeds maximum size of ${MAX_REGISTRY_SIZE} bytes`);
+  }
+
+  const text = await response.text();
+  if (text.length > MAX_REGISTRY_SIZE) {
+    throw new Error(`Registry at ${url} exceeds maximum size of ${MAX_REGISTRY_SIZE} bytes`);
+  }
+
+  return JSON.parse(text);
 }
 
 /**
@@ -120,18 +149,28 @@ async function main() {
           console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: missing required platforms`);
           return false;
         }
-        // All artifact URLs must be valid HTTPS URLs
+        // All artifact URLs must be valid HTTPS URLs from allowed domains
         for (const [, artifact] of Object.entries(artifacts)) {
           if (!artifact.url || !artifact.url.startsWith('https://')) {
             console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: non-HTTPS or missing artifact URL`);
             return false;
           }
+          if (!isAllowedArtifactUrl(artifact.url)) {
+            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL from disallowed domain — ${artifact.url}`);
+            return false;
+          }
         }
-        // Must not have zero/placeholder checksums
+        // Must not have zero/placeholder checksums or weak hash algorithms
+        const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
         for (const [, artifact] of Object.entries(artifacts)) {
           const value = artifact.checksum?.value || '';
           if (/^0+$/.test(value)) {
             console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: placeholder checksum`);
+            return false;
+          }
+          const algorithm = (artifact.checksum?.algorithm || '').toLowerCase();
+          if (algorithm && !ALLOWED_HASH_ALGORITHMS.includes(algorithm)) {
+            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: weak checksum algorithm "${algorithm}"`);
             return false;
           }
         }

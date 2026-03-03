@@ -15,7 +15,8 @@ $registrySource = "jongio"
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app" },
     @{ Name = "azd-copilot"; Id = "jongio.azd.copilot" },
-    @{ Name = "azd-exec";    Id = "jongio.azd.exec" }
+    @{ Name = "azd-exec";    Id = "jongio.azd.exec" },
+    @{ Name = "azd-rest";    Id = "jongio.azd.rest" }
 )
 
 Write-Host "`n🗑️  Uninstalling all azd extensions...`n" -ForegroundColor Cyan
