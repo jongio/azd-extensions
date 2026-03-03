@@ -1,0 +1,248 @@
+# Cross-Repo Release Orchestration Config
+# =========================================
+# This file defines the dependency graph, release order, and per-repo
+# procedures for coordinated releases across all azd extension repos.
+#
+# Usage: When performing a sweeping release (e.g., security hardening,
+# dependency bumps, or coordinated changes across all repos), follow
+# the tier order below. Tier 0 repos MUST be released first because
+# Tier 1 repos depend on them.
+
+# Dependency graph:
+#   azd-core (Go module) ──► azd-app, azd-copilot, azd-exec, azd-rest
+#   azd-web-core (npm pkg) ─► azd-app, azd-copilot, azd-exec, azd-rest, azd-extensions
+
+owner: jongio
+
+tiers:
+  # Tier 0: Foundation packages (no internal dependencies)
+  # These CAN be released in parallel since they don't depend on each other.
+  - tier: 0
+    name: foundations
+    parallel: true
+    repos:
+      - name: azd-core
+        github: jongio/azd-core
+        type: go-module
+        module: github.com/jongio/azd-core
+        test: "cd {repo} && go test ./..."
+        test_env:
+          GOWORK: "off"
+        version_source: git-tag  # version is the git tag (e.g., v0.5.3)
+        release_workflow: release.yml
+        release_trigger: tag  # push a tag to trigger release
+        consumers:
+          - azd-app
+          - azd-copilot
+          - azd-exec
+          - azd-rest
+
+      - name: azd-web-core
+        github: jongio/azd-web-core
+        type: npm-package
+        package: "@jongio/azd-web-core"
+        test: "cd {repo} && npm run check && npm run lint"
+        version_source: package.json
+        release_trigger: tag  # push a tag to trigger release
+        consumers:
+          - azd-app
+          - azd-copilot
+          - azd-exec
+          - azd-rest
+          - azd-extensions
+
+  # Tier 1: Consumer extensions (depend on Tier 0)
+  # These CAN be released in parallel AFTER Tier 0 is complete.
+  # Each must update references to new Tier 0 versions before release.
+  - tier: 1
+    name: extensions
+    parallel: true
+    repos:
+      - name: azd-app
+        github: jongio/azd-app
+        type: go-extension
+        module: github.com/jongio/azd-app/cli
+        go_mod: cli/go.mod
+        extension_yaml: cli/extension.yaml
+        test: "cd {repo}/cli && go test ./..."
+        test_env:
+          GOWORK: "off"
+        release_workflow: release.yml
+        release_trigger: tag
+        depends_on:
+          go:
+            - package: github.com/jongio/azd-core
+              file: cli/go.mod
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: web/package.json
+
+      - name: azd-copilot
+        github: jongio/azd-copilot
+        type: go-extension
+        module: github.com/jongio/azd-copilot/cli
+        go_mod: cli/go.mod
+        extension_yaml: cli/extension.yaml
+        test: "cd {repo}/cli && go test ./..."
+        test_env:
+          GOWORK: "off"
+        release_workflow: release.yml
+        release_trigger: tag
+        depends_on:
+          go:
+            - package: github.com/jongio/azd-core
+              file: cli/go.mod
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: web/package.json
+
+      - name: azd-exec
+        github: jongio/azd-exec
+        type: go-extension
+        module: github.com/jongio/azd-exec/cli
+        go_mod: cli/go.mod
+        extension_yaml: cli/extension.yaml
+        test: "cd {repo}/cli && go test ./..."
+        test_env:
+          GOWORK: "off"
+        release_workflow: release.yml
+        release_trigger: tag
+        depends_on:
+          go:
+            - package: github.com/jongio/azd-core
+              file: cli/go.mod
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: web/package.json
+              # Also in root package.json
+            - package: "@jongio/azd-web-core"
+              file: package.json
+
+      - name: azd-rest
+        github: jongio/azd-rest
+        type: go-extension
+        module: github.com/jongio/azd-rest
+        go_mod: cli/go.mod
+        extension_yaml: cli/extension.yaml
+        test: "cd {repo}/cli && go test ./..."
+        test_env:
+          GOWORK: "off"
+        release_workflow: release.yml
+        release_trigger: tag
+        depends_on:
+          go:
+            - package: github.com/jongio/azd-core
+              file: cli/go.mod
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: web/package.json
+
+      - name: azd-extensions
+        github: jongio/azd-extensions
+        type: astro-site
+        test: "cd {repo} && npm run build"
+        release_trigger: none  # no formal release, just deploy
+        depends_on:
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: package.json
+
+# Release procedure (per tier):
+#
+# For each repo in a tier:
+#   1. Ensure branch is clean and tests pass
+#   2. Create PR from feature/mq branch to main
+#   3. Merge PR
+#   4. If Tier 1: update dependency references to new Tier 0 versions
+#      - Go: `go get github.com/jongio/azd-core@v{new_version}`
+#      - npm: update package.json version for @jongio/azd-web-core
+#   5. Re-run tests to verify with updated deps
+#   6. Tag the release (triggers release workflow)
+#   7. Verify release artifacts are published
+#
+# After all tiers complete:
+#   - Run post-release verification (see section below)
+
+# Post-release verification
+# =========================
+# After all release workflows finish, each extension's release workflow
+# sends a repository_dispatch to azd-extensions, triggering the Publish
+# workflow (publish.yml). This workflow:
+#   1. Fetches registry.json from each extension repo's main branch
+#   2. Aggregates them into public/registry.json
+#   3. Deploys to GitHub Pages at: https://jongio.github.io/azd-extensions/registry.json
+#
+# Allow ~5 minutes after the last release workflow completes for
+# the Publish workflow to run and GitHub Pages to deploy.
+
+post_release_verification:
+  description: >
+    Verify that the azd-extensions registry has been updated with all
+    latest versions and that azd extension install/upgrade resolves
+    the correct versions.
+
+  registry_url: https://jongio.github.io/azd-extensions/registry.json
+
+  # Extensions to verify (Tier 1 Go extensions with release workflows)
+  extensions:
+    - id: jongio.azd.app
+      repo: jongio/azd-app
+    - id: jongio.azd.copilot
+      repo: jongio/azd-copilot
+    - id: jongio.azd.exec
+      repo: jongio/azd-exec
+    - id: jongio.azd.rest
+      repo: jongio/azd-rest
+
+  steps:
+    # Step 1: Wait for the azd-extensions Publish workflow to complete.
+    # Each release workflow fires a repository_dispatch event.
+    - name: wait-for-registry-publish
+      description: >
+        Verify that the azd-extensions Publish workflow has completed
+        successfully after the last release. Check with:
+          gh run list --repo jongio/azd-extensions --workflow publish.yml --limit 5
+      check: >
+        All recent runs triggered by 'repository_dispatch' should show
+        status '✓' (success). If not, re-trigger manually:
+          gh workflow run publish.yml --repo jongio/azd-extensions
+
+    # Step 2: Verify the live registry JSON has the expected latest versions.
+    - name: verify-registry-versions
+      description: >
+        For each extension, read the expected version from the release
+        tag or extension.yaml, then verify the registry contains it.
+      commands:
+        # Get expected version from each repo's extension.yaml on main
+        get_expected: >
+          gh api repos/{owner}/{repo}/contents/cli/extension.yaml
+          --jq '.content' | base64 -d | grep 'version:' | head -1
+        # Check the live registry
+        check_registry: >
+          curl -s {registry_url} | python -c "
+            import sys, json
+            data = json.load(sys.stdin)
+            for ext in data['extensions']:
+              versions = [v['version'] for v in ext['versions']]
+              print(ext['id'] + ': ' + ', '.join(sorted(versions, key=lambda v: list(map(int, v.split('.'))), reverse=True)[:3]))
+          "
+
+    # Step 3: Upgrade all locally installed extensions and verify versions match.
+    - name: verify-azd-extension-upgrade
+      description: >
+        Run azd extension upgrade --all, then verify each extension's
+        installed version matches the latest in the registry.
+      commands:
+        upgrade: "azd extension upgrade --all"
+        verify: "azd extension list"
+      expected: >
+        The 'Installed Version' column should match the 'Latest Version'
+        column for all extensions, with no '*' suffix (which indicates
+        an update is available).
+
+# Repos NOT part of release orchestration:
+excluded:
+  - name: azd-app-2
+    reason: "Secondary clone of azd-app for parallel work; not a separate release target"
+  - name: docs
+    reason: "Documentation only, no release artifacts"
