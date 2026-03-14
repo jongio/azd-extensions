@@ -15,10 +15,10 @@ jobs:
   spellcheck:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Check spelling
-        uses: streetsidesoftware/cspell-action@v6
+        uses: streetsidesoftware/cspell-action@26602fcdd72301b7f0dcc55023344f193389b9bf # v6
         with:
           files: |
             **/*.{ts,tsx,js,jsx,md,json}
