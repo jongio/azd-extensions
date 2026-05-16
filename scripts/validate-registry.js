@@ -40,14 +40,22 @@ const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
 const URL_TIMEOUT_MS = 10_000;
 const MAX_REDIRECTS = 5;
 
+const RETRYABLE_STATUS_CODES = [502, 503, 504];
+const MAX_RETRIES = 3;
+const RETRY_DELAY_MS = 2_000;
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
+
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 /**
  * Perform an HTTPS HEAD request, following redirects up to `maxRedirects`.
  * Rejects redirects to non-HTTPS URLs to prevent downgrade attacks.
  * Resolves with the final status code or rejects on error / timeout.
  */
-function headRequest(url, maxRedirects = MAX_REDIRECTS) {
+function headRequestOnce(url, maxRedirects = MAX_REDIRECTS) {
   return new Promise((resolvePromise, reject) => {
     const doRequest = (targetUrl, redirectsLeft) => {
       const parsedUrl = new URL(targetUrl);
@@ -86,6 +94,19 @@ function headRequest(url, maxRedirects = MAX_REDIRECTS) {
 
     doRequest(url, maxRedirects);
   });
+}
+
+/**
+ * HEAD request with automatic retries on transient server errors (502/503/504).
+ */
+async function headRequest(url, maxRedirects = MAX_REDIRECTS) {
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    const status = await headRequestOnce(url, maxRedirects);
+    if (!RETRYABLE_STATUS_CODES.includes(status) || attempt === MAX_RETRIES) {
+      return status;
+    }
+    await sleep(RETRY_DELAY_MS * (attempt + 1));
+  }
 }
 
 // ── Validation logic ─────────────────────────────────────────────────────────
