@@ -122,8 +122,17 @@ async function main() {
             aggregatedRegistry.extensions.push(extension);
             console.log(`Added extension: ${extension.id}`);
           } else {
-            // Replace with newer version if applicable
-            console.log(`Extension ${extension.id} already exists, keeping existing`);
+            // Merge versions from both sources, dedup by version string
+            const existing = aggregatedRegistry.extensions[existingIndex];
+            const existingVersions = new Set(
+              (existing.versions || []).map((v) => v.version)
+            );
+            for (const ver of extension.versions || []) {
+              if (!existingVersions.has(ver.version)) {
+                existing.versions.push(ver);
+              }
+            }
+            console.log(`Merged versions for extension: ${extension.id}`);
           }
         }
       }
