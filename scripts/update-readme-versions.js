@@ -41,7 +41,7 @@ for (const [repoName, version] of latestVersions) {
   const escapedName = repoName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/-/g, '[-.]');
   // Match table rows containing the repo name and update the version at the end
   const pattern = new RegExp(
-    `(\\|[^|]*${escapedName}[^|]*\\|[^|]*\\|)\\s*v?[0-9]+\\.[0-9]+\\.[0-9]+\\s*(\\|)`,
+    `(\\|[^|]*?${escapedName}[^|]*?\\|[^|]*?\\|)\\s*v?[0-9]+\\.[0-9]+\\.[0-9]+\\s*(\\|)`,
     'g',
   );
   updated = updated.replace(pattern, `$1 v${version} $2`);

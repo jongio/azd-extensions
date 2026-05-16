@@ -168,7 +168,8 @@ function validateAllVersions(extId, versions) {
       } else {
         try {
           const parsed = new URL(artifact.url);
-          if (!parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST)) {
+          const h = parsed.hostname;
+          if (!(h === ALLOWED_ARTIFACT_HOST || h.endsWith('.' + ALLOWED_ARTIFACT_HOST))) {
             fail(
               `[${extId}@${ver.version}] ${platform}: URL from disallowed domain — ${artifact.url}`
             );

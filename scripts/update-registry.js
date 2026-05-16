@@ -65,7 +65,9 @@ const ALLOWED_ARTIFACT_HOST = 'github.com';
 function isAllowedArtifactUrl(url) {
   try {
     const parsed = new URL(url);
-    return parsed.protocol === 'https:' && parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST);
+    const h = parsed.hostname;
+    return parsed.protocol === 'https:' &&
+      (h === ALLOWED_ARTIFACT_HOST || h.endsWith('.' + ALLOWED_ARTIFACT_HOST));
   } catch {
     return false;
   }
