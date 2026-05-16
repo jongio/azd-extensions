@@ -15,78 +15,18 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import https from 'https';
 import { compareSemver } from './lib/semver.js';
+import { headRequest } from './lib/http.js';
+import {
+  REQUIRED_PLATFORMS,
+  ALLOWED_ARTIFACT_HOST,
+  ALLOWED_HASH_ALGORITHMS,
+} from './lib/constants.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const REGISTRY_PATH = resolve(__dirname, '..', 'public', 'registry.json');
-
-const REQUIRED_PLATFORMS = [
-  'windows/amd64',
-  'darwin/amd64',
-  'darwin/arm64',
-  'linux/amd64',
-  'linux/arm64',
-];
-
-// Allowed hostname for artifact download URLs
-const ALLOWED_ARTIFACT_HOST = 'github.com';
-
-// Acceptable checksum algorithms (reject weak hashes like MD5, SHA1)
-const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
-
-const URL_TIMEOUT_MS = 10_000;
-const MAX_REDIRECTS = 5;
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Perform an HTTPS HEAD request, following redirects up to `maxRedirects`.
- * Rejects redirects to non-HTTPS URLs to prevent downgrade attacks.
- * Resolves with the final status code or rejects on error / timeout.
- */
-function headRequest(url, maxRedirects = MAX_REDIRECTS) {
-  return new Promise((resolvePromise, reject) => {
-    const doRequest = (targetUrl, redirectsLeft) => {
-      const parsedUrl = new URL(targetUrl);
-      if (parsedUrl.protocol !== 'https:') {
-        reject(new Error(`Refusing non-HTTPS URL: ${targetUrl}`));
-        return;
-      }
-
-      const req = https.request(
-        targetUrl,
-        { method: 'HEAD', timeout: URL_TIMEOUT_MS },
-        (res) => {
-          if (
-            [301, 302, 303, 307, 308].includes(res.statusCode) &&
-            res.headers.location
-          ) {
-            if (redirectsLeft <= 0) {
-              reject(new Error(`Too many redirects for ${url}`));
-              return;
-            }
-            const next = new URL(res.headers.location, targetUrl).href;
-            doRequest(next, redirectsLeft - 1);
-            return;
-          }
-          resolvePromise(res.statusCode);
-        },
-      );
-
-      req.on('timeout', () => {
-        req.destroy();
-        reject(new Error(`Timeout after ${URL_TIMEOUT_MS}ms for ${url}`));
-      });
-      req.on('error', (err) => reject(err));
-      req.end();
-    };
-
-    doRequest(url, maxRedirects);
-  });
-}
 
 // ── Validation logic ─────────────────────────────────────────────────────────
 
