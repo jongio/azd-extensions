@@ -9,19 +9,14 @@
  *  3. Artifact URLs return HTTP 200 (follows redirects)
  *  4. Each artifact has a checksum with algorithm and value
  *
- * Uses only Node.js built-in modules — no npm dependencies.
+ * Uses only Node.js built-in APIs — no npm dependencies.
  */
 
 import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
-import https from 'https';
+import { resolve } from 'path';
 import { compareSemver } from './lib/semver.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const REGISTRY_PATH = resolve(__dirname, '..', 'public', 'registry.json');
+const REGISTRY_PATH = resolve(import.meta.dirname, '..', 'public', 'registry.json');
 
 const REQUIRED_PLATFORMS = [
   'windows/amd64',
@@ -38,54 +33,29 @@ const ALLOWED_ARTIFACT_HOST = 'github.com';
 const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
 
 const URL_TIMEOUT_MS = 10_000;
-const MAX_REDIRECTS = 5;
 
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 /**
- * Perform an HTTPS HEAD request, following redirects up to `maxRedirects`.
- * Rejects redirects to non-HTTPS URLs to prevent downgrade attacks.
- * Resolves with the final status code or rejects on error / timeout.
+ * HEAD request using native fetch. Returns HTTP status code.
+ * Validates that the initial URL is HTTPS and that the final URL
+ * after redirects is still HTTPS to prevent downgrade attacks.
+ * Rejects on error / timeout.
  */
-function headRequest(url, maxRedirects = MAX_REDIRECTS) {
-  return new Promise((resolvePromise, reject) => {
-    const doRequest = (targetUrl, redirectsLeft) => {
-      const parsedUrl = new URL(targetUrl);
-      if (parsedUrl.protocol !== 'https:') {
-        reject(new Error(`Refusing non-HTTPS URL: ${targetUrl}`));
-        return;
-      }
-
-      const req = https.request(
-        targetUrl,
-        { method: 'HEAD', timeout: URL_TIMEOUT_MS },
-        (res) => {
-          if (
-            [301, 302, 303, 307, 308].includes(res.statusCode) &&
-            res.headers.location
-          ) {
-            if (redirectsLeft <= 0) {
-              reject(new Error(`Too many redirects for ${url}`));
-              return;
-            }
-            const next = new URL(res.headers.location, targetUrl).href;
-            doRequest(next, redirectsLeft - 1);
-            return;
-          }
-          resolvePromise(res.statusCode);
-        },
-      );
-
-      req.on('timeout', () => {
-        req.destroy();
-        reject(new Error(`Timeout after ${URL_TIMEOUT_MS}ms for ${url}`));
-      });
-      req.on('error', (err) => reject(err));
-      req.end();
-    };
-
-    doRequest(url, maxRedirects);
+async function headRequest(url) {
+  const parsed = new URL(url);
+  if (parsed.protocol !== 'https:') {
+    throw new Error(`Refusing non-HTTPS URL: ${url}`);
+  }
+  const response = await fetch(url, {
+    method: 'HEAD',
+    redirect: 'follow',
+    signal: AbortSignal.timeout(URL_TIMEOUT_MS),
   });
+  if (response.url && !response.url.startsWith('https://')) {
+    throw new Error(`Redirect to non-HTTPS URL: ${response.url}`);
+  }
+  return response.status;
 }
 
 // ── Validation logic ─────────────────────────────────────────────────────────
@@ -251,13 +221,15 @@ async function main() {
     registry = JSON.parse(raw);
   } catch (err) {
     console.error(`Failed to read/parse registry: ${err.message}`);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   const extensions = registry.extensions || [];
   if (extensions.length === 0) {
     console.error('Registry contains no extensions.');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   console.log(`Found ${extensions.length} extension(s).\n`);
@@ -306,7 +278,7 @@ async function main() {
   );
   console.log('═'.repeat(50));
 
-  process.exit(results.failed > 0 ? 1 : 0);
+  process.exitCode = results.failed > 0 ? 1 : 0;
 }
 
 main();

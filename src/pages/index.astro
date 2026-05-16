@@ -321,19 +321,7 @@ const installAzdTabs = [
 
         <div class="mb-[var(--space-20)] grid gap-[var(--space-8)] md:grid-cols-2">
           {extensions.map((ext) => (
-            <ExtensionShowcase
-              id={ext.id}
-              name={ext.name}
-              tagline={ext.tagline}
-              description={ext.description}
-              icon={ext.icon}
-              website={ext.website}
-              repository={ext.repository}
-              features={ext.features}
-              scenarios={ext.scenarios}
-              tags={ext.tags}
-              glowColor={ext.glowColor}
-            />
+            <ExtensionShowcase {...ext} />
           ))}
         </div>
       </section>

@@ -7,43 +7,32 @@
  */
 
 import { writeFileSync } from 'fs';
-import https from 'https';
 import { compareSemver } from './lib/semver.js';
 
 const REGISTRY_FILE = 'public/registry.json';
 
 /**
- * HEAD request with redirect following. Returns HTTP status code.
- * Only follows redirects to HTTPS URLs to prevent downgrade attacks.
+ * HEAD request using native fetch. Returns HTTP status code.
+ * Validates that the final URL after redirects is still HTTPS
+ * to prevent downgrade attacks.
  */
-function headRequest(url, redirectCount = 0) {
-  return new Promise((resolve, reject) => {
-    if (redirectCount > 5) return resolve(0);
-    if (!url.startsWith('https://')) {
-      console.warn(`  ⚠ Refusing non-HTTPS URL: ${url}`);
-      return resolve(0);
+async function headRequest(url) {
+  try {
+    const response = await fetch(url, {
+      method: 'HEAD',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(10_000),
+    });
+    // Verify the final URL is still HTTPS (prevent redirect downgrade)
+    if (response.url && !response.url.startsWith('https://')) {
+      console.warn(`  ⚠ Redirect to non-HTTPS URL: ${response.url}`);
+      return 0;
     }
-    const req = https.request(url, { method: 'HEAD', timeout: 10_000 }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        const redirectTarget = new URL(res.headers.location, url).href;
-        if (!redirectTarget.startsWith('https://')) {
-          console.warn(`  ⚠ Refusing redirect to non-HTTPS URL: ${redirectTarget}`);
-          return resolve(0);
-        }
-        return headRequest(redirectTarget, redirectCount + 1).then(resolve).catch(reject);
-      }
-      resolve(res.statusCode);
-    });
-    req.on('error', (err) => {
-      console.warn(`  ⚠ HEAD request failed for ${url}: ${err.message}`);
-      resolve(0);
-    });
-    req.on('timeout', () => {
-      req.destroy();
-      resolve(0);
-    });
-    req.end();
-  });
+    return response.status;
+  } catch (err) {
+    console.warn(`  ⚠ HEAD request failed for ${url}: ${err.message}`);
+    return 0;
+  }
 }
 
 // Extension source registries to aggregate
@@ -223,11 +212,9 @@ async function main() {
       const latestVersion = ext.versions?.[ext.versions.length - 1]?.version || 'unknown';
       console.log(`  - ${ext.id} (latest: ${latestVersion})`);
     }
-
-    process.exit(0);
   } catch (error) {
     console.error('Error updating registry:', error.message);
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 
