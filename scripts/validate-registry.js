@@ -9,117 +9,85 @@
  *  3. Artifact URLs return HTTP 200 (follows redirects)
  *  4. Each artifact has a checksum with algorithm and value
  *
+ * Flags:
+ *  --offline  Skip all URL reachability checks (useful for CI without network)
+ *
  * Uses only Node.js built-in modules — no npm dependencies.
  */
 
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import { headRequest } from './lib/http.js';
+import { batchHeadRequests } from './lib/http.js';
 import {
-  validateSemverOrder as validateSemverOrderPure,
-  validatePlatforms as validatePlatformsPure,
-  validateChecksums as validateChecksumsPure,
-  validateAllVersions as validateAllVersionsPure,
+  validateSemverOrder,
+  validatePlatforms,
+  validateChecksums,
+  validateAllVersions,
 } from './lib/validate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const REGISTRY_PATH = resolve(__dirname, '..', 'public', 'registry.json');
+const offlineMode = process.argv.includes('--offline');
 
-// ── Validation logic ─────────────────────────────────────────────────────────
+// ── Result helpers ───────────────────────────────────────────────────────────
 
-const results = { passed: 0, failed: 0 };
-
-function pass(msg) {
-  results.passed++;
-  console.log(`  ✅ PASS: ${msg}`);
-}
-
-function fail(msg) {
-  results.failed++;
-  console.error(`  ❌ FAIL: ${msg}`);
-}
-
-// ── Validation wrappers ──────────────────────────────────────────────────────
-// Wrap pure validation functions from lib/validate.js to integrate with
-// the pass/fail result tracking used by this script.
-
-function applyResults(pureResults) {
-  for (const r of pureResults) {
-    if (r.passed) {
-      pass(r.message);
-    } else {
-      fail(r.message);
-    }
+/**
+ * Print a batch of { passed, message } results and append them to the
+ * accumulator array. No global state — the caller owns the array.
+ *
+ * @param {{ passed: boolean, message: string }[]} batch
+ * @param {{ passed: boolean, message: string }[]} accumulator
+ */
+function collectResults(batch, accumulator) {
+  for (const r of batch) {
+    console.log(r.passed ? `  \u2705 PASS: ${r.message}` : `  \u274c FAIL: ${r.message}`);
+    accumulator.push(r);
   }
 }
 
-function validateSemverOrder(extId, versions) {
-  applyResults(validateSemverOrderPure(extId, versions));
-}
+// ── URL collection ───────────────────────────────────────────────────────────
 
-function validatePlatforms(extId, latestVersion) {
-  applyResults(validatePlatformsPure(extId, latestVersion));
-}
+/**
+ * Collect all URLs that need reachability checks for an extension.
+ * Returns de-duplicated entries: each unique URL appears once, tagged with
+ * extension/version/platform metadata for reporting.
+ *
+ * @param {string} extId
+ * @param {{ version: string, artifacts?: Record<string, { url?: string }> }[]} versions
+ * @returns {{ url: string, label: string }[]}
+ */
+function collectUrlChecks(extId, versions) {
+  /** @type {Set<string>} */
+  const seen = new Set();
+  /** @type {{ url: string, label: string }[]} */
+  const checks = [];
 
-function validateChecksums(extId, latestVersion) {
-  applyResults(validateChecksumsPure(extId, latestVersion));
-}
-
-function validateAllVersions(extId, versions) {
-  applyResults(validateAllVersionsPure(extId, versions));
-}
-
-async function validateAllUrls(extId, versions) {
   for (const ver of versions) {
     const artifacts = ver.artifacts || {};
-    // Check one representative URL per version
-    const checkPlatform = artifacts['windows/amd64']
-      ? 'windows/amd64'
-      : Object.keys(artifacts)[0];
-    const url = artifacts[checkPlatform]?.url;
-    if (!url) continue;
-    const status = await headRequest(url);
-    if (status === 200) {
-      pass(`[${extId}@${ver.version}] ${checkPlatform}: URL reachable`);
-    } else {
-      fail(
-        `[${extId}@${ver.version}] ${checkPlatform}: URL returned ${status} - ${url}`,
-      );
+    for (const [platform, artifact] of Object.entries(artifacts)) {
+      const url = artifact.url;
+      if (!url) continue;
+      if (!url.startsWith('https://')) continue;
+      if (seen.has(url)) continue;
+      seen.add(url);
+      checks.push({ url, label: `[${extId}@${ver.version}] ${platform}` });
     }
   }
-}
 
-async function validateUrls(extId, latestVersion) {
-  const artifacts = latestVersion.artifacts || {};
-  for (const [platform, artifact] of Object.entries(artifacts)) {
-    const url = artifact.url;
-    if (!url) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: missing URL`);
-      continue;
-    }
-
-    // Skip non-HTTP URLs (e.g. local file paths from CI builds)
-    if (!url.startsWith('http://') && !url.startsWith('https://')) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: URL is not HTTP(S): ${url}`);
-      continue;
-    }
-
-    const status = await headRequest(url);
-    if (status === 200) {
-      pass(`[${extId}@${latestVersion.version}] ${platform}: URL returned 200`);
-    } else {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: URL returned ${status} - ${url}`);
-    }
-  }
+  return checks;
 }
 
 // ── Main ─────────────────────────────────────────────────────────────────────
 
 async function main() {
   console.log(`\nValidating registry: ${REGISTRY_PATH}\n`);
+
+  if (offlineMode) {
+    console.log('(offline mode - skipping URL reachability checks)\n');
+  }
 
   let registry;
   try {
@@ -138,16 +106,25 @@ async function main() {
 
   console.log(`Found ${extensions.length} extension(s).\n`);
   console.log(
-    `ℹ️  Note: windows/arm64 is optional — not all extensions provide it yet.\n`,
+    `\u2139\uFE0F  Note: windows/arm64 is optional - not all extensions provide it yet.\n`,
   );
+
+  /** @type {{ passed: boolean, message: string }[]} */
+  const allResults = [];
+
+  /** @type {{ url: string, label: string }[]} */
+  let allUrlChecks = [];
 
   for (const ext of extensions) {
     const extId = ext.id || '(unknown)';
-    console.log(`── ${extId} ──`);
+    console.log(`-- ${extId} --`);
 
     const versions = ext.versions || [];
     if (versions.length === 0) {
-      fail(`[${extId}] No versions defined`);
+      collectResults(
+        [{ passed: false, message: `[${extId}] No versions defined` }],
+        allResults,
+      );
       console.log();
       continue;
     }
@@ -155,34 +132,64 @@ async function main() {
     const latestVersion = versions[versions.length - 1];
 
     // 1. Semver order
-    validateSemverOrder(extId, versions);
+    collectResults(validateSemverOrder(extId, versions), allResults);
 
     // 2. All versions basic validity
-    validateAllVersions(extId, versions);
+    collectResults(validateAllVersions(extId, versions), allResults);
 
     // 3. Required platforms (latest)
-    validatePlatforms(extId, latestVersion);
+    collectResults(validatePlatforms(extId, latestVersion), allResults);
 
     // 4. Checksums (latest)
-    validateChecksums(extId, latestVersion);
+    collectResults(validateChecksums(extId, latestVersion), allResults);
 
-    // 5. URL reachability (all versions, one platform each)
-    await validateAllUrls(extId, versions);
-
-    // 6. URL reachability (latest, all platforms)
-    await validateUrls(extId, latestVersion);
+    // 5. Collect URLs for batch reachability check (de-duplicated)
+    if (!offlineMode) {
+      const checks = collectUrlChecks(extId, versions);
+      allUrlChecks = allUrlChecks.concat(checks);
+    }
 
     console.log();
   }
 
-  // Summary
-  console.log('═'.repeat(50));
-  console.log(
-    `Results: ${results.passed} passed, ${results.failed} failed`,
-  );
-  console.log('═'.repeat(50));
+  // 6. Batch URL reachability (concurrent, de-duplicated across all extensions)
+  if (!offlineMode && allUrlChecks.length > 0) {
+    console.log(
+      `-- URL reachability (${allUrlChecks.length} unique URLs) --`,
+    );
 
-  process.exit(results.failed > 0 ? 1 : 0);
+    const statusMap = await batchHeadRequests(allUrlChecks);
+
+    /** @type {{ passed: boolean, message: string }[]} */
+    const urlResults = [];
+    for (const check of allUrlChecks) {
+      const status = statusMap.get(check.url) || 0;
+      if (status === 200) {
+        urlResults.push({
+          passed: true,
+          message: `${check.label}: URL reachable`,
+        });
+      } else {
+        urlResults.push({
+          passed: false,
+          message: `${check.label}: URL returned ${status} - ${check.url}`,
+        });
+      }
+    }
+
+    collectResults(urlResults, allResults);
+    console.log();
+  }
+
+  // Summary
+  const passed = allResults.filter((r) => r.passed).length;
+  const failed = allResults.filter((r) => !r.passed).length;
+
+  console.log('\u2550'.repeat(50));
+  console.log(`Results: ${passed} passed, ${failed} failed`);
+  console.log('\u2550'.repeat(50));
+
+  process.exit(failed > 0 ? 1 : 0);
 }
 
 main();
