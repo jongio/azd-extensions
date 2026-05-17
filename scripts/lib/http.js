@@ -6,20 +6,17 @@
  * for concurrent URL checking.
  */
 
-import https from 'https';
-
 const URL_TIMEOUT_MS = 10_000;
-const MAX_REDIRECTS = 5;
 const MAX_RETRIES = 3;
 const RETRY_STATUS_CODES = [502, 503, 504];
 
 /**
- * Perform an HTTPS HEAD request with redirect following.
+ * Perform an HTTPS HEAD request using the native fetch API.
  * Returns the final HTTP status code, or 0 on network error / timeout.
- * Never rejects — callers don't expect rejections.
+ * Never rejects - callers don't expect rejections.
  *
- * - Follows up to `MAX_REDIRECTS` redirects
- * - Rejects non-HTTPS redirect targets (returns 0)
+ * - fetch follows redirects automatically (redirect: 'follow')
+ * - Rejects non-HTTPS URLs (returns 0)
  * - Retries on transient 502/503/504 errors with exponential backoff
  *
  * @param {string} url - The URL to check
@@ -35,7 +32,7 @@ export function headRequest(url) {
  * @returns {Promise<number>}
  */
 async function headRequestWithRetry(url, retriesLeft) {
-  const status = await headRequestOnce(url, MAX_REDIRECTS);
+  const status = await headRequestOnce(url);
   if (RETRY_STATUS_CODES.includes(status) && retriesLeft > 0) {
     const delay = 2 ** (MAX_RETRIES - retriesLeft) * 500;
     await new Promise((r) => setTimeout(r, delay));
@@ -45,40 +42,32 @@ async function headRequestWithRetry(url, retriesLeft) {
 }
 
 /**
- * Single attempt HEAD request with redirect following.
+ * Single attempt HEAD request using native fetch.
  * @param {string} url
- * @param {number} redirectsLeft
  * @returns {Promise<number>}
  */
-function headRequestOnce(url, redirectsLeft) {
-  return new Promise((resolve) => {
-    if (redirectsLeft <= 0) return resolve(0);
-    if (!url.startsWith('https://')) {
+async function headRequestOnce(url) {
+  try {
+    const parsed = new URL(url);
+    if (parsed.protocol !== 'https:') {
       console.warn(`  ⚠ Refusing non-HTTPS URL: ${url}`);
-      return resolve(0);
+      return 0;
     }
 
-    const req = https.request(url, { method: 'HEAD', timeout: URL_TIMEOUT_MS }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        const redirectTarget = new URL(res.headers.location, url).href;
-        if (!redirectTarget.startsWith('https://')) {
-          console.warn(`  ⚠ Refusing redirect to non-HTTPS URL: ${redirectTarget}`);
-          return resolve(0);
-        }
-        return headRequestOnce(redirectTarget, redirectsLeft - 1).then(resolve);
-      }
-      resolve(res.statusCode);
+    const response = await fetch(url, {
+      method: 'HEAD',
+      redirect: 'follow',
+      signal: AbortSignal.timeout(URL_TIMEOUT_MS),
     });
-    req.on('error', (err) => {
+    return response.status;
+  } catch (err) {
+    if (err.name === 'TimeoutError') {
+      console.warn(`  ⚠ HEAD request timed out for ${url}`);
+    } else {
       console.warn(`  ⚠ HEAD request failed for ${url}: ${err.message}`);
-      resolve(0);
-    });
-    req.on('timeout', () => {
-      req.destroy();
-      resolve(0);
-    });
-    req.end();
-  });
+    }
+    return 0;
+  }
 }
 
 /**

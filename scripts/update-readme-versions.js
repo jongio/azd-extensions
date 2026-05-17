@@ -1,12 +1,10 @@
 #!/usr/bin/env node
 
 import { readFileSync, writeFileSync } from 'fs';
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { join } from 'path';
 import { compareSemver } from './lib/semver.js';
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-const root = join(__dirname, '..');
+const root = join(import.meta.dirname, '..');
 
 const registryPath = join(root, 'public', 'registry.json');
 const readmePath = join(root, 'README.md');
