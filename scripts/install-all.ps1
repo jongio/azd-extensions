@@ -6,6 +6,8 @@
 # is installed from the registry (so azd knows about it). Subsequent runs just rebuild
 # the binary in-place via 'azd x build'.
 
+# Extension list: keep in sync with scripts/lib/extensions.js
+
 $ErrorActionPreference = 'Stop'
 
 # Ensure UTF-8 output for emoji/unicode characters from azd CLI
@@ -41,21 +43,21 @@ function Ensure-ExtensionSource {
     }
 }
 
-# Ensure an extension is registered in config.json (first-time install from registry,
-# or local registration if not available in the registry)
+# NOTE: Direct config.json manipulation is an interim workaround until azd CLI supports
+# local extension registration natively (e.g., 'azd extension install --local <path>').
+# This function assumes the azd config schema at ~/.azd/config.json with the structure:
+#   { "extension": { "installed": { "<id>": { ... } } } }
+# If azd changes its config format, this function will need updating.
 function Ensure-ExtensionRegistered {
     param(
         [string]$ExtensionId,
-        [string]$CliDir
+        [string]$CliDir,
+        [PSCustomObject]$Config
     )
 
-    $configPath = Join-Path $env:USERPROFILE ".azd\config.json"
-    if (Test-Path $configPath) {
-        $config = Get-Content $configPath -Raw | ConvertFrom-Json
-        $installed = $config.extension.installed
-        if ($installed -and ($installed | Get-Member -Name $ExtensionId -ErrorAction SilentlyContinue)) {
-            return $true
-        }
+    $installed = $Config.extension.installed
+    if ($installed -and ($installed | Get-Member -Name $ExtensionId -ErrorAction SilentlyContinue)) {
+        return $true
     }
 
     # Try installing from registry first
@@ -88,18 +90,24 @@ function Ensure-ExtensionRegistered {
     $binaryName = ($ExtensionId -replace '\.', '-') + "-$os-$arch$ext"
     $relativePath = "extensions\$ExtensionId\$binaryName"
 
-    # Update config.json
-    $config = if (Test-Path $configPath) {
-        Get-Content $configPath -Raw | ConvertFrom-Json
+    # Update config.json — re-read to pick up any changes from 'azd extension install' above
+    $configPath = Join-Path $env:USERPROFILE ".azd\config.json"
+    $localConfig = if (Test-Path $configPath) {
+        try {
+            Get-Content $configPath -Raw | ConvertFrom-Json
+        } catch {
+            Write-Host "    Warning: could not parse config.json, treating as empty" -ForegroundColor Yellow
+            [PSCustomObject]@{}
+        }
     } else {
         [PSCustomObject]@{}
     }
 
-    if (-not $config.extension) {
-        $config | Add-Member -NotePropertyName "extension" -NotePropertyValue ([PSCustomObject]@{})
+    if (-not $localConfig.extension) {
+        $localConfig | Add-Member -NotePropertyName "extension" -NotePropertyValue ([PSCustomObject]@{})
     }
-    if (-not $config.extension.installed) {
-        $config.extension | Add-Member -NotePropertyName "installed" -NotePropertyValue ([PSCustomObject]@{})
+    if (-not $localConfig.extension.installed) {
+        $localConfig.extension | Add-Member -NotePropertyName "installed" -NotePropertyValue ([PSCustomObject]@{})
     }
 
     $extEntry = [PSCustomObject]@{
@@ -114,8 +122,8 @@ function Ensure-ExtensionRegistered {
         source = "local"
     }
 
-    $config.extension.installed | Add-Member -NotePropertyName $ExtensionId -NotePropertyValue $extEntry -Force
-    $config | ConvertTo-Json -Depth 10 | Set-Content $configPath -Encoding UTF8
+    $localConfig.extension.installed | Add-Member -NotePropertyName $ExtensionId -NotePropertyValue $extEntry -Force
+    $localConfig | ConvertTo-Json -Depth 10 | Set-Content $configPath -Encoding UTF8
     return $true
 }
 
@@ -127,6 +135,21 @@ Write-Host "`n🚀 Installing all azd extensions locally...`n" -ForegroundColor 
 
 Ensure-ExtensionSource
 
+# Read config.json once for all registration checks (#66 — avoid N+1 reads)
+$configPath = Join-Path $env:USERPROFILE ".azd\config.json"
+$config = if (Test-Path $configPath) {
+    try {
+        Get-Content $configPath -Raw | ConvertFrom-Json
+    } catch {
+        Write-Host "  Warning: could not parse config.json, treating as empty" -ForegroundColor Yellow
+        [PSCustomObject]@{}
+    }
+} else {
+    [PSCustomObject]@{}
+}
+
+# Phase 1: Register all extensions sequentially (may invoke azd CLI)
+$buildable = @()
 foreach ($ext in $extensions) {
     $name = $ext.Name
     $id = $ext.Id
@@ -138,70 +161,80 @@ foreach ($ext in $extensions) {
         continue
     }
 
-    Write-Host "  [$($succeeded.Count + $failed.Count + 1)/$($extensions.Count)] Building $name..." -ForegroundColor White
+    Ensure-ExtensionRegistered -ExtensionId $id -CliDir $cliDir -Config $config | Out-Null
+    $buildable += $ext
+}
 
-    # Ensure extension is registered before building (needed for first-time setup)
-    Ensure-ExtensionRegistered -ExtensionId $id -CliDir $cliDir | Out-Null
+# Phase 2: Launch all builds concurrently (#65 — parallel mage build)
+$buildJobs = @()
+foreach ($ext in $buildable) {
+    $name = $ext.Name
+    $cliDir = $ext.Path
 
-    try {
-        # Use System.Diagnostics.Process with UTF-8 encoding for proper unicode output
-        $psi = [System.Diagnostics.ProcessStartInfo]::new()
-        $psi.FileName = "mage"
-        $psi.Arguments = "build"
-        $psi.WorkingDirectory = $cliDir
-        $psi.UseShellExecute = $false
-        $psi.RedirectStandardOutput = $true
-        $psi.RedirectStandardError = $true
-        $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
-        $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
-        $psi.CreateNoWindow = $true
+    Write-Host "  Launching build for $name..." -ForegroundColor White
 
-        $proc = [System.Diagnostics.Process]::new()
-        $proc.StartInfo = $psi
-        $proc.EnableRaisingEvents = $true
+    $psi = [System.Diagnostics.ProcessStartInfo]::new()
+    $psi.FileName = "mage"
+    $psi.Arguments = "build"
+    $psi.WorkingDirectory = $cliDir
+    $psi.UseShellExecute = $false
+    $psi.RedirectStandardOutput = $true
+    $psi.RedirectStandardError = $true
+    $psi.StandardOutputEncoding = [System.Text.Encoding]::UTF8
+    $psi.StandardErrorEncoding = [System.Text.Encoding]::UTF8
+    $psi.CreateNoWindow = $true
 
-        $outputLines = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
+    $proc = [System.Diagnostics.Process]::new()
+    $proc.StartInfo = $psi
+    $proc.EnableRaisingEvents = $true
 
-        Register-ObjectEvent -InputObject $proc -EventName OutputDataReceived -Action {
-            if ($EventArgs.Data) {
-                $Event.MessageData.Enqueue($EventArgs.Data)
-            }
-        } -MessageData $outputLines | Out-Null
+    $outputLines = [System.Collections.Concurrent.ConcurrentQueue[string]]::new()
 
-        Register-ObjectEvent -InputObject $proc -EventName ErrorDataReceived -Action {
-            if ($EventArgs.Data) {
-                $Event.MessageData.Enqueue($EventArgs.Data)
-            }
-        } -MessageData $outputLines | Out-Null
-
-        $proc.Start() | Out-Null
-        $proc.BeginOutputReadLine()
-        $proc.BeginErrorReadLine()
-        $proc.WaitForExit()
-
-        # Small delay to let async event handlers flush
-        Start-Sleep -Milliseconds 200
-
-        # Drain and display output
-        $line = $null
-        while ($outputLines.TryDequeue([ref]$line)) {
-            Write-Host "    $line" -ForegroundColor Gray
+    Register-ObjectEvent -InputObject $proc -EventName OutputDataReceived -Action {
+        if ($EventArgs.Data) {
+            $Event.MessageData.Enqueue($EventArgs.Data)
         }
+    } -MessageData $outputLines | Out-Null
 
-        if ($proc.ExitCode -ne 0) {
-            throw "mage build failed with exit code $($proc.ExitCode)"
+    Register-ObjectEvent -InputObject $proc -EventName ErrorDataReceived -Action {
+        if ($EventArgs.Data) {
+            $Event.MessageData.Enqueue($EventArgs.Data)
         }
-        $proc.Dispose()
-        Get-EventSubscriber | Where-Object { $_.SourceObject -eq $null } | Unregister-Event -ErrorAction SilentlyContinue
-        $succeeded += $name
-        Write-Host "  ✅ $name installed" -ForegroundColor Green
-    } catch {
-        $failed += $name
-        Write-Host "  ❌ $name failed: $_" -ForegroundColor Red
+    } -MessageData $outputLines | Out-Null
+
+    $proc.Start() | Out-Null
+    $proc.BeginOutputReadLine()
+    $proc.BeginErrorReadLine()
+
+    $buildJobs += @{ Process = $proc; Name = $name; Output = $outputLines }
+}
+
+# Phase 3: Wait for all builds and collect results
+foreach ($job in $buildJobs) {
+    $job.Process.WaitForExit()
+
+    # Small delay to let async event handlers flush
+    Start-Sleep -Milliseconds 200
+
+    # Drain and display output
+    $line = $null
+    while ($job.Output.TryDequeue([ref]$line)) {
+        Write-Host "    $line" -ForegroundColor Gray
     }
 
+    if ($job.Process.ExitCode -ne 0) {
+        $failed += $job.Name
+        Write-Host "  ❌ $($job.Name) failed (exit code $($job.Process.ExitCode))" -ForegroundColor Red
+    } else {
+        $succeeded += $job.Name
+        Write-Host "  ✅ $($job.Name) installed" -ForegroundColor Green
+    }
+
+    $job.Process.Dispose()
     Write-Host ""
 }
+
+Get-EventSubscriber | Where-Object { $_.SourceObject -eq $null } | Unregister-Event -ErrorAction SilentlyContinue
 
 # Summary
 Write-Host "━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━" -ForegroundColor DarkGray

@@ -53,8 +53,11 @@ jobs:
       - name: Update registry
         run: node scripts/update-registry.js
 
-      - name: Validate registry
-        run: node scripts/validate-registry.js
-
       - name: Build
         run: pnpm run build
+
+      - name: Validate registry
+        run: pnpm run validate-registry --offline
+
+      - name: Test
+        run: pnpm run test
