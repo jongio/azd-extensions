@@ -16,8 +16,7 @@
  */
 
 import { readFileSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, resolve } from 'path';
+import { resolve } from 'path';
 import { batchHeadRequests } from './lib/http.js';
 import {
   validateSemverOrder,
@@ -26,10 +25,7 @@ import {
   validateAllVersions,
 } from './lib/validate.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-const REGISTRY_PATH = resolve(__dirname, '..', 'public', 'registry.json');
+const REGISTRY_PATH = resolve(import.meta.dirname, '..', 'public', 'registry.json');
 const offlineMode = process.argv.includes('--offline');
 
 // ── Result helpers ───────────────────────────────────────────────────────────
