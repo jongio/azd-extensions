@@ -7,44 +7,15 @@
  */
 
 import { writeFileSync } from 'fs';
-import https from 'https';
 import { compareSemver } from './lib/semver.js';
+import { headRequest } from './lib/http.js';
+import { isAllowedArtifactUrl } from './lib/validate.js';
+import {
+  ALLOWED_HASH_ALGORITHMS,
+  MIN_REQUIRED_PLATFORMS,
+} from './lib/constants.js';
 
 const REGISTRY_FILE = 'public/registry.json';
-
-/**
- * HEAD request with redirect following. Returns HTTP status code.
- * Only follows redirects to HTTPS URLs to prevent downgrade attacks.
- */
-function headRequest(url, redirectCount = 0) {
-  return new Promise((resolve, reject) => {
-    if (redirectCount > 5) return resolve(0);
-    if (!url.startsWith('https://')) {
-      console.warn(`  ⚠ Refusing non-HTTPS URL: ${url}`);
-      return resolve(0);
-    }
-    const req = https.request(url, { method: 'HEAD', timeout: 10_000 }, (res) => {
-      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
-        const redirectTarget = new URL(res.headers.location, url).href;
-        if (!redirectTarget.startsWith('https://')) {
-          console.warn(`  ⚠ Refusing redirect to non-HTTPS URL: ${redirectTarget}`);
-          return resolve(0);
-        }
-        return headRequest(redirectTarget, redirectCount + 1).then(resolve).catch(reject);
-      }
-      resolve(res.statusCode);
-    });
-    req.on('error', (err) => {
-      console.warn(`  ⚠ HEAD request failed for ${url}: ${err.message}`);
-      resolve(0);
-    });
-    req.on('timeout', () => {
-      req.destroy();
-      resolve(0);
-    });
-    req.end();
-  });
-}
 
 // Extension source registries to aggregate
 const EXTENSION_SOURCES = [
@@ -53,23 +24,6 @@ const EXTENSION_SOURCES = [
   'https://raw.githubusercontent.com/jongio/azd-exec/refs/heads/main/registry.json',
   'https://raw.githubusercontent.com/jongio/azd-rest/refs/heads/main/registry.json',
 ];
-
-// Allowed hostname for artifact download URLs (GitHub releases only)
-const ALLOWED_ARTIFACT_HOST = 'github.com';
-
-/**
- * Validate that an artifact URL points to an allowed domain.
- * Prevents a compromised upstream registry from redirecting downloads
- * to attacker-controlled infrastructure.
- */
-function isAllowedArtifactUrl(url) {
-  try {
-    const parsed = new URL(url);
-    return parsed.protocol === 'https:' && parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST);
-  } catch {
-    return false;
-  }
-}
 
 /**
  * Fetch registry JSON from a URL.
@@ -137,7 +91,6 @@ async function main() {
     }
 
     // Filter out broken versions (missing required platforms, zero checksums)
-    const REQUIRED_PLATFORMS = ['windows/amd64', 'darwin/amd64', 'linux/amd64'];
     for (const ext of aggregatedRegistry.extensions) {
       if (!ext.versions) continue;
       const before = ext.versions.length;
@@ -145,7 +98,7 @@ async function main() {
         const artifacts = ver.artifacts || {};
         const platforms = Object.keys(artifacts);
         // Must have all required platforms
-        if (!REQUIRED_PLATFORMS.every((p) => platforms.includes(p))) {
+        if (!MIN_REQUIRED_PLATFORMS.every((p) => platforms.includes(p))) {
           console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: missing required platforms`);
           return false;
         }
@@ -161,7 +114,6 @@ async function main() {
           }
         }
         // Must not have zero/placeholder checksums or weak hash algorithms
-        const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
         for (const [, artifact] of Object.entries(artifacts)) {
           const value = artifact.checksum?.value || '';
           if (/^0+$/.test(value)) {

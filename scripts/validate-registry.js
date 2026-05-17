@@ -15,78 +15,18 @@
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, resolve } from 'path';
-import https from 'https';
-import { compareSemver } from './lib/semver.js';
+import { headRequest } from './lib/http.js';
+import {
+  validateSemverOrder as validateSemverOrderPure,
+  validatePlatforms as validatePlatformsPure,
+  validateChecksums as validateChecksumsPure,
+  validateAllVersions as validateAllVersionsPure,
+} from './lib/validate.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const REGISTRY_PATH = resolve(__dirname, '..', 'public', 'registry.json');
-
-const REQUIRED_PLATFORMS = [
-  'windows/amd64',
-  'darwin/amd64',
-  'darwin/arm64',
-  'linux/amd64',
-  'linux/arm64',
-];
-
-// Allowed hostname for artifact download URLs
-const ALLOWED_ARTIFACT_HOST = 'github.com';
-
-// Acceptable checksum algorithms (reject weak hashes like MD5, SHA1)
-const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
-
-const URL_TIMEOUT_MS = 10_000;
-const MAX_REDIRECTS = 5;
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
-
-/**
- * Perform an HTTPS HEAD request, following redirects up to `maxRedirects`.
- * Rejects redirects to non-HTTPS URLs to prevent downgrade attacks.
- * Resolves with the final status code or rejects on error / timeout.
- */
-function headRequest(url, maxRedirects = MAX_REDIRECTS) {
-  return new Promise((resolvePromise, reject) => {
-    const doRequest = (targetUrl, redirectsLeft) => {
-      const parsedUrl = new URL(targetUrl);
-      if (parsedUrl.protocol !== 'https:') {
-        reject(new Error(`Refusing non-HTTPS URL: ${targetUrl}`));
-        return;
-      }
-
-      const req = https.request(
-        targetUrl,
-        { method: 'HEAD', timeout: URL_TIMEOUT_MS },
-        (res) => {
-          if (
-            [301, 302, 303, 307, 308].includes(res.statusCode) &&
-            res.headers.location
-          ) {
-            if (redirectsLeft <= 0) {
-              reject(new Error(`Too many redirects for ${url}`));
-              return;
-            }
-            const next = new URL(res.headers.location, targetUrl).href;
-            doRequest(next, redirectsLeft - 1);
-            return;
-          }
-          resolvePromise(res.statusCode);
-        },
-      );
-
-      req.on('timeout', () => {
-        req.destroy();
-        reject(new Error(`Timeout after ${URL_TIMEOUT_MS}ms for ${url}`));
-      });
-      req.on('error', (err) => reject(err));
-      req.end();
-    };
-
-    doRequest(url, maxRedirects);
-  });
-}
 
 // ── Validation logic ─────────────────────────────────────────────────────────
 
@@ -102,88 +42,34 @@ function fail(msg) {
   console.error(`  ❌ FAIL: ${msg}`);
 }
 
-function validateSemverOrder(extId, versions) {
-  const versionStrings = versions.map((v) => v.version);
-  for (let i = 1; i < versionStrings.length; i++) {
-    if (compareSemver(versionStrings[i - 1], versionStrings[i]) >= 0) {
-      fail(
-        `[${extId}] Versions not in ascending semver order: ` +
-          `${versionStrings[i - 1]} should come before ${versionStrings[i]}`,
-      );
-      return;
+// ── Validation wrappers ──────────────────────────────────────────────────────
+// Wrap pure validation functions from lib/validate.js to integrate with
+// the pass/fail result tracking used by this script.
+
+function applyResults(pureResults) {
+  for (const r of pureResults) {
+    if (r.passed) {
+      pass(r.message);
+    } else {
+      fail(r.message);
     }
   }
-  pass(`[${extId}] Versions are in ascending semver order`);
+}
+
+function validateSemverOrder(extId, versions) {
+  applyResults(validateSemverOrderPure(extId, versions));
 }
 
 function validatePlatforms(extId, latestVersion) {
-  const artifacts = latestVersion.artifacts || {};
-  const platforms = Object.keys(artifacts);
-
-  for (const platform of REQUIRED_PLATFORMS) {
-    if (platforms.includes(platform)) {
-      pass(`[${extId}@${latestVersion.version}] Has required platform: ${platform}`);
-    } else {
-      fail(`[${extId}@${latestVersion.version}] Missing required platform: ${platform}`);
-    }
-  }
+  applyResults(validatePlatformsPure(extId, latestVersion));
 }
 
 function validateChecksums(extId, latestVersion) {
-  const artifacts = latestVersion.artifacts || {};
-  for (const [platform, artifact] of Object.entries(artifacts)) {
-    const checksum = artifact.checksum;
-    if (!checksum) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: missing checksum`);
-    } else if (!checksum.algorithm) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing algorithm`);
-    } else if (!ALLOWED_HASH_ALGORITHMS.includes(checksum.algorithm.toLowerCase())) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: weak checksum algorithm "${checksum.algorithm}" (allowed: ${ALLOWED_HASH_ALGORITHMS.join(', ')})`);
-    } else if (!checksum.value) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: checksum missing value`);
-    } else if (/^0+$/.test(checksum.value)) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: placeholder checksum (all zeros)`);
-    } else {
-      pass(`[${extId}@${latestVersion.version}] ${platform}: checksum OK (${checksum.algorithm})`);
-    }
-  }
+  applyResults(validateChecksumsPure(extId, latestVersion));
 }
 
 function validateAllVersions(extId, versions) {
-  for (const ver of versions) {
-    const artifacts = ver.artifacts || {};
-    const platforms = Object.keys(artifacts);
-    // Every version must have at least windows/amd64, darwin/amd64, linux/amd64
-    const minPlatforms = ['windows/amd64', 'darwin/amd64', 'linux/amd64'];
-    for (const p of minPlatforms) {
-      if (!platforms.includes(p)) {
-        fail(`[${extId}@${ver.version}] Missing platform ${p} — will break installs on that OS`);
-      }
-    }
-    for (const [platform, artifact] of Object.entries(artifacts)) {
-      if (!artifact.url || !artifact.url.startsWith('https://')) {
-        fail(
-          `[${extId}@${ver.version}] ${platform}: non-HTTPS or missing URL — ${artifact.url || '(none)'}`
-        );
-      } else {
-        try {
-          const parsed = new URL(artifact.url);
-          if (!parsed.hostname.endsWith(ALLOWED_ARTIFACT_HOST)) {
-            fail(
-              `[${extId}@${ver.version}] ${platform}: URL from disallowed domain — ${artifact.url}`
-            );
-          }
-        } catch {
-          fail(`[${extId}@${ver.version}] ${platform}: malformed URL — ${artifact.url}`);
-        }
-      }
-      const value = artifact.checksum?.value || '';
-      if (/^0+$/.test(value)) {
-        fail(`[${extId}@${ver.version}] ${platform}: placeholder checksum (all zeros)`);
-      }
-    }
-  }
-  pass(`[${extId}] All ${versions.length} version(s) have valid platforms, URLs, and checksums`);
+  applyResults(validateAllVersionsPure(extId, versions));
 }
 
 async function validateAllUrls(extId, versions) {
@@ -195,18 +81,12 @@ async function validateAllUrls(extId, versions) {
       : Object.keys(artifacts)[0];
     const url = artifacts[checkPlatform]?.url;
     if (!url) continue;
-    try {
-      const status = await headRequest(url);
-      if (status === 200) {
-        pass(`[${extId}@${ver.version}] ${checkPlatform}: URL reachable`);
-      } else {
-        fail(
-          `[${extId}@${ver.version}] ${checkPlatform}: URL returned ${status} — ${url}`,
-        );
-      }
-    } catch (err) {
+    const status = await headRequest(url);
+    if (status === 200) {
+      pass(`[${extId}@${ver.version}] ${checkPlatform}: URL reachable`);
+    } else {
       fail(
-        `[${extId}@${ver.version}] ${checkPlatform}: URL error — ${err.message}`,
+        `[${extId}@${ver.version}] ${checkPlatform}: URL returned ${status} - ${url}`,
       );
     }
   }
@@ -227,15 +107,11 @@ async function validateUrls(extId, latestVersion) {
       continue;
     }
 
-    try {
-      const status = await headRequest(url);
-      if (status === 200) {
-        pass(`[${extId}@${latestVersion.version}] ${platform}: URL returned 200`);
-      } else {
-        fail(`[${extId}@${latestVersion.version}] ${platform}: URL returned ${status} — ${url}`);
-      }
-    } catch (err) {
-      fail(`[${extId}@${latestVersion.version}] ${platform}: URL error — ${err.message}`);
+    const status = await headRequest(url);
+    if (status === 200) {
+      pass(`[${extId}@${latestVersion.version}] ${platform}: URL returned 200`);
+    } else {
+      fail(`[${extId}@${latestVersion.version}] ${platform}: URL returned ${status} - ${url}`);
     }
   }
 }
