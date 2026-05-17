@@ -14,16 +14,9 @@ import {
   ALLOWED_HASH_ALGORITHMS,
   MIN_REQUIRED_PLATFORMS,
 } from './lib/constants.js';
+import { EXTENSION_SOURCE_URLS } from './lib/extensions.js';
 
 const REGISTRY_FILE = 'public/registry.json';
-
-// Extension source registries to aggregate
-const EXTENSION_SOURCES = [
-  'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-copilot/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-exec/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-rest/refs/heads/main/registry.json',
-];
 
 /**
  * Fetch registry JSON from a URL.
@@ -62,13 +55,13 @@ async function main() {
 
     // Fetch all source registries concurrently (#53)
     const fetchResults = await Promise.allSettled(
-      EXTENSION_SOURCES.map((url) => fetchRegistry(url))
+      EXTENSION_SOURCE_URLS.map((url) => fetchRegistry(url))
     );
 
     for (let i = 0; i < fetchResults.length; i++) {
       const result = fetchResults[i];
       if (result.status === 'rejected') {
-        console.error(`Failed to fetch ${EXTENSION_SOURCES[i]}: ${result.reason?.message ?? result.reason}`);
+        console.error(`Failed to fetch ${EXTENSION_SOURCE_URLS[i]}: ${result.reason?.message ?? result.reason}`);
         continue;
       }
 
@@ -97,7 +90,7 @@ async function main() {
           if (incoming.length > 0) {
             existing.versions = [...(existing.versions || []), ...incoming];
             console.log(
-              `Merged ${extension.id}: added ${incoming.length} new version(s) from ${EXTENSION_SOURCES[i]}`
+              `Merged ${extension.id}: added ${incoming.length} new version(s) from ${EXTENSION_SOURCE_URLS[i]}`
             );
           } else {
             console.log(`Extension ${extension.id} already exists, no new versions to merge`);
@@ -208,10 +201,10 @@ async function main() {
       console.log(`  - ${ext.id} (latest: ${latestVersion})`);
     }
 
-    process.exit(0);
+    process.exitCode = 0;
   } catch (error) {
     console.error('Error updating registry:', error.message);
-    process.exit(1);
+    process.exitCode = 1;
   }
 }
 

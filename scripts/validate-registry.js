@@ -95,13 +95,15 @@ async function main() {
     registry = JSON.parse(raw);
   } catch (err) {
     console.error(`Failed to read/parse registry: ${err.message}`);
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   const extensions = registry.extensions || [];
   if (extensions.length === 0) {
     console.error('Registry contains no extensions.');
-    process.exit(1);
+    process.exitCode = 1;
+    return;
   }
 
   console.log(`Found ${extensions.length} extension(s).\n`);
@@ -189,7 +191,7 @@ async function main() {
   console.log(`Results: ${passed} passed, ${failed} failed`);
   console.log('\u2550'.repeat(50));
 
-  process.exit(failed > 0 ? 1 : 0);
+  process.exitCode = failed > 0 ? 1 : 0;
 }
 
 main();
