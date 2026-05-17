@@ -6,6 +6,8 @@
 # Usage: pwsh scripts/watch-all.ps1
 # Stop:  Ctrl+C
 
+# Extension list: keep in sync with scripts/lib/extensions.js
+
 $ErrorActionPreference = 'Stop'
 
 # Ensure UTF-8 output for emoji/unicode characters from azd CLI

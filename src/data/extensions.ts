@@ -1,3 +1,4 @@
+// Registry data: see scripts/lib/extensions.js for the canonical extension list
 import type { Props as Extension } from '../components/ExtensionShowcase.astro';
 
 export type { Extension };

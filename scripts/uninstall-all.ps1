@@ -2,6 +2,8 @@
 # Uninstall all azd extensions that were installed by install-all.ps1.
 # Stops running processes, uninstalls each extension, removes the registry source, and cleans up cache.
 
+# Extension list: keep in sync with scripts/lib/extensions.js
+
 $ErrorActionPreference = 'Stop'
 
 # Ensure UTF-8 output for emoji/unicode characters from azd CLI

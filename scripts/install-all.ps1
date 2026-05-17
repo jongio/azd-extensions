@@ -6,6 +6,8 @@
 # is installed from the registry (so azd knows about it). Subsequent runs just rebuild
 # the binary in-place via 'azd x build'.
 
+# Extension list: keep in sync with scripts/lib/extensions.js
+
 $ErrorActionPreference = 'Stop'
 
 # Ensure UTF-8 output for emoji/unicode characters from azd CLI
