@@ -23,33 +23,26 @@ pnpm dev
 | `pnpm dev` | Start dev server |
 | `pnpm build` | Build for production |
 | `pnpm preview` | Preview production build |
-| `pnpm test` | Run tests |
-| `pnpm test:watch` | Watch mode |
-| `pnpm test:coverage` | Coverage report |
-| `pnpm lint` | Lint code |
-| `pnpm lint:fix` | Fix lint issues |
-| `pnpm type-check` | TypeScript check |
-| `pnpm format` | Format with Prettier |
-| `pnpm format:check` | Check formatting |
+| `pnpm test` | Run tests (vitest) |
+| `pnpm validate-registry` | Validate registry.json |
+| `pnpm update-readme-versions` | Update README version table |
 
 ## Pull Request Process
 
 1. Fork and create branch from `main`
 2. Make changes following coding standards
 3. Add tests for new functionality
-4. Ensure all checks pass:
+4. Ensure the build passes:
    ```bash
-   pnpm lint && pnpm type-check && pnpm test
+   pnpm build
    ```
 5. Submit PR
 
 ### Quality Standards
 
-- ✅ All tests pass
-- ✅ Coverage ≥80%
-- ✅ No lint errors
+- ✅ Build passes (`pnpm build`)
 - ✅ TypeScript strict mode
-- ✅ Formatted with Prettier
+- ✅ Clean, readable code
 
 ## Coding Standards
 
@@ -58,10 +51,10 @@ pnpm dev
 - No `any` types
 - Proper type definitions
 
-### React
-- Functional components with hooks
+### Astro Components
+- `.astro` components in `src/components/`
+- Props interface defined at the top
 - Small, focused components
-- Custom hooks for reusable logic
 
 ### Styling
 - Tailwind CSS utilities
@@ -76,7 +69,6 @@ Follow [Conventional Commits](https://www.conventionalcommits.org/):
 feat: add new feature
 fix: resolve bug
 docs: update documentation
-test: add tests
 refactor: code improvement
 chore: maintenance
 ```
@@ -212,44 +204,16 @@ $extensions = @(
 )
 ```
 
-### 6. Add UI Card Data in `ExtensionCard.tsx`
+### 6. Add UI Card Data
 
-Add your extension's rich card data to the `extensionData` record in `src/components/ExtensionCard.tsx`:
-
-```tsx
-'jongio.azd.myext': {
-  tagline: 'Short tagline',
-  description: 'Longer description of what the extension does.',
-  highlight: 'var(--color-glow-violet)', // pick a glow color
-  website: 'https://jongio.github.io/azd-myext/',
-  repository: 'https://github.com/jongio/azd-myext',
-  features: [
-    { icon: Terminal, title: 'Feature 1', desc: 'What it does' },
-    // ... up to 4 features
-  ],
-  scenarios: [
-    { title: 'Basic Usage', command: 'azd myext run' },
-    // ... example commands
-  ],
-},
-```
-
-Also update the sort order in `src/App.tsx` if you want to control card positioning:
-```tsx
-const order: Record<string, number> = {
-  'jongio.azd.copilot': 0,
-  'jongio.azd.app': 1,
-  'jongio.azd.exec': 2,
-  'jongio.azd.myext': 3, // Add your extension
-}
-```
+Add your extension's display data to the extension showcase in `src/components/ExtensionShowcase.astro` or the relevant data file in `src/data/`.
 
 ### 7. Test the Full Flow
 
 1. **Local registry update**: Run `node scripts/update-registry.js` to verify your extension is fetched and merged
 2. **Local dev build**: Run `pnpm dev` and verify the extension card renders correctly
 3. **Local install**: Run `pwsh scripts/install-all.ps1` to verify the extension builds locally
-4. **Submit PR**: Open a PR to `main` with your changes — CI will validate lint, type-check, and tests
+4. **Submit PR**: Open a PR to `main` with your changes - CI will validate the build
 5. **After merge**: The publish workflow deploys to GitHub Pages and the registry goes live
 
 ### Summary Checklist
@@ -261,14 +225,14 @@ const order: Record<string, number> = {
 | 3 | Extension repo | Add dispatch step to `release.yml` |
 | 4 | GitHub Settings | Create PAT and add `EXTENSIONS_DISPATCH_TOKEN` secret |
 | 5 | azd-extensions | Add to `scripts/install-all.ps1` and `scripts/watch-all.ps1` |
-| 6 | azd-extensions | Add card data in `ExtensionCard.tsx` and sort order in `App.tsx` |
+| 6 | azd-extensions | Add card data in `ExtensionShowcase.astro` or `src/data/` |
 | 7 | Both repos | Test registry update, dev build, and local install |
 
 ## CI/CD Workflows
 
 | Workflow | Trigger | Purpose |
 |----------|---------|---------|
-| `ci.yml` | Push/PR | Lint, type-check, test, build |
+| `ci.yml` | Push/PR | Build and validate |
 | `publish.yml` | Daily / Manual / Dispatch | Update registry, build, deploy to GitHub Pages |
 | `codeql.yml` | Weekly / PR | Security scanning |
 | `spellcheck.yml` | Push/PR | Spell checking |
@@ -278,15 +242,11 @@ const order: Record<string, number> = {
 
 ```
 ├── src/
-│   ├── components/        # React components
-│   │   ├── ui/           # shadcn/ui components
-│   │   └── icons/        # Custom icons
-│   ├── lib/              # Utility functions
-│   ├── test/             # Test setup
-│   ├── types/            # TypeScript types
-│   ├── App.tsx           # Main app
-│   ├── main.tsx          # Entry point
-│   └── index.css         # Global styles
+│   ├── components/        # Astro components
+│   ├── data/             # Data files
+│   ├── pages/            # Astro pages
+│   ├── styles/           # Global styles
+│   └── types/            # TypeScript types
 ├── public/
 │   └── registry.json     # Extension registry
 ├── scripts/

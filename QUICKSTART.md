@@ -21,7 +21,7 @@ cd azd-extensions
 pnpm install
 ```
 
-This will install all required packages including React 19, Vite, TypeScript, Tailwind CSS 4, and testing tools.
+This will install all required packages including Astro, TypeScript, and Tailwind CSS 4.
 
 ## 3. Start Development Server
 
@@ -29,7 +29,7 @@ This will install all required packages including React 19, Vite, TypeScript, Ta
 pnpm dev
 ```
 
-The site will be available at `http://localhost:5173`
+The site will be available at `http://localhost:4321`
 
 ## 4. Explore the Site
 
@@ -42,12 +42,6 @@ The site will be available at `http://localhost:5173`
 ```bash
 # Run all tests once
 pnpm test
-
-# Run tests in watch mode (recommended during development)
-pnpm test:watch
-
-# Generate coverage report
-pnpm test:coverage
 ```
 
 ## 6. Build for Production
@@ -66,22 +60,14 @@ pnpm preview
 
 ## Common Development Commands
 
-```bash
-# Type checking
-pnpm type-check
-
-# Linting
-pnpm lint
-
-# Fix lint issues
-pnpm lint:fix
-
-# Format code
-pnpm format
-
-# Check formatting
-pnpm format:check
-```
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start dev server |
+| `pnpm build` | Build for production |
+| `pnpm preview` | Preview production build |
+| `pnpm test` | Run tests (vitest) |
+| `pnpm validate-registry` | Validate registry.json |
+| `pnpm update-readme-versions` | Update README version table |
 
 ## Adding Your First Extension
 
@@ -126,7 +112,7 @@ Save and refresh the browser - your extension will appear!
 
 ### Port Already in Use
 
-If port 5173 is already in use, Vite will automatically use the next available port.
+If port 4321 is already in use, Astro will automatically use the next available port.
 
 ### Module Not Found
 
@@ -135,14 +121,6 @@ Make sure all dependencies are installed:
 ```bash
 rm -rf node_modules pnpm-lock.yaml
 pnpm install
-```
-
-### Tests Failing
-
-Ensure you're using Node.js 20 or later:
-
-```bash
-node --version
 ```
 
 ### Build Errors
