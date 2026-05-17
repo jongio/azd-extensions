@@ -8,7 +8,6 @@
 
 [![Publish](https://github.com/jongio/azd-extensions/actions/workflows/publish.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/publish.yml)
 [![CI](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml/badge.svg)](https://github.com/jongio/azd-extensions/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/jongio/azd-extensions/branch/main/graph/badge.svg)](https://codecov.io/gh/jongio/azd-extensions)
 
 </div>
 
@@ -163,21 +162,16 @@ pnpm dev
 |---------|-------------|
 | `pnpm dev` | Start dev server |
 | `pnpm build` | Build for production |
-| `pnpm test` | Run tests |
-| `pnpm test:coverage` | Generate coverage report |
-| `pnpm lint` | Lint code |
-| `pnpm type-check` | TypeScript check |
-| `pnpm format` | Format with Prettier |
+| `pnpm preview` | Preview production build |
+| `pnpm validate-registry` | Validate registry URLs and structure |
+| `pnpm update-readme-versions` | Update README version table |
 
 ## Tech Stack
 
 | Category | Technology |
 |----------|------------|
-| Framework | React 19 + TypeScript |
-| Build | Vite 7 |
-| Styling | Tailwind CSS 4 + shadcn/ui |
-| Animation | Motion |
-| Testing | Vitest |
+| Framework | Astro 6 + TypeScript |
+| Styling | Tailwind CSS 4 |
 | CI/CD | GitHub Actions |
 
 ## Registry
@@ -196,11 +190,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
 
 ```
 ├── src/
-│   ├── components/     # React components (Header, Footer, ExtensionCard, etc.)
-│   │   ├── ui/        # shadcn/ui components
-│   │   └── icons/     # Custom icons
-│   ├── lib/           # Utilities
-│   └── types/         # TypeScript types
+│   ├── components/     # Astro components (ExtensionShowcase, etc.)
+│   ├── pages/          # Astro pages
+│   └── styles/         # Global styles
 ├── public/
 │   └── registry.json  # Extension registry (served to azd)
 └── scripts/
@@ -221,5 +213,5 @@ MIT — see [LICENSE](LICENSE)
 ---
 
 <div align="center">
-  <sub>Built by <a href="https://github.com/jongio">Jon Gallant</a> with React 19, Vite 7, and Tailwind CSS 4</sub>
+  <sub>Built by <a href="https://github.com/jongio">Jon Gallant</a> with Astro 6 and Tailwind CSS 4</sub>
 </div>
