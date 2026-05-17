@@ -10,6 +10,7 @@
     "preview": "astro preview",
     "test": "vitest run",
     "validate-registry": "node scripts/validate-registry.js",
+    "validate-schema": "node scripts/validate-schema.js",
     "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {
@@ -19,6 +20,8 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.0",
     "@types/node": "^25.8.0",
+    "ajv": "^8.20.0",
+    "ajv-formats": "^3.0.1",
     "prettier": "^3.8.3",
     "prettier-plugin-tailwindcss": "^0.8.0",
     "tailwindcss": "^4.3.0",
