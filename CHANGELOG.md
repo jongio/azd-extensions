@@ -10,15 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release of azd extensions registry website
-- React 19 with TypeScript
-- Vite build system
+- Astro 6 with TypeScript
+- Astro build system with static site generation
 - Tailwind CSS 4 styling
-- shadcn/ui component library
-- Comprehensive test suite with Vitest
 - GitHub Actions CI/CD pipeline
-- CodeQL security scanning
+- Automated registry update workflow
 - Spell checking workflow
-- Extension card components
+- Extension showcase component
 - Getting started guide
 - Responsive design for all screen sizes
 
