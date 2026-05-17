@@ -8,7 +8,7 @@
 
 import { writeFileSync } from 'fs';
 import { compareSemver } from './lib/semver.js';
-import { headRequest } from './lib/http.js';
+import { headRequest, batchHeadRequests } from './lib/http.js';
 import { isAllowedArtifactUrl } from './lib/validate.js';
 import {
   ALLOWED_HASH_ALGORITHMS,
@@ -60,24 +60,47 @@ async function main() {
       extensions: [],
     };
 
-    // Fetch and merge each source registry
-    for (const sourceUrl of EXTENSION_SOURCES) {
-      const sourceRegistry = await fetchRegistry(sourceUrl);
+    // Fetch all source registries concurrently (#53)
+    const fetchResults = await Promise.allSettled(
+      EXTENSION_SOURCES.map((url) => fetchRegistry(url))
+    );
 
-      if (sourceRegistry.extensions && Array.isArray(sourceRegistry.extensions)) {
-        for (const extension of sourceRegistry.extensions) {
-          // Check if extension already exists (by id)
-          const existingIndex = aggregatedRegistry.extensions.findIndex(
-            (e) => e.id === extension.id
+    for (let i = 0; i < fetchResults.length; i++) {
+      const result = fetchResults[i];
+      if (result.status === 'rejected') {
+        console.error(`Failed to fetch ${EXTENSION_SOURCES[i]}: ${result.reason?.message ?? result.reason}`);
+        continue;
+      }
+
+      const sourceRegistry = result.value;
+      if (!sourceRegistry.extensions || !Array.isArray(sourceRegistry.extensions)) {
+        continue;
+      }
+
+      for (const extension of sourceRegistry.extensions) {
+        const existingIndex = aggregatedRegistry.extensions.findIndex(
+          (e) => e.id === extension.id
+        );
+
+        if (existingIndex === -1) {
+          aggregatedRegistry.extensions.push(extension);
+          console.log(`Added extension: ${extension.id}`);
+        } else {
+          // Merge versions from duplicate sources (#60)
+          const existing = aggregatedRegistry.extensions[existingIndex];
+          const existingVersions = new Set(
+            (existing.versions || []).map((v) => v.version)
           );
-
-          if (existingIndex === -1) {
-            // Add new extension
-            aggregatedRegistry.extensions.push(extension);
-            console.log(`Added extension: ${extension.id}`);
+          const incoming = (extension.versions || []).filter(
+            (v) => !existingVersions.has(v.version)
+          );
+          if (incoming.length > 0) {
+            existing.versions = [...(existing.versions || []), ...incoming];
+            console.log(
+              `Merged ${extension.id}: added ${incoming.length} new version(s) from ${EXTENSION_SOURCES[i]}`
+            );
           } else {
-            // Replace with newer version if applicable
-            console.log(`Extension ${extension.id} already exists, keeping existing`);
+            console.log(`Extension ${extension.id} already exists, no new versions to merge`);
           }
         }
       }
@@ -133,32 +156,41 @@ async function main() {
       }
     }
 
-    // Filter out versions with unreachable artifact URLs (404, deleted releases)
+    // Filter out versions with unreachable artifact URLs using batch requests (#63)
     for (const ext of aggregatedRegistry.extensions) {
       if (!ext.versions) continue;
       const before = ext.versions.length;
-      const kept = [];
-      for (const ver of ext.versions) {
+
+      // Build a list of { version, url } to check — one representative URL per version
+      const checks = ext.versions.map((ver) => {
         const artifacts = ver.artifacts || {};
-        // Check one representative URL per version (windows/amd64 or first available)
+        const checkPlatform = artifacts['windows/amd64']
+          ? 'windows/amd64'
+          : Object.keys(artifacts)[0];
+        return { version: ver, url: artifacts[checkPlatform]?.url };
+      }).filter((c) => c.url);
+
+      const statusMap = await batchHeadRequests(checks);
+
+      ext.versions = ext.versions.filter((ver) => {
+        const artifacts = ver.artifacts || {};
         const checkPlatform = artifacts['windows/amd64']
           ? 'windows/amd64'
           : Object.keys(artifacts)[0];
         const url = artifacts[checkPlatform]?.url;
-        if (url) {
-          const status = await headRequest(url);
-          if (status !== 200) {
-            console.log(
-              `  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL returned ${status} — ${url}`
-            );
-            continue;
-          }
+        if (!url) return true; // no URL to check — keep
+        const status = statusMap.get(url);
+        if (status !== 200) {
+          console.log(
+            `  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL returned ${status} - ${url}`
+          );
+          return false;
         }
-        kept.push(ver);
-      }
-      ext.versions = kept;
+        return true;
+      });
+
       if (ext.versions.length < before) {
-        console.log(`  URL-filtered ${ext.id}: ${before} → ${ext.versions.length} versions`);
+        console.log(`  URL-filtered ${ext.id}: ${before} -> ${ext.versions.length} versions`);
       }
     }
 
