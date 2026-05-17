@@ -13,15 +13,27 @@
  * @returns {number[]} Array of [major, minor, patch]
  */
 export function parseSemver(version) {
+  if (typeof version !== 'string' || version.trim() === '') {
+    throw new Error(`Invalid semver: expected non-empty string, got ${JSON.stringify(version)}`);
+  }
+  if (version !== version.trim()) {
+    throw new Error(
+      `Invalid semver: version "${version}" has leading or trailing whitespace`
+    );
+  }
   const parts = version.split('.');
+  if (parts.length > 3) {
+    throw new Error(
+      `Invalid semver: version "${version}" has ${parts.length} segments (max 3)`
+    );
+  }
   const nums = parts.map((part, i) => {
-    const n = Number(part);
-    if (!Number.isInteger(n) || n < 0) {
+    if (!/^\d+$/.test(part)) {
       throw new Error(
         `Invalid semver component "${part}" at position ${i} in version "${version}"`
       );
     }
-    return n;
+    return Number(part);
   });
   return nums;
 }
