@@ -27,6 +27,17 @@
     "type": "git",
     "url": "git+https://github.com/jongio/azd-extensions.git"
   },
+  "engines": {
+    "node": ">=20",
+    "pnpm": ">=9"
+  },
+  "pnpm": {
+    "overrides": {
+      "picomatch": ">=2.3.2",
+      "lodash": ">=4.18.0",
+      "fast-uri": ">=3.0.6"
+    }
+  },
   "author": "Jon Gallant",
   "license": "MIT"
 }
