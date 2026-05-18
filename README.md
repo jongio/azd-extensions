@@ -23,7 +23,7 @@
 | [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.2.3 | [🌐](https://jongio.github.io/azd-copilot/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.4.6 | [🌐](https://jongio.github.io/azd-rest/) |
 
-> **Note:** `azd exec` has moved to core Azure Developer CLI as `microsoft.azd.exec`. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
+> **Note:** `azd exec` is now a built-in command in Azure Developer CLI v1.25.1+. No extension needed. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
 
 ## Quick Start
 
