@@ -7,6 +7,7 @@ import ExtensionShowcase from '../components/ExtensionShowcase.astro';
 import { extensions } from '../data/extensions';
 import '../styles/global.css';
 
+
 const installAzdTabs = [
   {
     label: 'Windows',
@@ -28,7 +29,7 @@ const installAzdTabs = [
 
 <Layout
   title="azd extensions | Azure Developer CLI Extensions"
-  description="Four Azure Developer CLI extensions by Jon Gallant. azd app runs your entire app locally. azd copilot is your AI-powered Azure assistant. azd exec runs scripts with Azure credentials. azd rest makes authenticated REST API calls."
+  description="Three Azure Developer CLI extensions by Jon Gallant. azd app runs your entire app locally. azd copilot is your AI-powered Azure assistant. azd rest makes authenticated REST API calls."
   extensionName="extensions"
   canonicalUrl="https://jongio.github.io/azd-extensions/"
   ogImage="https://jongio.github.io/azd-extensions/og-image.png"
@@ -36,7 +37,7 @@ const installAzdTabs = [
 >
   <Fragment slot="head">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none';" />
-    <meta name="keywords" content="Azure, Azure Developer CLI, azd, azd extensions, azd app, azd exec, azd copilot, azd rest, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, AI assistant, REST API" />
+    <meta name="keywords" content="Azure, Azure Developer CLI, azd, azd extensions, azd app, azd copilot, azd rest, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, AI assistant, REST API" />
     <meta name="robots" content="index, follow" />
     <link rel="icon" type="image/svg+xml" href="/azd-extensions/favicon.svg" />
     <link rel="icon" type="image/svg+xml" sizes="192x192" href="/azd-extensions/favicon-192.svg" />
@@ -46,7 +47,7 @@ const installAzdTabs = [
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "jongio/azd-extensions",
-      "description": "Azure Developer CLI extensions by Jon Gallant — azd app for running apps locally, azd copilot for AI-powered Azure assistance, azd exec for script execution with Azure credentials, and azd rest for authenticated REST API calls",
+      "description": "Azure Developer CLI extensions by Jon Gallant — azd app for running apps locally, azd copilot for AI-powered Azure assistance, and azd rest for authenticated REST API calls",
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Windows, macOS, Linux",
       "author": { "@type": "Person", "name": "Jon Gallant", "url": "https://github.com/jongio" },
@@ -181,7 +182,7 @@ const installAzdTabs = [
         <h1
           class="mb-[var(--space-4)] text-4xl font-bold leading-tight sm:text-5xl"
         >
-          Four tools for your <span class="text-gradient-animated">Azure workflow</span>
+          Three tools for your <span class="text-gradient-animated">Azure workflow</span>
         </h1>
 
         <p
@@ -190,9 +191,8 @@ const installAzdTabs = [
         >
           <strong style="color: var(--color-text);">azd app</strong> runs your entire app locally.
           <strong style="color: var(--color-text);">azd copilot</strong> is your AI-powered Azure assistant.
-          <strong style="color: var(--color-text);">azd exec</strong> runs scripts with Azure credentials.
           <strong style="color: var(--color-text);">azd rest</strong> makes authenticated REST API calls.
-          Four extensions that handle local dev, AI assistance, script execution, and REST calls.
+          Three extensions that handle local dev, AI assistance, and REST calls.
         </p>
 
         <div class="flex flex-col items-center justify-center gap-[var(--space-4)] sm:flex-row">
@@ -251,7 +251,7 @@ const installAzdTabs = [
                 Get Started in <span class="text-gradient">30 Seconds</span>
               </h2>
               <p style="color: var(--color-text-muted);">
-                Install all four extensions with a single command
+                Install all three extensions with a single command
               </p>
             </div>
 
@@ -280,14 +280,13 @@ const installAzdTabs = [
               />
               <div class="-mt-[var(--space-4)] flex flex-col gap-[var(--space-3)]">
                 <p class="text-sm font-semibold" style="color: var(--color-text-muted);">Install all</p>
-                <CodeBlock code="azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec jongio.azd.rest" />
+                <CodeBlock code="azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.rest" />
 
                 <div class="border-t pt-[var(--space-4)]" style="border-color: var(--color-border);">
                   <p class="mb-[var(--space-3)] text-sm font-semibold" style="color: var(--color-text-muted);">Or install individually</p>
                   <div class="flex flex-col gap-[var(--space-2)]">
                     <CodeBlock code="azd extension install jongio.azd.app" />
                     <CodeBlock code="azd extension install jongio.azd.copilot" />
-                    <CodeBlock code="azd extension install jongio.azd.exec" />
                     <CodeBlock code="azd extension install jongio.azd.rest" />
                   </div>
                 </div>

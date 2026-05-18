@@ -21,8 +21,9 @@
 |-----------|-------------|--------|---------|
 | [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.14.0 | [🌐](https://jongio.github.io/azd-app/) |
 | [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.2.3 | [🌐](https://jongio.github.io/azd-copilot/) |
-| [**azd-exec**](https://github.com/jongio/azd-exec) | Execute scripts with azd environment context, Azure credentials, and Key Vault integration | v0.4.3 | [🌐](https://jongio.github.io/azd-exec/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.4.6 | [🌐](https://jongio.github.io/azd-rest/) |
+
+> **Note:** `azd exec` has moved to core Azure Developer CLI as `microsoft.azd.exec`. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
 
 ## Quick Start
 
@@ -39,12 +40,11 @@ azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-exten
 azd extension list --source jongio
 
 # Install all extensions
-azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.exec jongio.azd.rest
+azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.rest
 
 # Or install individually
 azd extension install jongio.azd.app
 azd extension install jongio.azd.copilot
-azd extension install jongio.azd.exec
 azd extension install jongio.azd.rest
 
 # View installed
@@ -114,30 +114,6 @@ azd rest head "https://..."
 
 # Start the MCP server for AI-powered Azure API exploration
 azd rest mcp serve
-```
-
-### azd-exec
-
-Run any script with full access to your azd environment variables, Azure credentials, and Key Vault secrets:
-
-```bash
-# Execute a script file with azd context
-azd exec ./deploy.sh
-
-# Execute an inline command
-azd exec 'echo "Deploying to $AZURE_ENV_NAME"'
-
-# Specify shell explicitly
-azd exec --shell pwsh ./deploy.ps1
-
-# Run in interactive mode
-azd exec --interactive ./setup.sh
-
-# Pass arguments to a script
-azd exec ./build.sh --verbose --config release
-
-# Key Vault secrets are resolved automatically from azd env references
-azd exec ./deploy-with-secrets.sh
 ```
 
 ## Development

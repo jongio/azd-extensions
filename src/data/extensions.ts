@@ -51,28 +51,6 @@ export const extensions: Extension[] = [
     tags: ['ai', 'copilot', 'agents', 'mcp-server'],
   },
   {
-    id: 'jongio.azd.exec',
-    name: 'azd exec',
-    tagline: 'Execute Scripts with Azure Context',
-    description: 'Run any script with full access to your Azure credentials, environment variables, and Key Vault secrets. Perfect for automation, migrations, and CI/CD.',
-    icon: '⌘',
-    website: 'https://jongio.github.io/azd-exec/',
-    repository: 'https://github.com/jongio/azd-exec',
-    glowColor: 'var(--color-glow-emerald)',
-    features: [
-      { icon: '🔐', title: 'Key Vault Integration', desc: 'Auto-resolve secrets at runtime' },
-      { icon: '💻', title: 'Multi-Shell Support', desc: 'Bash, PowerShell, zsh, cmd' },
-      { icon: '🛡️', title: 'Security Scanned', desc: '0 vulnerabilities, 86%+ coverage' },
-      { icon: '📂', title: 'Working Directory', desc: 'Run from any location' },
-    ],
-    scenarios: [
-      { title: 'Database Migration', command: 'azd exec ./migrate.sh' },
-      { title: 'PowerShell Deploy', command: 'azd exec --shell pwsh ./deploy.ps1' },
-      { title: 'With Key Vault', command: 'azd exec ./setup-with-secrets.sh' },
-    ],
-    tags: ['exec', 'scripts', 'automation', 'ci-cd'],
-  },
-  {
     id: 'jongio.azd.rest',
     name: 'azd rest',
     tagline: 'Authenticated REST API Calls',
