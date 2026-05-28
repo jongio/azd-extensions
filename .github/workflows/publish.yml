@@ -64,12 +64,13 @@ jobs:
 
       - name: Deploy to GitHub Pages
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-
           # Clone gh-pages branch
           git clone --branch gh-pages --single-branch "https://x-access-token:${GITHUB_TOKEN}@github.com/${{ github.repository }}.git" _gh_pages
           cd _gh_pages
+
+          # Set git identity inside the cloned repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
 
           # Remove old production files (keep pr/ directory for previews)
           find . -maxdepth 1 ! -name '.' ! -name '.git' ! -name 'pr' -exec rm -rf {} +
