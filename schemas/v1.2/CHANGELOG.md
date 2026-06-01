@@ -14,15 +14,20 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 - **`promote`** top-level property — Configures the `azd promote` extension for orchestrating environment promotion pipelines. Sub-properties:
   - `chain` — Ordered list of environment names forming the promotion chain (e.g., `[dev, staging, prod]`).
   - `protected` — Environments that require explicit confirmation before promotion.
+  - `preflight` — Preflight check configuration (env_diff with ignore_keys).
   - `database` — Database configuration for backup and migration phases, including:
     - `connection_string.env_var` — Environment variable for the DB connection string.
-    - `backup.retain` — Number of backup copies to retain (default: 5).
+    - `backup.enabled`, `backup.retain`, `backup.max_count` — Backup settings.
+    - `schema_check` — Pre-migration schema validation (tool, command).
     - `migrate` — Single command or multi-step migration pipeline with optional interactive confirmation.
-    - `seed` — Database seeding command.
-  - `deploy` — Deploy phase configuration (service filtering).
+    - `seed` — Database seeding command with environment filtering.
+  - `deploy` — Deploy phase configuration (service filtering, groups, SWA).
+  - `purge` — CDN/cache invalidation configuration (cloudflare, azure-cdn, custom).
   - `verify` — Post-deploy verification with health check endpoints and smoke test commands.
+  - `rollback` — Failure handling configuration (auto, pause, custom command).
   - `hooks` — User-defined `pre-`/`post-` commands for each promotion phase (preflight, backup, migrate, provision, deploy, verify).
   - `confirm` — Custom typed-confirmation gate before proceeding.
+  - `notifications` — Webhook notifications on promotion events (start, success, failure).
   - `environments` — Per-environment overrides that deep-merge onto the base promote config.
 
 ### Preserved from v1.1

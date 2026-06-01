@@ -4,7 +4,9 @@
   "title": "Azure Developer CLI Configuration",
   "description": "Schema for azure.yaml configuration file used by Azure Developer CLI and its extensions. This is a superset of the v1.0 schema with additional properties for azd extensions including local development (azd app) and environment promotion (azd promote).",
   "type": "object",
-  "required": ["name"],
+  "required": [
+    "name"
+  ],
   "additionalProperties": true,
   "properties": {
     "name": {
@@ -395,16 +397,38 @@
       "properties": {
         "chain": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Ordered list of environment names forming the promotion chain (e.g., [dev, staging, prod]).",
           "minItems": 2,
-          "examples": [["dev", "staging", "prod"], ["dev", "prod"]]
+          "examples": [
+            [
+              "dev",
+              "staging",
+              "prod"
+            ],
+            [
+              "dev",
+              "prod"
+            ]
+          ]
         },
         "protected": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "Environments that require explicit confirmation before promotion.",
-          "examples": [["prod"], ["staging", "prod"]]
+          "examples": [
+            [
+              "prod"
+            ],
+            [
+              "staging",
+              "prod"
+            ]
+          ]
         },
         "database": {
           "type": "object",
@@ -428,6 +452,16 @@
                   "description": "Number of backup copies to retain. Older backups are rotated out.",
                   "default": 5,
                   "minimum": 1
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable database backup before migration.",
+                  "default": true
+                },
+                "max_count": {
+                  "type": "integer",
+                  "description": "Alias for retain. Maximum number of backups to keep.",
+                  "minimum": 1
                 }
               }
             },
@@ -447,7 +481,9 @@
                 "env": {
                   "type": "object",
                   "description": "Environment variables for the migration command.",
-                  "additionalProperties": { "type": "string" }
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 },
                 "steps": {
                   "type": "array",
@@ -470,7 +506,9 @@
                       "env": {
                         "type": "object",
                         "description": "Environment variables for this step.",
-                        "additionalProperties": { "type": "string" }
+                        "additionalProperties": {
+                          "type": "string"
+                        }
                       },
                       "interactive": {
                         "type": "boolean",
@@ -478,7 +516,9 @@
                         "default": false
                       }
                     },
-                    "required": ["name"]
+                    "required": [
+                      "name"
+                    ]
                   }
                 }
               }
@@ -494,6 +534,49 @@
                 "workdir": {
                   "type": "string",
                   "description": "Working directory for the seed command."
+                },
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable database seeding after migration.",
+                  "default": true
+                },
+                "environments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Only run seed for these target environments."
+                },
+                "env": {
+                  "type": "object",
+                  "description": "Environment variables for the seed command.",
+                  "additionalProperties": {
+                    "type": "string"
+                  }
+                }
+              }
+            },
+            "schema_check": {
+              "type": "object",
+              "title": "Schema validation before migration",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable schema check.",
+                  "default": false
+                },
+                "tool": {
+                  "type": "string",
+                  "description": "Schema tool to use for validation.",
+                  "examples": [
+                    "prisma",
+                    "drizzle",
+                    "custom"
+                  ]
+                },
+                "command": {
+                  "type": "string",
+                  "description": "Custom schema check command."
                 }
               }
             }
@@ -505,8 +588,43 @@
           "properties": {
             "services": {
               "type": "array",
-              "items": { "type": "string" },
+              "items": {
+                "type": "string"
+              },
               "description": "Specific services to deploy. Default: all services."
+            },
+            "groups": {
+              "type": "array",
+              "description": "Deploy services in ordered groups. Each group deploys in parallel, groups execute sequentially.",
+              "items": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "swa": {
+              "type": "object",
+              "title": "Static Web App deployment",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable SWA deployment.",
+                  "default": false
+                },
+                "build_command": {
+                  "type": "string",
+                  "description": "Build command for the static site."
+                },
+                "output_dir": {
+                  "type": "string",
+                  "description": "Output directory of the build."
+                },
+                "app_name": {
+                  "type": "string",
+                  "description": "Azure Static Web App name. Supports \\ substitution."
+                }
+              }
             }
           }
         },
@@ -532,7 +650,9 @@
                         "default": 200
                       }
                     },
-                    "required": ["url"]
+                    "required": [
+                      "url"
+                    ]
                   }
                 },
                 "timeout": {
@@ -562,7 +682,9 @@
                 "env": {
                   "type": "object",
                   "description": "Environment variables for the smoke test command.",
-                  "additionalProperties": { "type": "string" }
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -587,10 +709,14 @@
                 "env": {
                   "type": "object",
                   "description": "Environment variables for the hook command.",
-                  "additionalProperties": { "type": "string" }
+                  "additionalProperties": {
+                    "type": "string"
+                  }
                 }
               },
-              "required": ["command"]
+              "required": [
+                "command"
+              ]
             }
           },
           "additionalProperties": false
@@ -609,7 +735,10 @@
               "description": "Exact string the user must type to confirm."
             }
           },
-          "required": ["message", "match"]
+          "required": [
+            "message",
+            "match"
+          ]
         },
         "environments": {
           "type": "object",
@@ -619,6 +748,119 @@
             "type": "object",
             "description": "Environment-specific promote configuration override. Supports all promote properties except chain and protected.",
             "additionalProperties": true
+          }
+        },
+        "preflight": {
+          "type": "object",
+          "title": "Preflight check configuration",
+          "description": "Configure additional preflight validations beyond the built-in chain and environment checks.",
+          "properties": {
+            "env_diff": {
+              "type": "object",
+              "description": "Compare environment variables between source and target before promotion.",
+              "properties": {
+                "enabled": {
+                  "type": "boolean",
+                  "description": "Enable environment variable diff check.",
+                  "default": false
+                },
+                "fail_on_missing": {
+                  "type": "boolean",
+                  "description": "Fail preflight if target is missing variables that source has.",
+                  "default": false
+                },
+                "ignore_keys": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Environment variable keys to exclude from the diff comparison."
+                }
+              }
+            }
+          }
+        },
+        "purge": {
+          "type": "object",
+          "title": "Cache/CDN purge configuration",
+          "description": "Configure cache invalidation after deployment (e.g., CDN purge).",
+          "properties": {
+            "enabled": {
+              "type": "boolean",
+              "description": "Enable the purge phase.",
+              "default": false
+            },
+            "provider": {
+              "type": "string",
+              "description": "CDN/cache provider name.",
+              "enum": [
+                "cloudflare",
+                "azure-cdn",
+                "custom"
+              ]
+            },
+            "zone_id": {
+              "type": "string",
+              "description": "CDN zone/profile identifier. Supports \\ substitution."
+            },
+            "command": {
+              "type": "string",
+              "description": "Custom purge command (used with provider: custom)."
+            }
+          }
+        },
+        "rollback": {
+          "type": "object",
+          "title": "Rollback configuration",
+          "description": "Configure behavior when a promotion phase fails.",
+          "properties": {
+            "auto": {
+              "type": "boolean",
+              "description": "Automatically rollback on failure.",
+              "default": false
+            },
+            "on_phase_failure": {
+              "type": "string",
+              "description": "Action when a phase fails.",
+              "enum": [
+                "abort",
+                "pause",
+                "rollback"
+              ]
+            },
+            "command": {
+              "type": "string",
+              "description": "Custom rollback command. Supports \\ substitution."
+            }
+          }
+        },
+        "notifications": {
+          "type": "object",
+          "title": "Notification configuration",
+          "description": "Send notifications on promotion events.",
+          "properties": {
+            "webhook_url": {
+              "type": "string",
+              "description": "Webhook URL for notifications. Supports \\ substitution."
+            },
+            "events": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "start",
+                  "success",
+                  "failure",
+                  "phase-complete"
+                ]
+              },
+              "description": "Events that trigger notifications."
+            },
+            "include_details": {
+              "type": "boolean",
+              "description": "Include phase details and timing in notifications.",
+              "default": true
+            }
           }
         }
       }
@@ -791,20 +1033,34 @@
           "type": "string",
           "title": "Command to run the service (azd app extension)",
           "description": "Full command to run the service (e.g., 'uvicorn main:app --reload'). Primary way to override the auto-detected run command.",
-          "examples": ["uvicorn main:app --reload", "npm run dev", "go run main.go"]
+          "examples": [
+            "uvicorn main:app --reload",
+            "npm run dev",
+            "go run main.go"
+          ]
         },
         "type": {
           "type": "string",
           "title": "Service type (azd app extension)",
           "description": "Service type defining how the service is accessed. 'http' for HTTP/HTTPS services (default if ports defined), 'tcp' for raw TCP connections like databases, 'process' for services with no network endpoint (default if no ports), 'container' for Docker container services (auto-detected if image is set).",
-          "enum": ["http", "tcp", "process", "container"],
+          "enum": [
+            "http",
+            "tcp",
+            "process",
+            "container"
+          ],
           "default": "http"
         },
         "mode": {
           "type": "string",
           "title": "Run mode for process services (azd app extension)",
           "description": "Run mode for process-type services. 'watch' for continuous file-watching processes (tsc --watch, nodemon), 'build' for one-time build processes that exit, 'daemon' for long-running background processes (default), 'task' for one-time tasks run on demand.",
-          "enum": ["watch", "build", "daemon", "task"],
+          "enum": [
+            "watch",
+            "build",
+            "daemon",
+            "task"
+          ],
           "default": "daemon"
         },
         "ports": {
@@ -816,15 +1072,28 @@
             "pattern": "^(\\d+|\\d+:\\d+|[\\da-fA-F:.]+:\\d+:\\d+)(\\/[a-z]+)?$"
           },
           "examples": [
-            ["3000"],
-            ["3000:8080"],
-            ["127.0.0.1:3000:8080"],
-            ["8080/udp"],
-            ["[::1]:3000:8080"]
+            [
+              "3000"
+            ],
+            [
+              "3000:8080"
+            ],
+            [
+              "127.0.0.1:3000:8080"
+            ],
+            [
+              "8080/udp"
+            ],
+            [
+              "[::1]:3000:8080"
+            ]
           ]
         },
         "environment": {
-          "type": ["array", "object"],
+          "type": [
+            "array",
+            "object"
+          ],
           "title": "Environment variables (azd app extension)",
           "description": "Environment variables for the service - Docker Compose compatible",
           "items": {
@@ -836,8 +1105,12 @@
         },
         "healthcheck": {
           "oneOf": [
-            { "type": "boolean" },
-            { "$ref": "#/definitions/healthcheck" }
+            {
+              "type": "boolean"
+            },
+            {
+              "$ref": "#/definitions/healthcheck"
+            }
           ],
           "title": "Health check configuration (azd app extension)",
           "description": "Health check configuration. Set to false to disable health checks for build/watch services that don't serve HTTP endpoints. Docker Compose-compatible object format is also supported."
@@ -863,7 +1136,11 @@
               "description": "User-configured custom URL for local development (e.g., ngrok, reverse proxy). Overrides auto-discovered local URL. Must be a valid HTTP or HTTPS URL.",
               "pattern": "^https?://",
               "maxLength": 2048,
-              "examples": ["https://myapp.ngrok.io", "http://myapp.local:8080", "https://localhost.local"]
+              "examples": [
+                "https://myapp.ngrok.io",
+                "http://myapp.local:8080",
+                "https://localhost.local"
+              ]
             }
           },
           "additionalProperties": false
@@ -879,7 +1156,11 @@
               "description": "User-configured custom URL for Azure deployment (e.g., custom domain, CDN, API gateway). Overrides auto-discovered Azure URL. Must be a valid HTTP or HTTPS URL.",
               "pattern": "^https?://",
               "maxLength": 2048,
-              "examples": ["https://www.mycompany.com", "https://api.mycompany.com", "https://cdn.example.com"]
+              "examples": [
+                "https://www.mycompany.com",
+                "https://api.mycompany.com",
+                "https://cdn.example.com"
+              ]
             },
             "customDomain": {
               "type": "string",
@@ -887,7 +1168,11 @@
               "description": "User-configured custom domain name for Azure deployment (domain only, without protocol). When set, overrides Azure SDK discovery. If not set, the system attempts to discover custom domains from Azure Portal.",
               "pattern": "^(?!https?://)[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$",
               "maxLength": 253,
-              "examples": ["www.mycompany.com", "app.example.com", "api.myservice.net"]
+              "examples": [
+                "www.mycompany.com",
+                "app.example.com",
+                "api.myservice.net"
+              ]
             }
           },
           "additionalProperties": false
@@ -898,18 +1183,32 @@
           "comment": "ContainerApp host - supports image OR project, docker config, and apiVersion",
           "if": {
             "properties": {
-              "host": { "const": "containerapp" }
+              "host": {
+                "const": "containerapp"
+              }
             }
           },
           "then": {
             "anyOf": [
               {
-                "required": ["image"],
-                "not": { "required": ["project"] }
+                "required": [
+                  "image"
+                ],
+                "not": {
+                  "required": [
+                    "project"
+                  ]
+                }
               },
               {
-                "required": ["project"],
-                "not": { "required": ["image"] }
+                "required": [
+                  "project"
+                ],
+                "not": {
+                  "required": [
+                    "image"
+                  ]
+                }
               }
             ],
             "properties": {
@@ -921,11 +1220,15 @@
           "comment": "AKS host - requires project, supports docker and k8s config",
           "if": {
             "properties": {
-              "host": { "const": "aks" }
+              "host": {
+                "const": "aks"
+              }
             }
           },
           "then": {
-            "required": ["project"],
+            "required": [
+              "project"
+            ],
             "properties": {
               "image": false,
               "apiVersion": false,
@@ -937,11 +1240,16 @@
           "comment": "AI Endpoint host - requires project and config, supports docker",
           "if": {
             "properties": {
-              "host": { "const": "ai.endpoint" }
+              "host": {
+                "const": "ai.endpoint"
+              }
             }
           },
           "then": {
-            "required": ["project", "config"],
+            "required": [
+              "project",
+              "config"
+            ],
             "properties": {
               "config": {
                 "$ref": "#/definitions/aiEndpointConfig",
@@ -959,11 +1267,15 @@
           "comment": "Azure AI Agent host - requires project, supports docker and config",
           "if": {
             "properties": {
-              "host": { "const": "azure.ai.agent" }
+              "host": {
+                "const": "azure.ai.agent"
+              }
             }
           },
           "then": {
-            "required": ["project"],
+            "required": [
+              "project"
+            ],
             "properties": {
               "config": {
                 "$ref": "https://raw.githubusercontent.com/Azure/azure-dev/refs/heads/main/cli/azd/extensions/azure.ai.agents/schemas/azure.ai.agent.json",
@@ -981,11 +1293,20 @@
           "comment": "Traditional hosts - require project only, disable container-specific properties",
           "if": {
             "properties": {
-              "host": { "enum": ["appservice", "function", "springapp", "staticwebapp"] }
+              "host": {
+                "enum": [
+                  "appservice",
+                  "function",
+                  "springapp",
+                  "staticwebapp"
+                ]
+              }
             }
           },
           "then": {
-            "required": ["project"],
+            "required": [
+              "project"
+            ],
             "properties": {
               "image": false,
               "docker": false,
@@ -1066,7 +1387,9 @@
     "envVar": {
       "type": "object",
       "description": "Environment variable definition",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string",
@@ -1083,17 +1406,23 @@
       },
       "oneOf": [
         {
-          "required": ["value"]
+          "required": [
+            "value"
+          ]
         },
         {
-          "required": ["secret"]
+          "required": [
+            "secret"
+          ]
         }
       ]
     },
     "resource": {
       "type": "object",
       "description": "An Azure resource definition",
-      "required": ["type"],
+      "required": [
+        "type"
+      ],
       "properties": {
         "type": {
           "type": "string",
@@ -1133,20 +1462,174 @@
         }
       },
       "allOf": [
-        { "if": { "properties": { "type": { "const": "host.appservice" }}}, "then": { "$ref": "#/definitions/appServiceResource" } },
-        { "if": { "properties": { "type": { "const": "host.containerapp" }}}, "then": { "$ref": "#/definitions/containerAppResource" } },
-        { "if": { "properties": { "type": { "const": "ai.openai.model" }}}, "then": { "$ref": "#/definitions/aiModelResource" } },
-        { "if": { "properties": { "type": { "const": "ai.project" }}}, "then": { "$ref": "#/definitions/aiProjectResource" } },
-        { "if": { "properties": { "type": { "const": "ai.search" }}}, "then": { "$ref": "#/definitions/aiSearchResource" } },
-        { "if": { "properties": { "type": { "const": "db.postgres"  }}}, "then": { "$ref": "#/definitions/genericDbResource"} },
-        { "if": { "properties": { "type": { "const": "db.mysql"  }}}, "then": { "$ref": "#/definitions/genericDbResource"} },
-        { "if": { "properties": { "type": { "const": "db.redis"  }}}, "then": { "$ref": "#/definitions/genericDbResource"} },
-        { "if": { "properties": { "type": { "const": "db.mongo"  }}}, "then": { "$ref": "#/definitions/genericDbResource"} },
-        { "if": { "properties": { "type": { "const": "db.cosmos" }}}, "then": { "$ref": "#/definitions/cosmosDbResource"} },
-        { "if": { "properties": { "type": { "const": "messaging.eventhubs" }}}, "then": { "$ref": "#/definitions/eventHubsResource" } },
-        { "if": { "properties": { "type": { "const": "messaging.servicebus" }}}, "then": { "$ref": "#/definitions/serviceBusResource" } },
-        { "if": { "properties": { "type": { "const": "storage"  }}}, "then": { "$ref": "#/definitions/storageAccountResource"} },
-        { "if": { "properties": { "type": { "const": "keyvault" }}}, "then": { "$ref": "#/definitions/keyVaultResource"} }
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "host.appservice"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/appServiceResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "host.containerapp"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/containerAppResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ai.openai.model"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/aiModelResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ai.project"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/aiProjectResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "ai.search"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/aiSearchResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "db.postgres"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/genericDbResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "db.mysql"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/genericDbResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "db.redis"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/genericDbResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "db.mongo"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/genericDbResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "db.cosmos"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/cosmosDbResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "messaging.eventhubs"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/eventHubsResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "messaging.servicebus"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/serviceBusResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "storage"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/storageAccountResource"
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "type": {
+                "const": "keyvault"
+              }
+            }
+          },
+          "then": {
+            "$ref": "#/definitions/keyVaultResource"
+          }
+        }
       ]
     },
     "healthcheck": {
@@ -1154,7 +1637,10 @@
       "description": "Health check configuration for monitoring service status. Supports different check types: 'http' for web services, 'tcp' for port connectivity, 'process' for background workers, and 'output' for matching stdout patterns. For build/watch services that don't serve HTTP endpoints, use 'disable: true' or 'type: none'.",
       "properties": {
         "test": {
-          "type": ["string", "array"],
+          "type": [
+            "string",
+            "array"
+          ],
           "description": "The test to perform. For cross-platform compatibility, use HTTP URL string (e.g., 'http://localhost:8080/health'). Can also be shell command string or array (CMD or CMD-SHELL format).",
           "items": {
             "type": "string"
@@ -1162,14 +1648,30 @@
           "examples": [
             "http://localhost:8080/health",
             "curl -f http://localhost/health || exit 1",
-            ["CMD", "curl", "-f", "http://localhost/health"],
-            ["CMD-SHELL", "curl -f http://localhost/health || exit 1"],
-            ["NONE"]
+            [
+              "CMD",
+              "curl",
+              "-f",
+              "http://localhost/health"
+            ],
+            [
+              "CMD-SHELL",
+              "curl -f http://localhost/health || exit 1"
+            ],
+            [
+              "NONE"
+            ]
           ]
         },
         "type": {
           "type": "string",
-          "enum": ["http", "tcp", "process", "output", "none"],
+          "enum": [
+            "http",
+            "tcp",
+            "process",
+            "output",
+            "none"
+          ],
           "description": "Type of health check to perform. 'http' checks an HTTP endpoint (default for services with ports), 'tcp' checks if a port is listening, 'process' checks if the process is running (default for services without ports), 'output' monitors stdout for a regex pattern (useful for watch mode services), 'none' disables health checks.",
           "default": "http"
         },
@@ -1181,7 +1683,12 @@
         "pattern": {
           "type": "string",
           "description": "Regex pattern to match in stdout (when type=output). Service is considered healthy when this pattern is matched. Useful for watch mode services like TypeScript compiler.",
-          "examples": ["Found 0 errors", "Server started", "Listening on port", "Watching for file changes"]
+          "examples": [
+            "Found 0 errors",
+            "Server started",
+            "Listening on port",
+            "Watching for file changes"
+          ]
         },
         "interval": {
           "type": "string",
@@ -1223,12 +1730,22 @@
     "requirement": {
       "type": "object",
       "description": "A prerequisite tool or dependency requirement - azd app addition",
-      "required": ["name"],
+      "required": [
+        "name"
+      ],
       "properties": {
         "name": {
           "type": "string",
           "description": "Name of the required tool",
-          "examples": ["node", "python", "docker", "azd", "dotnet", "go", "java"]
+          "examples": [
+            "node",
+            "python",
+            "docker",
+            "azd",
+            "dotnet",
+            "go",
+            "java"
+          ]
         },
         "minVersion": {
           "type": "string",
@@ -1281,7 +1798,10 @@
           "type": "string",
           "format": "uri",
           "description": "URL to installation page for this tool. Displayed when requirement check fails. Built-in tools have default URLs that can be overridden.",
-          "examples": ["https://nodejs.org/", "https://www.docker.com/products/docker-desktop"]
+          "examples": [
+            "https://nodejs.org/",
+            "https://www.docker.com/products/docker-desktop"
+          ]
         }
       }
     },
@@ -1462,7 +1982,10 @@
     "logClassification": {
       "type": "object",
       "description": "Override log level when text matches",
-      "required": ["text", "level"],
+      "required": [
+        "text",
+        "level"
+      ],
       "properties": {
         "text": {
           "type": "string",
@@ -1470,7 +1993,11 @@
         },
         "level": {
           "type": "string",
-          "enum": ["info", "warning", "error"],
+          "enum": [
+            "info",
+            "warning",
+            "error"
+          ],
           "description": "Log level to assign when text matches"
         }
       }
@@ -1483,7 +2010,9 @@
         "workspace": {
           "type": "string",
           "description": "Log Analytics workspace ID. If not specified, auto-detected from Azure environment.",
-          "examples": ["/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{name}"]
+          "examples": [
+            "/subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.OperationalInsights/workspaces/{name}"
+          ]
         },
         "pollingInterval": {
           "type": "string",
@@ -1516,9 +2045,17 @@
             "type": "string"
           },
           "examples": [
-            ["ContainerAppConsoleLogs_CL"],
-            ["ContainerAppConsoleLogs_CL", "ContainerAppSystemLogs_CL"],
-            ["FunctionAppLogs", "AppServiceConsoleLogs"]
+            [
+              "ContainerAppConsoleLogs_CL"
+            ],
+            [
+              "ContainerAppConsoleLogs_CL",
+              "ContainerAppSystemLogs_CL"
+            ],
+            [
+              "FunctionAppLogs",
+              "AppServiceConsoleLogs"
+            ]
           ]
         },
         "query": {
@@ -1539,7 +2076,11 @@
             "type": "string"
           },
           "examples": [
-            ["npm warn", "Debugger listening", "ExperimentalWarning"]
+            [
+              "npm warn",
+              "Debugger listening",
+              "ExperimentalWarning"
+            ]
           ]
         }
       }
@@ -1570,7 +2111,12 @@
         },
         "outputFormat": {
           "type": "string",
-          "enum": ["default", "json", "junit", "github"],
+          "enum": [
+            "default",
+            "json",
+            "junit",
+            "github"
+          ],
           "default": "default",
           "description": "Output format for test results"
         }
@@ -1607,7 +2153,12 @@
         "command": {
           "type": "string",
           "description": "Custom command to run tests",
-          "examples": ["npm test", "pytest", "go test ./...", "dotnet test"]
+          "examples": [
+            "npm test",
+            "pytest",
+            "go test ./...",
+            "dotnet test"
+          ]
         },
         "args": {
           "type": "array",
@@ -1619,12 +2170,20 @@
         "path": {
           "type": "string",
           "description": "Path to test files or directory (relative to service project)",
-          "examples": ["tests/unit", "tests/integration", "tests/e2e"]
+          "examples": [
+            "tests/unit",
+            "tests/integration",
+            "tests/e2e"
+          ]
         },
         "pattern": {
           "type": "string",
           "description": "Pattern to match test files or test names",
-          "examples": ["*_test.go", "test_*.py", "*.spec.ts"]
+          "examples": [
+            "*_test.go",
+            "test_*.py",
+            "*.spec.ts"
+          ]
         },
         "env": {
           "type": "object",
@@ -1663,7 +2222,11 @@
             "type": "string"
           },
           "examples": [
-            ["**/vendor/**", "**/test/**", "**/*_test.go"]
+            [
+              "**/vendor/**",
+              "**/test/**",
+              "**/*_test.go"
+            ]
           ]
         },
         "include": {
@@ -2254,7 +2817,12 @@
           "items": {
             "type": "object",
             "additionalProperties": false,
-            "required": ["name", "version", "format", "sku"],
+            "required": [
+              "name",
+              "version",
+              "format",
+              "sku"
+            ],
             "properties": {
               "name": {
                 "type": "string",
@@ -2276,7 +2844,11 @@
                 "title": "The SKU configuration for the AI model.",
                 "description": "Required. The SKU details for the AI model.",
                 "additionalProperties": false,
-                "required": ["name", "usageName", "capacity"],
+                "required": [
+                  "name",
+                  "usageName",
+                  "capacity"
+                ],
                 "properties": {
                   "name": {
                     "type": "string",
@@ -2480,11 +3052,20 @@
       "name": "fullstack-app",
       "logs": {
         "filters": {
-          "exclude": ["npm warn", "Debugger listening"]
+          "exclude": [
+            "npm warn",
+            "Debugger listening"
+          ]
         },
         "classifications": [
-          { "text": "DEPRECATED", "level": "warning" },
-          { "text": "fatal", "level": "error" }
+          {
+            "text": "DEPRECATED",
+            "level": "warning"
+          },
+          {
+            "text": "fatal",
+            "level": "error"
+          }
         ],
         "analytics": {
           "pollingInterval": "10s",
@@ -2495,20 +3076,26 @@
         "web": {
           "language": "TypeScript",
           "project": "./frontend",
-          "ports": ["3000"],
+          "ports": [
+            "3000"
+          ],
           "environment": [
             {
               "name": "API_URL",
               "value": "http://localhost:8000"
             }
           ],
-          "uses": ["api"]
+          "uses": [
+            "api"
+          ]
         },
         "api": {
           "language": "Python",
           "project": "./backend",
           "entrypoint": "main.py",
-          "ports": ["8000"],
+          "ports": [
+            "8000"
+          ],
           "environment": [
             {
               "name": "DATABASE_URL",
@@ -2522,10 +3109,15 @@
             "retries": 3,
             "start_period": "30s"
           },
-          "uses": ["db"],
+          "uses": [
+            "db"
+          ],
           "logs": {
             "analytics": {
-              "tables": ["ContainerAppConsoleLogs_CL", "ContainerAppSystemLogs_CL"]
+              "tables": [
+                "ContainerAppConsoleLogs_CL",
+                "ContainerAppSystemLogs_CL"
+              ]
             }
           }
         },
@@ -2561,7 +3153,9 @@
           "name": "mytool",
           "minVersion": "1.0.0",
           "command": "mytool",
-          "args": ["--version"],
+          "args": [
+            "--version"
+          ],
           "installUrl": "https://example.com/mytool/install"
         }
       ],
@@ -2601,7 +3195,9 @@
         },
         "postgres": {
           "image": "postgres:15",
-          "ports": ["5432"],
+          "ports": [
+            "5432"
+          ],
           "healthcheck": {
             "type": "tcp"
           },
