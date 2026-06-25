@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A centralized registry and showcase site for azd extensions by Jon Gallant",
   "type": "module",
-  "packageManager": "pnpm@9.0.0",
+  "packageManager": "pnpm@11.9.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -15,18 +15,18 @@
   },
   "dependencies": {
     "@jongio/azd-web-core": "^2.4.1",
-    "astro": "^6.3.3"
+    "astro": "^7.0.3"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.0",
-    "@types/node": "^25.8.0",
+    "@tailwindcss/vite": "^4.3.1",
+    "@types/node": "^26.0.1",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
-    "prettier": "^3.8.3",
+    "prettier": "^3.8.4",
     "prettier-plugin-tailwindcss": "^0.8.0",
-    "tailwindcss": "^4.3.0",
+    "tailwindcss": "^4.3.1",
     "typescript": "^6.0.3",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.9"
   },
   "repository": {
     "type": "git",
@@ -35,13 +35,6 @@
   "engines": {
     "node": ">=20",
     "pnpm": ">=9"
-  },
-  "pnpm": {
-    "overrides": {
-      "picomatch": ">=2.3.2",
-      "lodash": ">=4.18.0",
-      "fast-uri": ">=3.0.6"
-    }
   },
   "author": "Jon Gallant",
   "license": "MIT"
