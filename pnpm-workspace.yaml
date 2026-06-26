@@ -11,4 +11,12 @@ minimumReleaseAgeExclude:
 overrides:
   picomatch: ">=2.3.2"
   lodash: ">=4.18.0"
-  fast-uri: ">=3.0.6"
+  fast-uri: "4.0.0"
+  smol-toml: "1.7.0"
+  yaml: "2.9.0"
+  js-yaml: "5.1.0"
+  "@astrojs/check": "0.9.9"
+
+patchedDependencies:
+  '@astrojs/internal-helpers@0.10.0': patches/@astrojs__internal-helpers@0.10.0.patch
+  astro@7.0.3: patches/astro@7.0.3.patch
