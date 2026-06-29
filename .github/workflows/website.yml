@@ -98,7 +98,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download production artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: production-build
           path: _new_build
@@ -136,7 +136,7 @@ jobs:
           fetch-depth: 0
 
       - name: Download PR preview artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pr-preview-${{ github.event.pull_request.number }}
           path: pr/${{ github.event.pull_request.number }}
