@@ -35,7 +35,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - name: Checkout
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v6
@@ -92,13 +92,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           fetch-depth: 0
 
       - name: Download production artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: production-build
           path: _new_build
@@ -130,13 +130,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           fetch-depth: 0
 
       - name: Download PR preview artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: pr-preview-${{ github.event.pull_request.number }}
           path: pr/${{ github.event.pull_request.number }}
@@ -201,7 +201,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout gh-pages
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           ref: gh-pages
           fetch-depth: 0
