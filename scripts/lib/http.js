@@ -6,9 +6,9 @@
  * for concurrent URL checking.
  */
 
-const URL_TIMEOUT_MS = 10_000;
+const URL_TIMEOUT_MS = 20_000;
 const MAX_RETRIES = 3;
-const RETRY_STATUS_CODES = [502, 503, 504];
+const RETRY_STATUS_CODES = [0, 502, 503, 504];
 
 /**
  * Perform an HTTPS HEAD request using the native fetch API.
@@ -17,7 +17,7 @@ const RETRY_STATUS_CODES = [502, 503, 504];
  *
  * - fetch follows redirects automatically (redirect: 'follow')
  * - Rejects non-HTTPS URLs (returns 0)
- * - Retries on transient 502/503/504 errors with exponential backoff
+ * - Retries on network failures and transient 502/503/504 errors with exponential backoff
  *
  * @param {string} url - The URL to check
  * @returns {Promise<number>} HTTP status code, or 0 on failure
@@ -74,10 +74,10 @@ async function headRequestOnce(url) {
  * Run HEAD requests concurrently with a worker pool.
  *
  * @param {{ url: string }[]} items - Objects with a `url` property
- * @param {number} [concurrency=8] - Maximum concurrent requests
+ * @param {number} [concurrency=4] - Maximum concurrent requests
  * @returns {Promise<Map<string, number>>} Map of URL -> status code
  */
-export async function batchHeadRequests(items, concurrency = 8) {
+export async function batchHeadRequests(items, concurrency = 4) {
   /** @type {Map<string, number>} */
   const results = new Map();
   let index = 0;
