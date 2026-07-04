@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "A centralized registry and showcase site for azd extensions by Jon Gallant",
   "type": "module",
-  "packageManager": "pnpm@11.9.0",
+  "packageManager": "pnpm@11.10.0",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
