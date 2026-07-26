@@ -1,14 +1,15 @@
 // Registry data: see scripts/lib/extensions.js for the canonical extension list
-import type { Props as Extension } from '../components/ExtensionShowcase.astro';
+import type { Extension } from '../types/extension'
 
-export type { Extension };
+export type { Extension }
 
 export const extensions: Extension[] = [
   {
     id: 'jongio.azd.app',
     name: 'azd app',
     tagline: 'Run Azure Apps Locally',
-    description: 'One command starts all your services with auto-dependencies, real-time dashboard, and AI-powered debugging via GitHub Copilot MCP integration.',
+    description:
+      'One command starts all your services with auto-dependencies, real-time dashboard, and AI-powered debugging via GitHub Copilot MCP integration.',
     icon: '▶',
     website: 'https://jongio.github.io/azd-app/',
     repository: 'https://github.com/jongio/azd-app',
@@ -31,7 +32,8 @@ export const extensions: Extension[] = [
     id: 'jongio.azd.copilot',
     name: 'azd copilot',
     tagline: 'AI-Powered Azure Assistant',
-    description: 'Describe what you want to build, and Copilot builds and deploys it to Azure. Includes 16 specialized agents and 29 Azure skills with GitHub Copilot integration.',
+    description:
+      'Describe what you want to build, and Copilot builds and deploys it to Azure. Includes 16 specialized agents and 29 Azure skills with GitHub Copilot integration.',
     icon: '⚡',
     website: 'https://jongio.github.io/azd-copilot/',
     repository: 'https://github.com/jongio/azd-copilot',
@@ -54,7 +56,8 @@ export const extensions: Extension[] = [
     id: 'jongio.azd.rest',
     name: 'azd rest',
     tagline: 'Authenticated REST API Calls',
-    description: 'Make REST API calls to Azure services with automatic authentication and scope detection. No manual token management — just point at a URL and go.',
+    description:
+      'Make REST API calls to Azure services with automatic authentication and scope detection. No manual token management — just point at a URL and go.',
     icon: '🌐',
     website: 'https://jongio.github.io/azd-rest/',
     repository: 'https://github.com/jongio/azd-rest',
@@ -66,10 +69,16 @@ export const extensions: Extension[] = [
       { icon: '🛡️', title: 'Secure by Default', desc: 'HTTPS, credential chain, retries' },
     ],
     scenarios: [
-      { title: 'List Subscriptions', command: 'azd rest get https://management.azure.com/subscriptions?api-version=2020-01-01' },
-      { title: 'Key Vault Secret', command: 'azd rest get https://myvault.vault.azure.net/secrets/mysecret?api-version=7.4' },
+      {
+        title: 'List Subscriptions',
+        command: 'azd rest get https://management.azure.com/subscriptions?api-version=2020-01-01',
+      },
+      {
+        title: 'Key Vault Secret',
+        command: 'azd rest get https://myvault.vault.azure.net/secrets/mysecret?api-version=7.4',
+      },
       { title: 'Microsoft Graph', command: 'azd rest get https://graph.microsoft.com/v1.0/me' },
     ],
     tags: ['rest', 'api', 'http', 'developer-tools'],
   },
-];
+]

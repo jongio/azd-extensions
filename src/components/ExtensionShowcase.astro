@@ -1,28 +1,5 @@
 ---
-export interface Feature {
-  icon: string;
-  title: string;
-  desc: string;
-}
-
-export interface Scenario {
-  title: string;
-  command: string;
-}
-
-export interface Props {
-  id: string;
-  name: string;
-  tagline: string;
-  description: string;
-  icon: string;
-  website: string;
-  repository: string;
-  features: Feature[];
-  scenarios: Scenario[];
-  tags: string[];
-  glowColor: string;
-}
+import type { Extension as Props } from '../types/extension';
 
 const { id, name, tagline, description, icon, website, repository, features, scenarios, tags, glowColor } = Astro.props;
 ---
