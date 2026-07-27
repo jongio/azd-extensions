@@ -1,5 +1,5 @@
 diff --git a/dist/content/loaders/file.js b/dist/content/loaders/file.js
-index 61d49183862bd3b56b633d346a3fad602ed1f8b1..1a7436de932e1ba64689bab13cfbcc1558b39c2d 100644
+index 80f36f893fd951d873a9986855077f89f5003dd8..d27e8eb159b2bdce09a507d8cb7ae78e08eed412 100644
 --- a/dist/content/loaders/file.js
 +++ b/dist/content/loaders/file.js
 @@ -1,6 +1,6 @@
@@ -7,11 +7,11 @@ index 61d49183862bd3b56b633d346a3fad602ed1f8b1..1a7436de932e1ba64689bab13cfbcc15
  import { fileURLToPath } from "node:url";
 -import yaml from "js-yaml";
 +import * as yaml from "js-yaml";
- import toml from "smol-toml";
+ import * as toml from "smol-toml";
  import { FileGlobNotSupported, FileParserNotFound } from "../../core/errors/errors-data.js";
  import { AstroError } from "../../core/errors/index.js";
 diff --git a/dist/core/config/settings.js b/dist/core/config/settings.js
-index 32f88d7ae91b2a0eca56a659bba145a1a6062a32..d9693b913eb2d0980bac0e179e691e3e13d8c321 100644
+index c6aeb4e1dc7ac2df958a8f76110fbd053e0698b1..9abb8f97abcc6524843a20fa53ecc125dca46f15 100644
 --- a/dist/core/config/settings.js
 +++ b/dist/core/config/settings.js
 @@ -1,6 +1,6 @@
@@ -19,6 +19,6 @@ index 32f88d7ae91b2a0eca56a659bba145a1a6062a32..d9693b913eb2d0980bac0e179e691e3e
  import { fileURLToPath, pathToFileURL } from "node:url";
 -import yaml from "js-yaml";
 +import * as yaml from "js-yaml";
- import toml from "smol-toml";
+ import * as toml from "smol-toml";
  import { getContentPaths } from "../../content/index.js";
  import createPreferences from "../../preferences/index.js";
