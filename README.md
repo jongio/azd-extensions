@@ -19,7 +19,7 @@
 
 | Extension | Description | Latest | Website |
 |-----------|-------------|--------|---------|
-| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.19.5 | [🌐](https://jongio.github.io/azd-app/) |
+| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/) |
 | [**azd-copilot**](https://github.com/jongio/azd-copilot) | AI-powered Azure development with 16 agents, 29 Azure skills, and MCP server integration | v0.2.4 | [🌐](https://jongio.github.io/azd-copilot/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.5.0 | [🌐](https://jongio.github.io/azd-rest/) |
 
