@@ -6,18 +6,20 @@ allowBuilds:
   sharp: true
   koffi: true
 
-minimumReleaseAgeExclude:
-  - astro@7.1.6
-  - '@astrojs/check@0.9.10'
-  - '@types/node@26.1.2'
+minimumReleaseAgeExclude: []
 
 overrides:
   picomatch: '>=2.3.2'
   lodash: '>=4.18.0'
-  fast-uri: '4.1.1'
+  fast-uri: '4.1.2'
   smol-toml: '1.7.1'
   yaml: '2.9.0'
-  js-yaml: '5.2.2'
+  js-yaml: '5.2.3'
+  # @napi-rs/wasm-runtime declares its emnapi peers as '^1.7.1 || ^2.0.0-alpha.3'.
+  # With autoInstallPeers, `pnpm update --latest` resolves those to the 2.0.0 alpha.
+  # Pin to the latest stable release instead.
+  '@emnapi/core': '1.11.3'
+  '@emnapi/runtime': '1.11.3'
   '@astrojs/check': '0.9.10'
 
 patchedDependencies:
