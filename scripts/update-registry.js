@@ -6,15 +6,15 @@
  * versioning and multi-platform artifacts. This script fetches and merges them.
  */
 
-import { writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import { compareSemver } from './lib/semver.js';
 import { headRequest, batchHeadRequests } from './lib/http.js';
-import { isAllowedArtifactUrl } from './lib/validate.js';
+import { isAllowedArtifactUrl, isExtensionPackVersion } from './lib/validate.js';
 import {
   ALLOWED_HASH_ALGORITHMS,
   MIN_REQUIRED_PLATFORMS,
 } from './lib/constants.js';
-import { EXTENSION_SOURCE_URLS } from './lib/extensions.js';
+import { EXTENSION_SOURCE_URLS, EXTENSION_SOURCE_PATHS } from './lib/extensions.js';
 
 const REGISTRY_FILE = 'public/registry.json';
 
@@ -45,6 +45,19 @@ async function fetchRegistry(url) {
 }
 
 /**
+ * Read a registry JSON file that lives in this repo.
+ *
+ * Repo-relative and resolved against the repo root rather than the caller's
+ * working directory, so this behaves the same from a package script, from CI,
+ * and from a shell in any subdirectory.
+ */
+function readLocalRegistry(relativePath) {
+  const fullPath = new URL(`../${relativePath}`, import.meta.url);
+  console.log(`Reading ${relativePath}...`);
+  return JSON.parse(readFileSync(fullPath, 'utf8'));
+}
+
+/**
  * Main function - aggregates all source registries into one
  */
 async function main() {
@@ -53,15 +66,29 @@ async function main() {
       extensions: [],
     };
 
-    // Fetch all source registries concurrently (#53)
-    const fetchResults = await Promise.allSettled(
-      EXTENSION_SOURCE_URLS.map((url) => fetchRegistry(url))
-    );
+    // Fetch all remote source registries concurrently (#53), then append the
+    // sources that live in this repo. A local source has no release to fetch
+    // because it has no binaries: the extension pack is a dependency list, so
+    // its registry entry is authored here rather than published from a repo.
+    const remoteSources = EXTENSION_SOURCE_URLS;
+    const localSources = EXTENSION_SOURCE_PATHS;
+    const sourceLabels = [...remoteSources, ...localSources];
+
+    const fetchResults = [
+      ...(await Promise.allSettled(remoteSources.map((url) => fetchRegistry(url)))),
+      ...localSources.map((path) => {
+        try {
+          return { status: 'fulfilled', value: readLocalRegistry(path) };
+        } catch (error) {
+          return { status: 'rejected', reason: error };
+        }
+      }),
+    ];
 
     for (let i = 0; i < fetchResults.length; i++) {
       const result = fetchResults[i];
       if (result.status === 'rejected') {
-        console.error(`Failed to fetch ${EXTENSION_SOURCE_URLS[i]}: ${result.reason?.message ?? result.reason}`);
+        console.error(`Failed to load ${sourceLabels[i]}: ${result.reason?.message ?? result.reason}`);
         continue;
       }
 
@@ -90,7 +117,7 @@ async function main() {
           if (incoming.length > 0) {
             existing.versions = [...(existing.versions || []), ...incoming];
             console.log(
-              `Merged ${extension.id}: added ${incoming.length} new version(s) from ${EXTENSION_SOURCE_URLS[i]}`
+              `Merged ${extension.id}: added ${incoming.length} new version(s) from ${sourceLabels[i]}`
             );
           } else {
             console.log(`Extension ${extension.id} already exists, no new versions to merge`);
@@ -111,6 +138,13 @@ async function main() {
       if (!ext.versions) continue;
       const before = ext.versions.length;
       ext.versions = ext.versions.filter((ver) => {
+        // Extension packs carry dependencies instead of artifacts. Every check
+        // below inspects artifacts, so without this a pack is dropped for
+        // "missing required platforms" and disappears from the published
+        // registry with nothing but a log line to say so.
+        if (isExtensionPackVersion(ver)) {
+          return true;
+        }
         const artifacts = ver.artifacts || {};
         const platforms = Object.keys(artifacts);
         // Must have all required platforms
