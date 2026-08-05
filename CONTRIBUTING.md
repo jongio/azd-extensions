@@ -136,16 +136,26 @@ Example structure:
 
 The `azd x publish` command in your release workflow will generate and update this file automatically.
 
-### 2. Add Source URL to `scripts/update-registry.js`
+### 2. Add Your Extension to `scripts/lib/extensions.js`
 
-Add your extension's raw `registry.json` URL to the `EXTENSION_SOURCES` array:
+That file is the single source of truth for every JS registry script. Add an entry
+with your extension's id, repo, and the raw URL of its `registry.json`:
 
 ```js
-const EXTENSION_SOURCES = [
-  'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-rest/refs/heads/main/registry.json',
+export const EXTENSIONS = [
+  {
+    id: 'jongio.azd.app',
+    repo: 'azd-app',
+    sourceUrl:
+      'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
+  },
   // Add your extension here:
-  'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+  {
+    id: 'jongio.azd.myext',
+    repo: 'azd-myext',
+    sourceUrl:
+      'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+  },
 ];
 ```
 

@@ -16,6 +16,8 @@ $registrySource = "jongio"
 
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app" },
+    # Retired, but kept here on purpose: anyone who installed it before it was
+    # retired still needs a way to get it off their machine.
     @{ Name = "azd-copilot"; Id = "jongio.azd.copilot" },
     @{ Name = "azd-rest";    Id = "jongio.azd.rest" }
 )
