@@ -11,6 +11,11 @@ id: jongio.azd
 version: 0.1.0
 displayName: Azure Developer CLI Extension Pack
 description: Installs the jongio azd extensions, app, copilot and rest, in one step.
+usage: azd extension install jongio.azd
+examples:
+  - name: install
+    description: Install every jongio azd extension in one step
+    usage: azd extension install jongio.azd
 
 # Floors rather than exact pins. The three extensions release together but not
 # always in lockstep, and an exact pin would force a pack release for every patch.
