@@ -16,12 +16,6 @@ export const EXTENSIONS = [
       'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
   },
   {
-    id: 'jongio.azd.copilot',
-    repo: 'azd-copilot',
-    sourceUrl:
-      'https://raw.githubusercontent.com/jongio/azd-copilot/refs/heads/main/registry.json',
-  },
-  {
     id: 'jongio.azd.rest',
     repo: 'azd-rest',
     sourceUrl:

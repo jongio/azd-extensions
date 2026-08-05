@@ -14,7 +14,9 @@ overrides:
   fast-uri: '4.1.2'
   smol-toml: '1.7.1'
   yaml: '2.9.0'
-  js-yaml: '5.2.3'
+  # astro depends on js-yaml ^4.1.1. A 5.x override breaks the build, so this
+  # override is capped below 5 while still floating above 4.3.0.
+  js-yaml: '>=4.3.0 <5'
   # @napi-rs/wasm-runtime declares its emnapi peers as '^1.7.1 || ^2.0.0-alpha.3'.
   # With autoInstallPeers, `pnpm update --latest` resolves those to the 2.0.0 alpha.
   # Pin to the latest stable release instead.
