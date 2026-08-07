@@ -2,7 +2,7 @@
 
 ## Overview
 
-Comprehensive azd extensions registry website showcasing four production-ready extensions: **azd-app**, **azd-copilot**, **azd-exec**, and **azd-rest**. Built with Astro 6, TypeScript, Tailwind CSS 4, and automated workflows.
+Comprehensive azd extensions registry website showcasing the active azd extensions: **azd-app** and **azd-rest**. Built with Astro 6, TypeScript, Tailwind CSS 4, and automated workflows.
 
 ## Extensions
 
@@ -12,23 +12,18 @@ Comprehensive azd extensions registry website showcasing four production-ready e
 - **Purpose**: Developer productivity commands for Azure Developer CLI
 - **Key Features**: Service management, prerequisites verification, testing, MCP server support
 
-### 2. azd-copilot
-
-- **Repository**: [jongio/azd-copilot](https://github.com/jongio/azd-copilot)
-- **Purpose**: AI-powered Azure development with agents, skills, and MCP server integration
-- **Key Features**: 16 agents, 29 Azure skills, MCP server for GitHub Copilot
-
-### 3. azd-exec
-
-- **Repository**: [jongio/azd-exec](https://github.com/jongio/azd-exec)
-- **Purpose**: Run any script with azd environment and Azure credentials
-- **Key Features**: Database migrations, setup automation, CI/CD workflows, Key Vault integration
-
-### 4. azd-rest
+### 2. azd-rest
 
 - **Repository**: [jongio/azd-rest](https://github.com/jongio/azd-rest)
 - **Purpose**: Make authenticated REST API calls to Azure services
 - **Key Features**: Automatic OAuth scope detection, token management, MCP server integration
+
+## Archived extensions
+
+These are no longer listed in the registry. The repositories remain available read-only.
+
+- **azd-copilot** ([jongio/azd-copilot](https://github.com/jongio/azd-copilot)): archived.
+- **azd-exec** ([jongio/azd-exec](https://github.com/jongio/azd-exec)): archived 2026-06-25. `azd exec` is now built into Azure Developer CLI v1.25.1+. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
 
 ## Completed Features
 

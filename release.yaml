@@ -9,8 +9,8 @@
 # Tier 1 repos depend on them.
 
 # Dependency graph:
-#   azd-core (Go module) ──► azd-app, azd-copilot, azd-exec, azd-rest
-#   azd-web-core (npm pkg) ─► azd-app, azd-copilot, azd-exec, azd-rest, azd-extensions
+#   azd-core (Go module) ──► azd-app, azd-rest
+#   azd-web-core (npm pkg) ─► azd-app, azd-rest, azd-extensions
 
 owner: jongio
 
@@ -33,8 +33,6 @@ tiers:
         release_trigger: tag  # push a tag to trigger release
         consumers:
           - azd-app
-          - azd-copilot
-          - azd-exec
           - azd-rest
 
       - name: azd-web-core
@@ -46,8 +44,6 @@ tiers:
         release_trigger: tag  # push a tag to trigger release
         consumers:
           - azd-app
-          - azd-copilot
-          - azd-exec
           - azd-rest
           - azd-extensions
 
@@ -77,46 +73,7 @@ tiers:
             - package: "@jongio/azd-web-core"
               file: web/package.json
 
-      - name: azd-copilot
-        github: jongio/azd-copilot
-        type: go-extension
-        module: github.com/jongio/azd-copilot/cli
-        go_mod: cli/go.mod
-        extension_yaml: cli/extension.yaml
-        test: "cd {repo}/cli && go test ./..."
-        test_env:
-          GOWORK: "off"
-        release_workflow: release.yml
-        release_trigger: tag
-        depends_on:
-          go:
-            - package: github.com/jongio/azd-core
-              file: cli/go.mod
-          npm:
-            - package: "@jongio/azd-web-core"
-              file: web/package.json
 
-      - name: azd-exec
-        github: jongio/azd-exec
-        type: go-extension
-        module: github.com/jongio/azd-exec/cli
-        go_mod: cli/go.mod
-        extension_yaml: cli/extension.yaml
-        test: "cd {repo}/cli && go test ./..."
-        test_env:
-          GOWORK: "off"
-        release_workflow: release.yml
-        release_trigger: tag
-        depends_on:
-          go:
-            - package: github.com/jongio/azd-core
-              file: cli/go.mod
-          npm:
-            - package: "@jongio/azd-web-core"
-              file: web/package.json
-              # Also in root package.json
-            - package: "@jongio/azd-web-core"
-              file: package.json
 
       - name: azd-rest
         github: jongio/azd-rest
@@ -187,10 +144,6 @@ post_release_verification:
   extensions:
     - id: jongio.azd.app
       repo: jongio/azd-app
-    - id: jongio.azd.copilot
-      repo: jongio/azd-copilot
-    - id: jongio.azd.exec
-      repo: jongio/azd-exec
     - id: jongio.azd.rest
       repo: jongio/azd-rest
 

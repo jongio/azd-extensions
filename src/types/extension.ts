@@ -1,5 +1,7 @@
+import type { IconName } from '@jongio/azd-web-core/components/Icon.astro'
+
 export interface ExtensionFeature {
-  icon: string
+  icon: IconName
   title: string
   desc: string
 }
@@ -13,8 +15,10 @@ export interface Extension {
   id: string
   name: string
   tagline: string
+  /** Verb-first clause for the landing-page hero, e.g. "runs your whole app locally." */
+  heroClaim: string
   description: string
-  icon: string
+  icon: IconName
   website: string
   repository: string
   features: ExtensionFeature[]
