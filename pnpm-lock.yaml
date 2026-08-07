@@ -10,7 +10,7 @@ overrides:
   fast-uri: 4.1.2
   smol-toml: 1.7.1
   yaml: 2.9.0
-  js-yaml: '>=4.3.0 <5'
+  js-yaml: '>=4.3.1 <5'
   '@emnapi/core': 1.11.3
   '@emnapi/runtime': 1.11.3
   '@astrojs/check': 0.9.10
