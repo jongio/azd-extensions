@@ -20,9 +20,8 @@ examples:
 # Floors rather than exact pins. The extensions release together but not
 # always in lockstep, and an exact pin would force a pack release for every patch.
 #
-# jongio.azd.copilot is deliberately absent. It is being retired, so the pack
-# must not install it for anyone new. Its registry entry stays for now so
-# existing installs keep resolving.
+# jongio.azd.copilot is deliberately absent. It is retired and archived, and it
+# has already been dropped from the registry, so the pack must not name it.
 dependencies:
   - id: jongio.azd.app
     version: ">= 0.20.0"

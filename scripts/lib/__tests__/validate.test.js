@@ -52,7 +52,7 @@ const BINARY_VERSION = {
   },
 };
 
-const KNOWN_IDS = ['jongio.azd.app', 'jongio.azd.copilot', 'jongio.azd.rest'];
+const KNOWN_IDS = ['jongio.azd.app', 'jongio.azd.rest'];
 
 describe('isExtensionPackVersion', () => {
   it('identifies a dependency-only version as a pack', () => {

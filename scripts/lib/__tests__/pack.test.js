@@ -32,9 +32,9 @@ describe('extension pack manifest', () => {
     expect(manifest.artifacts).toBeUndefined();
   });
 
-  // jongio.azd.copilot is being retired. Its registry entry stays so existing
-  // installs keep resolving, which means nothing else stops the pack from
-  // quietly handing it to every new user.
+  // jongio.azd.copilot is retired and archived, and main has already dropped it
+  // from the registry. This guards the pack against it being reintroduced by a
+  // future edit that copies an older dependency list.
   it('does not install the retired copilot extension', () => {
     const ids = manifest.dependencies.map((dep) => dep.id);
     expect(ids).not.toContain('jongio.azd.copilot');
