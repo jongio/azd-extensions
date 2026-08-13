@@ -8,7 +8,7 @@
 /** Allowed hostname for artifact download URLs (GitHub releases only). */
 export const ALLOWED_ARTIFACT_HOST = 'github.com';
 
-/** Acceptable checksum algorithms — reject weak hashes like MD5, SHA1. */
+/** Acceptable checksum algorithms: reject weak hashes like MD5, SHA1. */
 export const ALLOWED_HASH_ALGORITHMS = ['sha256', 'sha384', 'sha512'];
 
 /**

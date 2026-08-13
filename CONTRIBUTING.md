@@ -181,7 +181,7 @@ The dispatch step requires a Personal Access Token (PAT) with permission to trig
 1. Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens](https://github.com/settings/tokens?type=beta)
 2. Create a new token with:
    - **Repository access**: Select `jongio/azd-extensions`
-   - **Permissions**: Contents (read/write) — needed for `repository_dispatch`
+   - **Permissions**: Contents (read/write), needed for `repository_dispatch`
 3. Go to your extension repo's **Settings > Secrets and variables > Actions**
 4. Add a new repository secret named `EXTENSIONS_DISPATCH_TOKEN` with the PAT value
 
@@ -191,7 +191,7 @@ The dispatch step requires a Personal Access Token (PAT) with permission to trig
 
 Update the local development scripts in `scripts/` so other developers can build and watch your extension alongside the others.
 
-**`scripts/install-all.ps1`** — Add your extension to the `$extensions` array:
+**`scripts/install-all.ps1`**: Add your extension to the `$extensions` array:
 ```powershell
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
@@ -201,7 +201,7 @@ $extensions = @(
 )
 ```
 
-**`scripts/watch-all.ps1`** — Add your extension to the `$extensions` array:
+**`scripts/watch-all.ps1`**: Add your extension to the `$extensions` array:
 ```powershell
 $extensions = @(
     @{ Name = "app";     Color = "Green";   Path = Join-Path $parentDir "azd-app\cli" },

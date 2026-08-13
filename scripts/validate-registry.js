@@ -12,7 +12,7 @@
  * Flags:
  *  --offline  Skip all URL reachability checks (useful for CI without network)
  *
- * Uses only Node.js built-in modules — no npm dependencies.
+ * Uses only Node.js built-in modules, no npm dependencies.
  */
 
 import { readFileSync } from 'fs';
@@ -34,7 +34,7 @@ const offlineMode = process.argv.includes('--offline');
 
 /**
  * Print a batch of { passed, message } results and append them to the
- * accumulator array. No global state — the caller owns the array.
+ * accumulator array. No global state; the caller owns the array.
  *
  * @param {{ passed: boolean, message: string }[]} batch
  * @param {{ passed: boolean, message: string }[]} accumulator

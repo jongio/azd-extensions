@@ -2,7 +2,7 @@
  * Shared validation functions for registry scripts.
  *
  * Pure functions that return arrays of { passed, message } results.
- * No side effects — no console.log, no global state mutation.
+ * No side effects, no console.log, no global state mutation.
  */
 
 import { compareSemver } from './semver.js';
