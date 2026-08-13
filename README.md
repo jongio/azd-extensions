@@ -21,6 +21,7 @@
 |-----------|-------------|--------|---------|
 | [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.5.0 | [🌐](https://jongio.github.io/azd-rest/) |
+| [**azd pack**](pack/) | Installs both of the above in one step as `jongio.azd` | v0.1.0 | [📦](pack/README.md) |
 
 > **Note:** `azd exec` is now a built-in command in Azure Developer CLI v1.25.1+. No extension needed. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
 
@@ -38,8 +39,8 @@ azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-exten
 # List available extensions
 azd extension list --source jongio
 
-# Install all extensions
-azd extension install jongio.azd.app jongio.azd.rest
+# Install both in one step, via the pack
+azd extension install jongio.azd
 
 # Or install individually
 azd extension install jongio.azd.app

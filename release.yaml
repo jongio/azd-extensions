@@ -11,6 +11,10 @@
 # Dependency graph:
 #   azd-core (Go module) ──► azd-app, azd-rest
 #   azd-web-core (npm pkg) ─► azd-app, azd-rest, azd-extensions
+#
+# Retired, do not release, do not treat as a blocker:
+#   azd-copilot  retired and archived
+#   azd-exec     archived; azd absorbed it as the built-in `azd exec` command
 
 owner: jongio
 
@@ -72,8 +76,6 @@ tiers:
           npm:
             - package: "@jongio/azd-web-core"
               file: web/package.json
-
-
 
       - name: azd-rest
         github: jongio/azd-rest
@@ -140,8 +142,13 @@ post_release_verification:
 
   registry_url: https://jongio.github.io/azd-extensions/registry.json
 
-  # Extensions to verify (Tier 1 Go extensions with release workflows)
+  # Extensions to verify (Tier 1 Go extensions with release workflows, plus
+  # the pack that bundles them). azd-copilot and azd-exec are retired and keep
+  # their existing registry entries so installed copies still resolve, but
+  # nothing new ships for them, so there is nothing here to verify.
   extensions:
+    - id: jongio.azd
+      repo: jongio/azd-extensions
     - id: jongio.azd.app
       repo: jongio/azd-app
     - id: jongio.azd.rest

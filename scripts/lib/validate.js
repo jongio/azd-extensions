@@ -45,6 +45,89 @@ export function isAllowedArtifactUrl(url) {
 }
 
 /**
+ * Detect an extension pack version.
+ *
+ * azd defines a pack by what it lacks, not by a flag. From the SDK's own
+ * ExtensionVersion doc comment: "An extension with dependencies and no
+ * artifacts is considered an extension pack." There is no discriminator to
+ * check, so this predicate has to mirror that shape exactly. If azd ever adds
+ * an explicit marker, prefer it over this.
+ *
+ * A pack ships no binaries, so every artifact check below is meaningless for
+ * one. Without this the aggregator drops packs for "missing required
+ * platforms" and the validator reports four failures, both of which look like
+ * a broken release rather than a category the tooling never learned about.
+ *
+ * @param {{ artifacts?: Record<string, unknown>, dependencies?: unknown[] }} version
+ * @returns {boolean}
+ */
+export function isExtensionPackVersion(version) {
+  const dependencies = version?.dependencies;
+  if (!Array.isArray(dependencies) || dependencies.length === 0) {
+    return false;
+  }
+  const artifacts = version?.artifacts;
+  return !artifacts || Object.keys(artifacts).length === 0;
+}
+
+/**
+ * Validate a pack version's dependencies.
+ *
+ * A pack is nothing but its dependency list, so a typo in an id is the whole
+ * failure mode: azd resolves nothing, installs nothing, and reports no error
+ * because an unresolvable dependency is indistinguishable from one that is
+ * simply not in this registry. Every id must therefore be one this registry
+ * actually serves.
+ *
+ * @param {string} extId
+ * @param {{ version: string, dependencies?: { id?: string, version?: string }[] }} version
+ * @param {string[]} knownIds ids present in the registry being validated
+ * @returns {{ passed: boolean, message: string }[]}
+ */
+export function validatePackDependencies(extId, version, knownIds) {
+  const results = [];
+
+  for (const dependency of version.dependencies || []) {
+    if (!dependency.id) {
+      results.push({
+        passed: false,
+        message: `[${extId}@${version.version}] dependency missing id`,
+      });
+      continue;
+    }
+    if (!knownIds.includes(dependency.id)) {
+      results.push({
+        passed: false,
+        message:
+          `[${extId}@${version.version}] dependency "${dependency.id}" is not in this registry ` +
+          `- azd would silently resolve nothing`,
+      });
+      continue;
+    }
+    if (!dependency.version) {
+      results.push({
+        passed: false,
+        message: `[${extId}@${version.version}] dependency "${dependency.id}" missing version constraint`,
+      });
+      continue;
+    }
+    results.push({
+      passed: true,
+      message: `[${extId}@${version.version}] dependency OK: ${dependency.id} ${dependency.version}`,
+    });
+  }
+
+  if (results.length === 0) {
+    results.push({
+      passed: false,
+      message: `[${extId}@${version.version}] extension pack has no dependencies - it would install nothing`,
+    });
+  }
+
+  return results;
+}
+
+/**
  * Validate that versions are in strictly ascending semver order.
  *
  * @param {string} extId
@@ -76,6 +159,15 @@ export function validateSemverOrder(extId, versions) {
  * @returns {{ passed: boolean, message: string }[]}
  */
 export function validatePlatforms(extId, latestVersion) {
+  if (isExtensionPackVersion(latestVersion)) {
+    return [
+      {
+        passed: true,
+        message: `[${extId}@${latestVersion.version}] Extension pack - no platform artifacts expected`,
+      },
+    ];
+  }
+
   const artifacts = latestVersion.artifacts || {};
   const platforms = Object.keys(artifacts);
   const results = [];
@@ -104,8 +196,28 @@ export function validatePlatforms(extId, latestVersion) {
  * @returns {{ passed: boolean, message: string }[]}
  */
 export function validateChecksums(extId, version) {
+  if (isExtensionPackVersion(version)) {
+    return [
+      {
+        passed: true,
+        message: `[${extId}@${version.version}] Extension pack - no artifacts to checksum`,
+      },
+    ];
+  }
+
   const artifacts = version.artifacts || {};
   const results = [];
+
+  if (Object.keys(artifacts).length === 0) {
+    return [
+      {
+        passed: false,
+        message:
+          `[${extId}@${version.version}] no artifacts and no dependencies ` +
+          `- nothing to install and nothing to verify`,
+      },
+    ];
+  }
 
   for (const [platform, artifact] of Object.entries(artifacts)) {
     const checksum = artifact.checksum;
@@ -156,6 +268,14 @@ export function validateAllVersions(extId, versions) {
   const results = [];
 
   for (const ver of versions) {
+    if (isExtensionPackVersion(ver)) {
+      results.push({
+        passed: true,
+        message: `[${extId}@${ver.version}] Extension pack - dependency-only, no artifacts to check`,
+      });
+      continue;
+    }
+
     const artifacts = ver.artifacts || {};
     const platforms = Object.keys(artifacts);
 
