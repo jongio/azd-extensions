@@ -171,7 +171,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
 
 ## License
 
-MIT, see [LICENSE](LICENSE)
+MIT. See [LICENSE](LICENSE)
 
 ---
 
