@@ -159,7 +159,7 @@ async function main() {
             return false;
           }
           if (!isAllowedArtifactUrl(artifact.url)) {
-            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL from disallowed domain — ${artifact.url}`);
+            console.log(`  ⚠ Dropping ${ext.id}@${ver.version}: artifact URL from disallowed domain (${artifact.url})`);
             return false;
           }
         }
@@ -188,7 +188,7 @@ async function main() {
       if (!ext.versions) continue;
       const before = ext.versions.length;
 
-      // Build a list of { version, url } to check — one representative URL per version
+      // Build a list of { version, url } to check: one representative URL per version
       const checks = ext.versions.map((ver) => {
         const artifacts = ver.artifacts || {};
         const checkPlatform = artifacts['windows/amd64']
@@ -205,7 +205,7 @@ async function main() {
           ? 'windows/amd64'
           : Object.keys(artifacts)[0];
         const url = artifacts[checkPlatform]?.url;
-        if (!url) return true; // no URL to check — keep
+        if (!url) return true; // no URL to check, so keep
         const status = statusMap.get(url);
         if (status !== 200) {
           console.log(

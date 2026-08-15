@@ -1,9 +1,9 @@
 /**
- * Canonical extension list — single source of truth for all JS registry scripts.
+ * Canonical extension list: single source of truth for all JS registry scripts.
  *
  * PowerShell scripts (install-all.ps1, watch-all.ps1, uninstall-all.ps1) maintain
  * their own lists with PS-specific fields (local paths, colors). Keep them in sync
- * manually — each PS1 file has a comment pointing back here.
+ * manually. Each PS1 file has a comment pointing back here.
  *
  * UI showcase data lives in src/data/extensions.ts (taglines, features, icons).
  *

@@ -54,7 +54,7 @@ azd extension list --installed
 
 ### azd-app
 
-Run your entire app locally with one command — auto-dependencies, real-time dashboard, and AI-powered debugging:
+Run your entire app locally with one command: auto-dependencies, real-time dashboard, and AI-powered debugging:
 
 ```bash
 # Start all services defined in azure.yaml
@@ -84,7 +84,7 @@ azd app mcp serve
 
 ### azd-rest
 
-Make authenticated REST API calls to any Azure service — automatic OAuth scope detection, token management, and MCP server for AI integration:
+Make authenticated REST API calls to any Azure service: automatic OAuth scope detection, token management, and MCP server for AI integration:
 
 ```bash
 # GET request to Azure Resource Manager
@@ -171,7 +171,7 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT. See [LICENSE](LICENSE)
 
 ---
 
