@@ -24,8 +24,8 @@ importers:
   .:
     dependencies:
       '@jongio/azd-web-core':
-        specifier: ^3.0.0
-        version: 3.0.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))(tailwindcss@4.3.3)
+        specifier: ^3.0.1
+        version: 3.0.1(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))(tailwindcss@4.3.3)
       astro:
         specifier: ^7.1.6
         version: 7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0)
@@ -547,8 +547,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@jongio/azd-web-core@3.0.0':
-    resolution: {integrity: sha512-Fli2aexJy1GPz3OT5nGls+7t9QraOj/TyNOm7C2Xt4BmQBsEwt50GxALf1w39katguOTypstsE/umed2bqAzFQ==, tarball: https://npm.pkg.github.com/download/@jongio/azd-web-core/3.0.0/bb96b135a17fc496c5997d318742e78f94648f9a}
+  '@jongio/azd-web-core@3.0.1':
+    resolution: {integrity: sha512-p/E6XdsG2UZHl3TkQJNBcK7D144MYYQwDaYX+tIkwceElx2n13u/jkh5y47lZVCool/Mi+5ve/ijyO4LGvMlbA==, tarball: https://npm.pkg.github.com/download/@jongio/azd-web-core/3.0.1/3d14e6953ce323868dfb7951434101871162fbb4}
     engines: {node: '>=18'}
     peerDependencies:
       astro: ^5.0.0 || ^6.0.0 || ^7.0.0
@@ -570,8 +570,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@lucide/astro@1.29.0':
-    resolution: {integrity: sha512-bUCIxIPV8NsDLSzad5G5evyBUqYchmaDHSQBFygRyyS0dAg/N+/88aRlresB8aJ3I27fRMyQdaL4Y5+IQMz3gA==}
+  '@lucide/astro@1.41.0':
+    resolution: {integrity: sha512-B6i+gssCkaI9o2mTGLslHOSNyFUv5i6bqxATozpFepdT5XH/n3gjcH4jQ6efqMRGIrqaKsFr5TRwgfKEMqlHiQ==}
     peerDependencies:
       astro: ^4 || ^5 || ^6 || ^7
 
@@ -2344,9 +2344,9 @@ snapshots:
   '@img/sharp-win32-x64@0.35.3':
     optional: true
 
-  '@jongio/azd-web-core@3.0.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))(tailwindcss@4.3.3)':
+  '@jongio/azd-web-core@3.0.1(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))(tailwindcss@4.3.3)':
     dependencies:
-      '@lucide/astro': 1.29.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
+      '@lucide/astro': 1.41.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))
       astro: 7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0)
       tailwindcss: 4.3.3
 
@@ -2369,7 +2369,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@lucide/astro@1.29.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))':
+  '@lucide/astro@1.41.0(astro@7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0))':
     dependencies:
       astro: 7.1.6(patch_hash=ac3dd1ebdd14e16e9da66b4e16592205f85240c22f1d286a7c1af77c718e3ef2)(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(@types/node@26.1.2)(jiti@2.7.0)(yaml@2.9.0)
 
@@ -3625,8 +3625,7 @@ snapshots:
 
   xxhash-wasm@1.1.0: {}
 
-  yaml@2.9.0:
-    optional: true
+  yaml@2.9.0: {}
 
   yargs-parser@22.0.0: {}
 

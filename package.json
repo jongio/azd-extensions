@@ -14,7 +14,7 @@
     "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {
-    "@jongio/azd-web-core": "^3.0.0",
+    "@jongio/azd-web-core": "^3.0.1",
     "astro": "^7.1.6"
   },
   "devDependencies": {
