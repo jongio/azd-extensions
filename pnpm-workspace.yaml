@@ -20,20 +20,18 @@ peerDependencyRules:
 overrides:
   picomatch: '>=2.3.2'
   lodash: '>=4.18.0'
-  fast-uri: '4.1.2'
+  fast-uri: '>=4.1.3'
+  nanoid: '>=3.3.18'
   smol-toml: '1.7.1'
+  svgo: '>=4.1.0'
   yaml: '2.9.0'
   # astro depends on js-yaml ^4.1.1. A 5.x override breaks the build, so this
-  # override is capped below 5. The floor is 4.3.1 because GHSA-5p4m-2wfm-xmqj
-  # (quadratic CPU consumption in !!omap) affects >=4.0.0 <4.3.1.
-  js-yaml: '>=4.3.1 <5'
+  # override is capped below 5. The floor is 4.3.2 because GHSA-mh29-5h37-fv8m
+  # affects >=4.0.0 <4.3.2.
+  js-yaml: '>=4.3.2 <5'
   # @napi-rs/wasm-runtime declares its emnapi peers as '^1.7.1 || ^2.0.0-alpha.3'.
   # With autoInstallPeers, `pnpm update --latest` resolves those to the 2.0.0 alpha.
   # Pin to the latest stable release instead.
   '@emnapi/core': '1.11.3'
   '@emnapi/runtime': '1.11.3'
   '@astrojs/check': '0.9.10'
-
-patchedDependencies:
-  '@astrojs/internal-helpers@0.10.2': patches/@astrojs__internal-helpers@0.10.2.patch
-  astro@7.1.6: patches/astro@7.1.6.patch

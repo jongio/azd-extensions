@@ -3,10 +3,11 @@
   "version": "1.0.0",
   "description": "A centralized registry and showcase site for azd extensions by Jon Gallant",
   "type": "module",
-  "packageManager": "pnpm@11.20.0",
+  "packageManager": "pnpm@12.3.4+sha512.961aa41fb077da3a04a441d9f8e15ebc0c96da8ef710b2eb67bf9ee7cb0610eabd48f1fd85f51cffe73846785fa0f87c56a3a872a1d893f8446741b5cce45457",
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "check": "astro check",
     "preview": "astro preview",
     "test": "vitest run",
     "validate-registry": "node scripts/validate-registry.js",
@@ -14,19 +15,21 @@
     "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {
-    "@jongio/azd-web-core": "^3.0.0",
-    "astro": "^7.1.6"
+    "@jongio/azd-web-core": "^3.0.1",
+    "astro": "^7.3.2"
   },
   "devDependencies": {
+    "@astrojs/check": "^0.9.10",
     "@tailwindcss/vite": "^4.3.3",
-    "@types/node": "^26.1.2",
+    "@types/node": "^26.5.1",
+    "@typescript/native": "npm:typescript@^7.0.2",
     "ajv": "^8.20.0",
     "ajv-formats": "^3.0.1",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.3",
-    "typescript": "^7.0.2",
-    "vitest": "^4.1.10",
+    "typescript": "npm:@typescript/typescript6@^6.0.2",
+    "vitest": "^5.0.0",
     "yaml": "2.9.0"
   },
   "repository": {
