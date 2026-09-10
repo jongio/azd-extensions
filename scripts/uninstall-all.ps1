@@ -15,7 +15,12 @@ chcp 65001 | Out-Null
 $registrySource = "jongio"
 
 $extensions = @(
+    # The pack itself, so anyone who installed the umbrella id can remove it.
+    @{ Name = "azd pack";    Id = "jongio.azd" },
     @{ Name = "azd-app";     Id = "jongio.azd.app" },
+    # Retired, but kept here on purpose: anyone who installed it before it was
+    # retired still needs a way to get it off their machine. This is now the
+    # only surface that mentions it, since the registry entry is gone.
     @{ Name = "azd-copilot"; Id = "jongio.azd.copilot" },
     @{ Name = "azd-rest";    Id = "jongio.azd.rest" }
 )

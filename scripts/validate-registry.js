@@ -12,7 +12,7 @@
  * Flags:
  *  --offline  Skip all URL reachability checks (useful for CI without network)
  *
- * Uses only Node.js built-in modules — no npm dependencies.
+ * Uses only Node.js built-in modules, no npm dependencies.
  */
 
 import { readFileSync } from 'fs';
@@ -23,6 +23,8 @@ import {
   validatePlatforms,
   validateChecksums,
   validateAllVersions,
+  validatePackDependencies,
+  isExtensionPackVersion,
 } from './lib/validate.js';
 
 const REGISTRY_PATH = resolve(import.meta.dirname, '..', 'public', 'registry.json');
@@ -32,7 +34,7 @@ const offlineMode = process.argv.includes('--offline');
 
 /**
  * Print a batch of { passed, message } results and append them to the
- * accumulator array. No global state — the caller owns the array.
+ * accumulator array. No global state; the caller owns the array.
  *
  * @param {{ passed: boolean, message: string }[]} batch
  * @param {{ passed: boolean, message: string }[]} accumulator
@@ -113,6 +115,11 @@ async function main() {
   /** @type {{ url: string, label: string }[]} */
   let allUrlChecks = [];
 
+  // Every id this registry serves. An extension pack's dependencies are checked
+  // against this, because azd cannot distinguish a mistyped id from one that
+  // simply is not in the source it was installed from.
+  const knownIds = extensions.map((e) => e.id).filter(Boolean);
+
   for (const ext of extensions) {
     const extId = ext.id || '(unknown)';
     console.log(`-- ${extId} --`);
@@ -141,7 +148,17 @@ async function main() {
     // 4. Checksums (latest)
     collectResults(validateChecksums(extId, latestVersion), allResults);
 
-    // 5. Collect URLs for batch reachability check (de-duplicated)
+    // 5. Extension pack dependencies. A pack is only its dependency list, so an
+    // id that this registry does not serve makes the whole entry install nothing
+    // while azd reports no error.
+    if (isExtensionPackVersion(latestVersion)) {
+      collectResults(
+        validatePackDependencies(extId, latestVersion, knownIds),
+        allResults,
+      );
+    }
+
+    // 6. Collect URLs for batch reachability check (de-duplicated)
     if (!offlineMode) {
       const checks = collectUrlChecks(extId, versions);
       allUrlChecks = allUrlChecks.concat(checks);

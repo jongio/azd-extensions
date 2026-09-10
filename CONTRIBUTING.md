@@ -136,17 +136,26 @@ Example structure:
 
 The `azd x publish` command in your release workflow will generate and update this file automatically.
 
-### 2. Add Source URL to `scripts/update-registry.js`
+### 2. Add Your Extension to `scripts/lib/extensions.js`
 
-Add your extension's raw `registry.json` URL to the `EXTENSION_SOURCES` array:
+That file is the single source of truth for every JS registry script. Add an entry
+with your extension's id, repo, and the raw URL of its `registry.json`:
 
 ```js
-const EXTENSION_SOURCES = [
-  'https://raw.githubusercontent.com/jongio/azd-exec/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
-  'https://raw.githubusercontent.com/jongio/azd-copilot/refs/heads/main/registry.json',
+export const EXTENSIONS = [
+  {
+    id: 'jongio.azd.app',
+    repo: 'azd-app',
+    sourceUrl:
+      'https://raw.githubusercontent.com/jongio/azd-app/refs/heads/main/registry.json',
+  },
   // Add your extension here:
-  'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+  {
+    id: 'jongio.azd.myext',
+    repo: 'azd-myext',
+    sourceUrl:
+      'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+  },
 ];
 ```
 
@@ -172,7 +181,7 @@ The dispatch step requires a Personal Access Token (PAT) with permission to trig
 1. Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens](https://github.com/settings/tokens?type=beta)
 2. Create a new token with:
    - **Repository access**: Select `jongio/azd-extensions`
-   - **Permissions**: Contents (read/write) — needed for `repository_dispatch`
+   - **Permissions**: Contents (read/write), needed for `repository_dispatch`
 3. Go to your extension repo's **Settings > Secrets and variables > Actions**
 4. Add a new repository secret named `EXTENSIONS_DISPATCH_TOKEN` with the PAT value
 
@@ -182,25 +191,23 @@ The dispatch step requires a Personal Access Token (PAT) with permission to trig
 
 Update the local development scripts in `scripts/` so other developers can build and watch your extension alongside the others.
 
-**`scripts/install-all.ps1`** — Add your extension to the `$extensions` array:
+**`scripts/install-all.ps1`**: Add your extension to the `$extensions` array:
 ```powershell
 $extensions = @(
-    @{ Name = "azd-exec";    Id = "jongio.azd.exec";    Path = Join-Path $parentDir "azd-exec\cli" },
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "azd-copilot"; Id = "jongio.azd.copilot"; Path = Join-Path $parentDir "azd-copilot\cli" },
+    @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" },
     # Add your extension:
     @{ Name = "azd-myext";   Id = "jongio.azd.myext";   Path = Join-Path $parentDir "azd-myext\cli" }
 )
 ```
 
-**`scripts/watch-all.ps1`** — Add your extension to the `$extensions` array:
+**`scripts/watch-all.ps1`**: Add your extension to the `$extensions` array:
 ```powershell
 $extensions = @(
-    @{ Name = "exec";    Color = "Cyan";    Path = Join-Path $parentDir "azd-exec\cli" },
     @{ Name = "app";     Color = "Green";   Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "copilot"; Color = "Magenta"; Path = Join-Path $parentDir "azd-copilot\cli" },
+    @{ Name = "rest";    Color = "Yellow";  Path = Join-Path $parentDir "azd-rest\cli" },
     # Add your extension:
-    @{ Name = "myext";   Color = "Yellow";  Path = Join-Path $parentDir "azd-myext\cli" }
+    @{ Name = "myext";   Color = "Cyan";    Path = Join-Path $parentDir "azd-myext\cli" }
 )
 ```
 

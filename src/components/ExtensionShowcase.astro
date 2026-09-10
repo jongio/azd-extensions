@@ -1,5 +1,6 @@
 ---
 import type { Extension as Props } from '../types/extension';
+import Icon from '@jongio/azd-web-core/components/Icon.astro';
 
 const { id, name, tagline, description, icon, website, repository, features, scenarios, tags, glowColor } = Astro.props;
 ---
@@ -20,10 +21,10 @@ const { id, name, tagline, description, icon, website, repository, features, sce
     <div class="mb-6 flex items-start justify-between gap-4">
       <div class="flex items-start gap-4">
         <div
-          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl text-2xl transition-transform duration-300 group-hover:scale-110"
-          style={`background: linear-gradient(135deg, color-mix(in srgb, ${glowColor} 30%, transparent), color-mix(in srgb, ${glowColor} 10%, transparent));`}
+          class="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl transition-transform duration-300 group-hover:scale-110"
+          style={`background: linear-gradient(135deg, color-mix(in srgb, ${glowColor} 30%, transparent), color-mix(in srgb, ${glowColor} 10%, transparent)); color: ${glowColor};`}
         >
-          {icon}
+          <Icon name={icon} size={28} />
         </div>
         <div>
             <h3 class="text-xl font-bold sm:text-2xl" style="color: var(--color-text);">
@@ -68,8 +69,8 @@ const { id, name, tagline, description, icon, website, repository, features, sce
       <ul role="list" class="mb-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
         {features.map((feature) => (
           <li class="feature-item flex items-start gap-2 rounded-lg p-3">
-            <span class="mt-0.5 shrink-0 text-sm" style={`color: ${glowColor};`} aria-hidden="true">
-              {feature.icon}
+            <span class="mt-0.5 shrink-0" style={`color: ${glowColor};`}>
+              <Icon name={feature.icon} size={16} />
             </span>
             <div>
               <p class="text-xs font-semibold" style="color: var(--color-text);">{feature.title}</p>
@@ -92,7 +93,7 @@ const { id, name, tagline, description, icon, website, repository, features, sce
               <p class="mb-1 text-xs" style="color: var(--color-text-muted);">{scenario.title}</p>
               <div class="terminal-code flex items-center gap-2 rounded-lg px-3 py-2">
                 <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0" style={`color: ${glowColor};`}><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg>
-                <code class="terminal-code-inner flex-1 overflow-x-auto whitespace-nowrap text-xs" style="font-family: var(--font-mono); color: var(--color-text);">
+                <code class="terminal-code-inner flex-1 overflow-x-auto whitespace-nowrap text-xs" style="font-family: var(--azd-font-mono); color: var(--color-text);">
                   {scenario.command}
                 </code>
                 <button

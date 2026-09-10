@@ -25,11 +25,15 @@ const installAzdTabs = [
     commands: ['curl -fsSL https://aka.ms/install-azd.sh | bash'],
   },
 ];
+
+const metaDescription = `Extensions that give the Azure Developer CLI new abilities. ${extensions
+  .map((ext) => `${ext.name} ${ext.heroClaim}`)
+  .join(' ')}`
 ---
 
 <Layout
   title="azd extensions | Azure Developer CLI Extensions"
-  description="Three Azure Developer CLI extensions by Jon Gallant. azd app runs your entire app locally. azd copilot is your AI-powered Azure assistant. azd rest makes authenticated REST API calls."
+  description={metaDescription}
   extensionName="extensions"
   canonicalUrl="https://jongio.github.io/azd-extensions/"
   ogImage="https://jongio.github.io/azd-extensions/og-image.png"
@@ -37,7 +41,7 @@ const installAzdTabs = [
 >
   <Fragment slot="head">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'; frame-ancestors 'none';" />
-    <meta name="keywords" content="Azure, Azure Developer CLI, azd, azd extensions, azd app, azd copilot, azd rest, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, AI assistant, REST API" />
+    <meta name="keywords" content={`Azure, Azure Developer CLI, azd, azd extensions, ${extensions.map((ext) => ext.name).join(', ')}, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, REST API`} />
     <meta name="robots" content="index, follow" />
     <link rel="icon" type="image/svg+xml" href="/azd-extensions/favicon.svg" />
     <link rel="icon" type="image/svg+xml" sizes="192x192" href="/azd-extensions/favicon-192.svg" />
@@ -47,7 +51,7 @@ const installAzdTabs = [
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       "name": "jongio/azd-extensions",
-      "description": "Azure Developer CLI extensions by Jon Gallant — azd app for running apps locally, azd copilot for AI-powered Azure assistance, and azd rest for authenticated REST API calls",
+      "description": metaDescription,
       "applicationCategory": "DeveloperApplication",
       "operatingSystem": "Windows, macOS, Linux",
       "author": { "@type": "Person", "name": "Jon Gallant", "url": "https://github.com/jongio" },
@@ -182,17 +186,21 @@ const installAzdTabs = [
         <h1
           class="mb-[var(--space-4)] text-4xl font-bold leading-tight sm:text-5xl"
         >
-          Three tools for your <span class="text-gradient-animated">Azure workflow</span>
+          Superpowers for <span class="text-gradient-animated">azd</span>
         </h1>
 
         <p
           class="mx-auto mb-[var(--space-8)] max-w-2xl text-lg"
           style="color: var(--color-text-muted);"
         >
-          <strong style="color: var(--color-text);">azd app</strong> runs your entire app locally.
-          <strong style="color: var(--color-text);">azd copilot</strong> is your AI-powered Azure assistant.
-          <strong style="color: var(--color-text);">azd rest</strong> makes authenticated REST API calls.
-          Three extensions that handle local dev, AI assistance, and REST calls.
+          Extensions that give the Azure Developer CLI new abilities.{' '}
+          {extensions.map((ext, i) => (
+            <>
+              {i > 0 && ' '}
+              <strong style="color: var(--color-text);">{ext.name}</strong>
+              {' '}{ext.heroClaim}
+            </>
+          ))}
         </p>
 
         <div class="flex flex-col items-center justify-center gap-[var(--space-4)] sm:flex-row">
@@ -223,7 +231,7 @@ const installAzdTabs = [
           <h2 class="mb-[var(--space-4)] text-2xl sm:text-3xl">
             The <span class="text-gradient">Extensions</span>
           </h2>
-          <p style="color: var(--color-text-muted); font-size: var(--text-base);" class="mx-auto max-w-2xl">
+          <p style="color: var(--color-text-muted); font-size: var(--azd-text-base);" class="mx-auto max-w-2xl">
             Built to solve real problems. Battle-tested with comprehensive security scanning,
             cross-platform support, and extensive documentation.
           </p>
@@ -251,7 +259,7 @@ const installAzdTabs = [
                 Get Started in <span class="text-gradient">30 Seconds</span>
               </h2>
               <p style="color: var(--color-text-muted);">
-                Install all three extensions with a single command
+                Install every extension with a single command
               </p>
             </div>
 
@@ -280,14 +288,14 @@ const installAzdTabs = [
               />
               <div class="-mt-[var(--space-4)] flex flex-col gap-[var(--space-3)]">
                 <p class="text-sm font-semibold" style="color: var(--color-text-muted);">Install all</p>
-                <CodeBlock code="azd extension install jongio.azd.app jongio.azd.copilot jongio.azd.rest" />
+                <CodeBlock code={`azd extension install ${extensions.map((ext) => ext.id).join(' ')}`} />
 
                 <div class="border-t pt-[var(--space-4)]" style="border-color: var(--color-border);">
                   <p class="mb-[var(--space-3)] text-sm font-semibold" style="color: var(--color-text-muted);">Or install individually</p>
                   <div class="flex flex-col gap-[var(--space-2)]">
-                    <CodeBlock code="azd extension install jongio.azd.app" />
-                    <CodeBlock code="azd extension install jongio.azd.copilot" />
-                    <CodeBlock code="azd extension install jongio.azd.rest" />
+                    {extensions.map((ext) => (
+                      <CodeBlock code={`azd extension install ${ext.id}`} />
+                    ))}
                   </div>
                 </div>
               </div>

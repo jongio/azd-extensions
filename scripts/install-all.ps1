@@ -26,7 +26,6 @@ $registryUrl = "https://jongio.github.io/azd-extensions/registry.json"
 # Extension repos relative to the parent directory
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "azd-copilot"; Id = "jongio.azd.copilot"; Path = Join-Path $parentDir "azd-copilot\cli" },
     @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" }
 )
 
@@ -66,7 +65,7 @@ function Ensure-ExtensionRegistered {
         return $true
     }
 
-    # Not in registry — register locally from extension.yaml
+    # Not in registry, so register locally from extension.yaml
     Write-Host "    Not in registry, registering locally from extension.yaml..." -ForegroundColor Gray
     $extYamlPath = Join-Path $CliDir "extension.yaml"
     if (-not (Test-Path $extYamlPath)) {
@@ -89,7 +88,7 @@ function Ensure-ExtensionRegistered {
     $binaryName = ($ExtensionId -replace '\.', '-') + "-$os-$arch$ext"
     $relativePath = "extensions\$ExtensionId\$binaryName"
 
-    # Update config.json — re-read to pick up any changes from 'azd extension install' above
+    # Update config.json: re-read to pick up any changes from 'azd extension install' above
     $configPath = Join-Path $env:USERPROFILE ".azd\config.json"
     $localConfig = if (Test-Path $configPath) {
         try {
@@ -134,7 +133,7 @@ Write-Host "`n🚀 Installing all azd extensions locally...`n" -ForegroundColor 
 
 Ensure-ExtensionSource
 
-# Read config.json once for all registration checks (#66 — avoid N+1 reads)
+# Read config.json once for all registration checks (#66, avoid N+1 reads)
 $configPath = Join-Path $env:USERPROFILE ".azd\config.json"
 $config = if (Test-Path $configPath) {
     try {
@@ -155,7 +154,7 @@ foreach ($ext in $extensions) {
     $cliDir = $ext.Path
 
     if (-not (Test-Path $cliDir)) {
-        Write-Host "  ⚠️  $name — not found at $cliDir, skipping" -ForegroundColor Yellow
+        Write-Host "  ⚠️  ${name}: not found at $cliDir, skipping" -ForegroundColor Yellow
         $skipped += $name
         continue
     }
@@ -164,7 +163,7 @@ foreach ($ext in $extensions) {
     $buildable += $ext
 }
 
-# Phase 2: Launch all builds concurrently (#65 — parallel mage build)
+# Phase 2: Launch all builds concurrently (#65, parallel mage build)
 $buildJobs = @()
 foreach ($ext in $buildable) {
     $name = $ext.Name

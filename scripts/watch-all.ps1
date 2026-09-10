@@ -22,7 +22,6 @@ $parentDir = Split-Path -Parent $repoDir
 # Extension repos relative to the parent directory
 $extensions = @(
     @{ Name = "app";     Color = "Cyan";    Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "copilot"; Color = "Magenta"; Path = Join-Path $parentDir "azd-copilot\cli" },
     @{ Name = "rest";    Color = "Yellow";  Path = Join-Path $parentDir "azd-rest\cli" }
 )
 

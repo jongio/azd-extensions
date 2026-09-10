@@ -14,7 +14,7 @@
     "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {
-    "@jongio/azd-web-core": "^2.4.1",
+    "@jongio/azd-web-core": "^3.0.0",
     "astro": "^7.1.6"
   },
   "devDependencies": {
@@ -26,7 +26,8 @@
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.10",
+    "yaml": "2.9.0"
   },
   "repository": {
     "type": "git",

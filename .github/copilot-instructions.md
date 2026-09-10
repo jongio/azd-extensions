@@ -11,9 +11,8 @@ extension ecosystem:
    verification steps.
 
 2. **Follow tier order strictly**: Tier 0 (azd-core, azd-web-core) MUST be
-   released before Tier 1 (azd-app, azd-copilot, azd-exec, azd-rest,
-   azd-extensions). Tier 0 repos can be parallel. Tier 1 repos can be parallel
-   after Tier 0 completes.
+   released before Tier 1 (azd-app, azd-rest, azd-extensions). Tier 0 repos can
+   be parallel. Tier 1 repos can be parallel after Tier 0 completes.
 
 3. **Dependency updates**: After releasing Tier 0, Tier 1 repos must update
    their references:
@@ -40,12 +39,12 @@ extension ecosystem:
 | azd-core | `GOWORK=off go test ./...` |
 | azd-web-core | `npm run check && npm run lint` |
 | azd-app | `cd cli && GOWORK=off go test ./...` |
-| azd-copilot | `cd cli && GOWORK=off go test ./...` |
-| azd-exec | `cd cli && GOWORK=off go test ./...` |
 | azd-rest | `cd cli && GOWORK=off go test ./...` |
 | azd-extensions | `pnpm run build` |
 
 ## Excluded Repos
 
 - `azd-app-2`: Secondary clone for parallel work; not a release target
+- `azd-copilot`: Retired and being archived. Not a release target.
+- `azd-exec`: Archived. azd absorbed it as the built-in `azd exec` command.
 - `docs`: Documentation only, no release artifacts
