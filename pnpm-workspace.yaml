@@ -24,7 +24,7 @@ overrides:
   nanoid: '>=3.3.18'
   smol-toml: '1.7.1'
   svgo: '>=4.1.0'
-  yaml: '2.9.0'
+  yaml: '2.9.1'
   # astro depends on js-yaml ^4.1.1. A 5.x override breaks the build, so this
   # override is capped below 5. The floor is 4.3.2 because GHSA-mh29-5h37-fv8m
   # affects >=4.0.0 <4.3.2.
