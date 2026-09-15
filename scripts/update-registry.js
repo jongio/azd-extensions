@@ -8,7 +8,7 @@
 
 import { readFileSync, writeFileSync } from 'fs';
 import { compareSemver } from './lib/semver.js';
-import { headRequest, batchHeadRequests } from './lib/http.js';
+import { batchHeadRequests } from './lib/http.js';
 import { isAllowedArtifactUrl, isExtensionPackVersion } from './lib/validate.js';
 import {
   ALLOWED_HASH_ALGORITHMS,
