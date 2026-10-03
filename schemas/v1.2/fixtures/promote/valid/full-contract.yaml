@@ -1,0 +1,409 @@
+name: full-contract
+promote:
+  project:
+    id: sampleApp
+
+  chains:
+    release:
+      default: true
+      targets: [dev, staging, prod]
+
+  candidate:
+    worktree: clean
+    upstream: published
+
+  approvals:
+    targets: [staging, prod, publishContent, activateContent]
+    message: Approve the exact candidate and reviewed content
+    match: PROMOTE
+    automation: allowed
+
+  records:
+    path: '.azure/promote/records/{target}.json'
+
+  results:
+    path: '.azure/promote/results/{target}/{artifact}.json'
+
+  snapshots:
+    stagingRelease:
+      purpose: verifiedStaging
+      mode: publish
+      recovery: manual
+      refs:
+        - kind: branch
+          ref: refs/heads/environments/staging
+
+  artifacts:
+    contentApp:
+      type: static
+      path: dist/content-app
+      identityPaths:
+        - azure.yaml
+        - pnpm-lock.yaml
+      sealedPaths:
+        - '.azure/promote/verification/{workflow}-selected-files.json'
+      liveFiles:
+        - path: content-index.json
+
+  providers:
+    cloudflare:
+      type: cloudflareWorker
+      config: deploy/content-app/wrangler.jsonc
+      secrets:
+        - DEPLOY_API_TOKEN
+      variables:
+        CONTENT_APP_REGION: DEPLOY_REGION
+      message: sampleApp {environment} promotion
+
+  environments:
+    dev:
+      provider: cloudflare
+      artifacts: [contentApp]
+      candidate:
+        worktree: dirtyAllowed
+      auth: basic
+      hooks:
+        before:
+          [
+            verifyCredentials,
+            checkAssetStore,
+            migrateData,
+            verifyData,
+            buildContentApp,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+        apply: [publishAssets, configureAssetCors]
+        after: [runSmokeTests, verifyLiveSite]
+
+    staging:
+      provider: cloudflare
+      artifacts: [contentApp]
+      auth: basic
+      snapshot: stagingRelease
+      hooks:
+        before:
+          [
+            verifyCredentials,
+            checkAssetStore,
+            migrateData,
+            verifyData,
+            buildContentApp,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+        apply: [publishAssets, configureAssetCors]
+        after: [runSmokeTests, verifyLiveSite]
+
+    prod:
+      provider: cloudflare
+      artifacts: [contentApp]
+      candidate:
+        worktree: clean
+        ref:
+          exact: origin/main
+          refresh: true
+      previousRun:
+        files:
+          - .azure/promote/verification/staging-content.json
+          - .azure/promote/verification/staging-routing.json
+      hooks:
+        before:
+          [
+            prepareProductionData,
+            verifyPublisherApproval,
+            prepareProductionRelease,
+            verifyCredentials,
+            checkAssetStore,
+            verifyData,
+            buildContentApp,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+        apply: [verifyDeploymentInputs, deployContentApp]
+        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+
+  operations:
+    publishContent:
+      environment: prod
+      hooks:
+        before:
+          [
+            verifyPreparedContent,
+            verifyCredentials,
+            checkAssetStore,
+            verifyData,
+            buildContentApp,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+        apply: [verifyContentInputs, deployContentApp]
+        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+
+    validateContent:
+      environment: prod
+      mode: validate
+      hooks:
+        before:
+          [
+            verifyCredentials,
+            checkAssetStore,
+            verifyData,
+            buildContentPreview,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+
+    activateContent:
+      environment: prod
+      hooks:
+        before:
+          [
+            verifyCredentials,
+            checkAssetStore,
+            verifyData,
+            buildContentApp,
+            pruneOutput,
+            normalizeOutput,
+            verifyOfflineOutput,
+            selectFiles,
+            removeUnusedFiles,
+          ]
+        apply: [verifyContentInputs, deployContentApp]
+        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+
+  hooks:
+    verifyCredentials:
+      effect: inspection
+      command: node
+      args: [scripts/verify-credentials.mjs]
+      inspectionOnly: true
+      timeout: 5m
+
+    checkAssetStore:
+      command: node
+      args: [scripts/check-resource.mjs, content-assets]
+      timeout: 5m
+
+    migrateData:
+      effect: change
+      command: node
+      args: [scripts/migrate-data.mjs]
+      timeout: 30m
+
+    verifyData:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-data.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-data.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-data.json'
+      timeout: 10m
+
+    buildContentApp:
+      command: node
+      args: [scripts/build-content-app.mjs]
+      timeout: 30m
+
+    buildContentPreview:
+      command: node
+      args: [scripts/build-content-preview.mjs]
+      timeout: 30m
+
+    pruneOutput:
+      command: node
+      args: [scripts/prune-output.mjs, dist/content-app]
+      timeout: 10m
+
+    normalizeOutput:
+      command: node
+      args: [scripts/normalize-output.mjs, dist/content-app]
+      timeout: 10m
+
+    verifyOfflineOutput:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-offline-output.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-offline-output.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-offline-output.json'
+      timeout: 10m
+
+    publishAssets:
+      effect: change
+      command: node
+      args:
+        [
+          scripts/publish-assets.mjs,
+          --source,
+          public/assets,
+          --target,
+          https://assets.example.invalid,
+          --export-dir,
+          dist/content-app,
+          --skip-existing,
+        ]
+      timeout: 1h
+
+    selectFiles:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/select-files.mjs,
+          --source,
+          public/assets,
+          --target,
+          https://assets.example.invalid,
+          --dry-run,
+          --export-dir,
+          dist/content-app,
+          --selection-record,
+          '.azure/promote/verification/{workflow}-selected-files.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-selected-files.json'
+      timeout: 1h
+
+    removeUnusedFiles:
+      command: node
+      args: [scripts/remove-unused-files.mjs, dist/content-app]
+      timeout: 10m
+
+    configureAssetCors:
+      effect: change
+      command: node
+      args: [scripts/configure-asset-cors.mjs, content-assets]
+      timeout: 10m
+
+    runSmokeTests:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/run-smoke-tests.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-smoke.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-smoke.json'
+      timeout: 15m
+
+    verifyLiveSite:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-live-site.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-live-site.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-live-site.json'
+      timeout: 15m
+
+    prepareProductionData:
+      effect: change
+      command: node
+      args: [scripts/prepare-production-data.mjs]
+      timeout: 30m
+
+    verifyPublisherApproval:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-publisher-approval.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-publisher-approval.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-publisher-approval.json'
+      timeout: 5m
+
+    prepareProductionRelease:
+      effect: change
+      command: node
+      args: [scripts/prepare-production-release.mjs]
+      timeout: 30m
+
+    verifyDeploymentInputs:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-deployment-inputs.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-deployment-inputs.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-deployment-inputs.json'
+      timeout: 10m
+
+    deployContentApp:
+      effect: change
+      command: node
+      args: [scripts/deploy-content-app.mjs]
+      timeout: 30m
+
+    verifyPublishedContent:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-published-content.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-published-content.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-published-content.json'
+      timeout: 10m
+
+    verifyPreparedContent:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-prepared-content.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-prepared-content.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-prepared-content.json'
+      timeout: 10m
+
+    verifyContentInputs:
+      effect: verification
+      command: node
+      args:
+        [
+          scripts/verify-content-inputs.mjs,
+          --record,
+          '.azure/promote/verification/{workflow}-content-inputs.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{workflow}-content-inputs.json'
+      timeout: 10m

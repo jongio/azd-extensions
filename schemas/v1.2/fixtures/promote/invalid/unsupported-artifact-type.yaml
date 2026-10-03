@@ -1,0 +1,19 @@
+name: invalid-unsupported-artifact-type
+promote:
+  project:
+    id: invalidUnsupportedArtifactType
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: localPublisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: container
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish

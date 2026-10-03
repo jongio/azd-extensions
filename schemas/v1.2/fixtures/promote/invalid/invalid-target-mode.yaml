@@ -1,0 +1,20 @@
+name: invalid-target-mode
+promote:
+  project:
+    id: invalidTargetMode
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: localPublisher
+      mode: preview
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish

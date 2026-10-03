@@ -98,7 +98,7 @@ node scripts/update-registry.js
 
 ## Adding a New Extension
 
-This is the complete checklist for adding a new azd extension to this registry. Each extension lives in its own repo (e.g., `jongio/azd-myext`) and publishes its own `registry.json`. This repo aggregates them all.
+This is the complete checklist for adding a new azd extension to this registry. Each extension lives in its own repo (e.g., `username/azd-myext`) and publishes its own `registry.json`. This repo aggregates them all.
 
 ### 1. Create `registry.json` in the Extension Repo
 
@@ -151,10 +151,10 @@ export const EXTENSIONS = [
   },
   // Add your extension here:
   {
-    id: 'jongio.azd.myext',
+    id: 'example.azd.myext',
     repo: 'azd-myext',
     sourceUrl:
-      'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+      'https://raw.githubusercontent.com/username/azd-myext/refs/heads/main/registry.json',
   },
 ];
 ```

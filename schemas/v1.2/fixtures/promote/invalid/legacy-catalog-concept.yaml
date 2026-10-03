@@ -1,0 +1,21 @@
+name: invalid-legacy-catalog-concept
+promote:
+  project:
+    id: invalidCatalogConcept
+  chains:
+    release:
+      targets: [prod]
+  environments:
+    prod:
+      provider: localPublisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish
+  catalog:
+    publish: true

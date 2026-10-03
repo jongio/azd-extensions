@@ -1,0 +1,26 @@
+name: invalid-verification-effect-without-record
+promote:
+  project:
+    id: invalidVerificationEffectWithoutRecord
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: localPublisher
+      artifacts: [site]
+      hooks:
+        before: [verifyTarget]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish
+  hooks:
+    verifyTarget:
+      effect: verification
+      command: pnpm
+      timeout: 5m

@@ -1,0 +1,57 @@
+name: auth-forms-and-external-names
+promote:
+  project:
+    id: authFormsAndExternalNames
+  chains:
+    release:
+      targets: [dev-west, qa-headers, staging-service-token, prod-basic-map]
+  environments:
+    dev-west:
+      provider: localPublisher
+      artifacts: [site]
+      auth: basic
+      locks: [deployment:dev-west]
+    qa-headers:
+      provider: localPublisher
+      artifacts: [site]
+      auth:
+        type: headers
+        headers:
+          X-Access-Key: ACCESS_KEY
+    staging-service-token:
+      provider: localPublisher
+      artifacts: [site]
+      auth:
+        type: serviceToken
+        clientIdHeader: CF-Access-Client-Id
+        clientId: CF_ACCESS_CLIENT_ID
+        clientSecretHeader: CF-Access-Client-Secret
+        clientSecret: CF_ACCESS_CLIENT_SECRET
+    prod-basic-map:
+      provider: localPublisher
+      artifacts: [site]
+      auth:
+        type: basic
+        username: BASIC_AUTH_USERNAME
+        password: BASIC_AUTH_PASSWORD
+      candidate:
+        ref:
+          exact: origin/release-2026-10
+          refresh: true
+  artifacts:
+    site:
+      type: static
+      path: dist/site-output
+      identityPaths: [azure.yaml, pnpm-lock.yaml]
+      sealedPaths: [verification/staging-content.json]
+      liveFiles:
+        - path: search-index.json
+          urlPath: /search-index.json
+  providers:
+    localPublisher:
+      type: process
+      command: publish-site
+      args: [--environment, '{environment}']
+      variables:
+        DEPLOY_REGION: AZURE_LOCATION
+      secrets: [PUBLISH_TOKEN]

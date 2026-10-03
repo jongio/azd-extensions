@@ -1,0 +1,32 @@
+name: named-promotion-operation
+promote:
+  project:
+    id: namedPromotionOperation
+  chains:
+    release:
+      targets: [prod]
+  environments:
+    prod:
+      provider: cloudflare
+      artifacts: [site]
+  operations:
+    validateContent:
+      environment: prod
+      mode: validate
+      hooks:
+        before: [buildPreview]
+  artifacts:
+    site:
+      type: static
+      path: dist
+      sealedPaths:
+        - .azure/promote/verification/validateContent-selected-files.json
+  providers:
+    cloudflare:
+      type: cloudflareWorker
+      config: deploy/content-app/wrangler.jsonc
+  hooks:
+    buildPreview:
+      command: pnpm
+      args: [build]
+      timeout: 30m

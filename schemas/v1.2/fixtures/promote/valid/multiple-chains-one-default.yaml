@@ -1,0 +1,25 @@
+name: multiple-promotion-chains
+promote:
+  project:
+    id: multiplePromotionChains
+  chains:
+    release:
+      default: true
+      targets: [dev-west, staging]
+    preview:
+      targets: [dev-west]
+  environments:
+    dev-west:
+      provider: localPublisher
+      artifacts: [site]
+    staging:
+      provider: localPublisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist/site-output
+  providers:
+    localPublisher:
+      type: process
+      command: publish

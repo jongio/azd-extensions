@@ -1,0 +1,19 @@
+name: invalid-empty-target-artifacts
+promote:
+  project:
+    id: invalidEmptyTargetArtifacts
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: localPublisher
+      artifacts: []
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish

@@ -1,0 +1,23 @@
+name: invalid-unbounded-hook-timeout
+promote:
+  project:
+    id: invalidUnboundedHookTimeout
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: localPublisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish
+  hooks:
+    inspectTarget:
+      command: pnpm
+      timeout: forever

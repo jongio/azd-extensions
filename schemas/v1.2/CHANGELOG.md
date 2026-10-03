@@ -11,24 +11,16 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 
 ### New
 
-- **`promote`** top-level property — Configures the `azd promote` extension for orchestrating environment promotion pipelines. Sub-properties:
-  - `chain` — Ordered list of environment names forming the promotion chain (e.g., `[dev, staging, prod]`).
-  - `protected` — Environments that require explicit confirmation before promotion.
-  - `preflight` — Preflight check configuration (env_diff with ignore_keys).
-  - `database` — Database configuration for backup and migration phases, including:
-    - `connection_string.env_var` — Environment variable for the DB connection string.
-    - `backup.enabled`, `backup.retain`, `backup.max_count` — Backup settings.
-    - `schema_check` — Pre-migration schema validation (tool, command).
-    - `migrate` — Single command or multi-step migration pipeline with optional interactive confirmation.
-    - `seed` — Database seeding command with environment filtering.
-  - `deploy` — Deploy phase configuration (service filtering, groups, SWA).
-  - `purge` — CDN/cache invalidation configuration (cloudflare, azure-cdn, custom).
-  - `verify` — Post-deploy verification with health check endpoints and smoke test commands.
-  - `rollback` — Failure handling configuration (auto, pause, custom command).
-  - `hooks` — User-defined `pre-`/`post-` commands for each promotion phase (preflight, backup, migrate, provision, deploy, verify).
-  - `confirm` — Custom typed-confirmation gate before proceeding.
-  - `notifications` — Webhook notifications on promotion events (start, success, failure).
-  - `environments` — Per-environment overrides that deep-merge onto the base promote config.
+- **`promote`** top-level property configures the `azd promote` extension with a strict config-first contract.
+- The stale pre-release promote model has been replaced completely. Legacy phase-specific fields and permissive environment overrides are rejected.
+- The authored `promote` object has no independent `version`. The v1.2 `azure.yaml` schema URI is the sole public contract version.
+- Promote-owned keys and identifiers use lower camelCase. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
+- The contract covers projects, named chains, real environments, operations, artifacts, providers, reusable lifecycle hooks, candidate policy, approvals, results, run records, snapshots, authentication, locks, previous-run files, live files, and provider variables and secrets.
+- Public terminology uses run records, previous runs, verification, results, cleanup, changes, and inspection.
+
+### Pre-release compatibility
+
+The replacement promote contract is not compatible with the stale experimental model. Runtime implementations, CLI and MCP adapters, durable-state formats, documentation, examples, and downstream configurations must adopt the final contract before claiming v1.2 compatibility.
 
 ### Preserved from v1.1
 
@@ -49,10 +41,10 @@ All core azd properties remain unchanged:
 
 ### Schema Location Change
 
-| Version | Repository | Path |
-|---------|-----------|------|
-| v1.0 | azure-dev | Built-in to azd CLI |
-| v1.1 | azd-app | `schemas/v1.1/azure.yaml.json` |
+| Version  | Repository         | Path                               |
+| -------- | ------------------ | ---------------------------------- |
+| v1.0     | azure-dev          | Built-in to azd CLI                |
+| v1.1     | azd-app            | `schemas/v1.1/azure.yaml.json`     |
 | **v1.2** | **azd-extensions** | **`schemas/v1.2/azure.yaml.json`** |
 
 Starting with v1.2, the `azd-extensions` repo is the centralized schema home. The v1.1 schema in `azd-app` remains frozen for backward compatibility.
@@ -69,4 +61,4 @@ To adopt the v1.2 schema in your `azure.yaml`, update the `$schema` reference:
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jongio/azd-extensions/main/schemas/v1.2/azure.yaml.json
 ```
 
-No other changes are required — v1.2 is fully backward compatible with v1.1 and v1.0 configurations. The new `promote` property is optional.
+Existing v1.0 and v1.1 properties remain compatible. Configurations that used the unreleased experimental `promote` model must migrate to the replacement contract before release.
