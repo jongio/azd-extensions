@@ -5,7 +5,7 @@ promote:
       targets: [dev]
   environments:
     dev:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
   artifacts:
     site:
@@ -15,6 +15,6 @@ promote:
         - path: search-index.json
           urlPath: search-index.json
   providers:
-    localPublisher:
+    local-publisher:
       type: process
       command: publish

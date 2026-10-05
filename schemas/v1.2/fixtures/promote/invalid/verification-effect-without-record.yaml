@@ -5,21 +5,21 @@ promote:
       targets: [dev]
   environments:
     dev:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
       steps:
         verify:
-          - use: verifyTarget
+          - use: verify-target
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    localPublisher:
+    local-publisher:
       type: process
       command: publish
   commands:
-    verifyTarget:
+    verify-target:
       effect: verification
       command: pnpm
       timeout: 5m

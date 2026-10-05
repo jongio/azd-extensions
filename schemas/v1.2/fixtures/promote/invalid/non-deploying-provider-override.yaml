@@ -1,20 +1,25 @@
-name: invalid-legacy-operation-environment
+name: invalid-non-deploying-provider-override
 promote:
   chains:
     release:
       targets: [prod]
   environments:
     prod:
-      provider: local-publisher
+      provider: publisher
       artifacts: [site]
   operations:
-    validate-content:
-      environment: prod
+    validate:
+      target: prod
+      deploy: false
+      provider: validator
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    local-publisher:
+    publisher:
       type: process
       command: publish
+    validator:
+      type: process
+      command: validate

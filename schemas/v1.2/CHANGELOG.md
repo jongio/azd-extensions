@@ -21,11 +21,11 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 - Authentication values use explicit `{azd: SECRET_NAME}` references. Scalar `auth: basic` defaults and raw secret names are rejected.
 - Reusable definitions are authored under `commands`. Lifecycle groups use `prepare`, `change`, `verify`, and `cleanup`, with `{use, with}` invocation objects instead of hook-name strings.
 - Git policy composes in order from top-level `promote.git` to environment `git` to operation `git`, with recursive merging and later authored members taking precedence.
-- Named operations compose explicitly from a real environment through `target`. Provider, artifacts, auth, and the environment's effective Git policy inherit according to the documented base rule; operation requirements, steps, locks, snapshots, and approvals remain operation-owned.
+- Named operations compose explicitly from a real environment through `target`. Provider, artifacts, auth, and the environment's effective Git policy inherit according to the documented base rule; operation requirements, steps, locks, snapshots, and approvals remain operation-owned. `deploy: false` explicitly preserves artifact sealing and lifecycle commands while suppressing provider expansion, operation results, deployment verification, and live-file HTTP verification.
 - Approval and snapshot policy is inline on environments and operations. Global approval target lists, named snapshot maps, and repeated snapshot purpose IDs are rejected.
-- Target `mode` is removed. Validation uses ordinary commands or a generic provider selected by the operation.
+- Target `mode` is removed. Validation uses ordinary commands plus `deploy: false` rather than a fake deployment provider.
 - Provider definitions use strict type-specific `process` and `azd` schemas. Platform-specific adapters are project-owned process providers.
-- Promote-owned keys and identifiers use lower camelCase. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
+- Promote-owned schema fields use lower camelCase. Promote-owned identifiers use lowercase kebab-case. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
 - The contract covers named chains, real environments, explicitly composed operations, artifacts, strict providers, reusable parameterized commands, lifecycle steps, Git policy, inline approvals and snapshots, authentication, locks, predecessor verification imports, and live files.
 - Run-record and operation-result paths remain runtime-owned. Verification commands author their own output record path, while predecessor verification imports use stable IDs instead of authored predecessor paths.
 - Public terminology uses run records, previous runs, verification, results, cleanup, changes, and inspection.

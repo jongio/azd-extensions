@@ -5,12 +5,12 @@ promote:
       targets: [dev]
   environments:
     dev:
-      provider: customPublisher
+      provider: custom-publisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    customPublisher:
+    custom-publisher:
       type: cloudflareWorker

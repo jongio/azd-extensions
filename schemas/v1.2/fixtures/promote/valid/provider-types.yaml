@@ -5,23 +5,23 @@ promote:
       targets: [process-env, azd-env]
   environments:
     process-env:
-      provider: processPublisher
+      provider: process-publisher
       artifacts: [site]
     azd-env:
-      provider: azdPublisher
+      provider: azd-publisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist/site
   providers:
-    processPublisher:
+    process-publisher:
       type: process
       command: publish-site
       args: [--artifact, '{artifact}', --result, '{result}']
       workdir: .
       timeout: 15m
-    azdPublisher:
+    azd-publisher:
       type: azd
       args: [--all]
       workdir: infra

@@ -30,13 +30,14 @@ operations invoke them through `steps.prepare`, `steps.change`,
    one `default: true`.
 3. `require_clean` and other `require_*` booleans are rejected. Policies use
    nested state values.
-4. Every underscore and hyphen is audited in the authored `promote` schema.
-   Framework-owned keys and identifiers use lower camelCase.
+4. Every underscore, hyphen, and capital letter is audited in the authored
+   `promote` schema. Schema-owned fields use lower camelCase; authored
+   identifiers use lowercase kebab-case.
 5. File names, paths, CLI flags, environment variables, external resource
    names, and real azd environment names may retain idiomatic hyphens.
 6. `catalog` is not a framework concept. Operation IDs use verb-first,
-   application-neutral names such as `publishContent`, `validateContent`, and
-   `activateContent`.
+   application-neutral, lowercase kebab-case names such as `publish-content`,
+   `validate-content`, and `activate-content`.
 7. `evidence`, `receipt`, and `proof` are removed from the normal public mental
    model. Public terms are run record, verification, result, checks, and
    inspection.
@@ -70,8 +71,9 @@ operations invoke them through `steps.prepare`, `steps.change`,
     boundary. A global approval target list is rejected.
 22. Snapshot policy is inline on its environment or operation. Named one-use
     snapshot IDs and repeated purpose IDs are rejected.
-23. Target `mode` is removed. Validation uses ordinary command invocations or
-    a generic provider selected by the operation.
+23. Target `mode` is removed. Validation uses ordinary command invocations and
+    an operation-authored `deploy: false` boundary instead of a fake deployment
+    provider.
 24. Provider schemas are strict per type. Process, azd, and Cloudflare Worker
     fields cannot be mixed.
 
@@ -80,8 +82,8 @@ operations invoke them through `steps.prepare`, `steps.change`,
 ### This repository
 
 - Replace `schemas/v1.2/azure.yaml.json` promote schema.
-- Add strict promote definitions with camelCase keys and promote-owned ID
-  patterns.
+- Add strict promote definitions with lower camelCase schema fields and
+  lowercase kebab-case promote-owned ID patterns.
 - Add valid and invalid schema fixtures and executable AJV tests.
 - Update `schemas/v1.2/CHANGELOG.md`.
 - Add this design under
@@ -107,7 +109,7 @@ operations invoke them through `steps.prepare`, `steps.change`,
 - Migrate authored `azure.yaml` files to the final schema 1.2 promote contract.
 - Consolidate duplicate build, asset, verification, and smoke-test commands
   where behavior is equivalent.
-- Rename promote-owned IDs to lower camelCase.
+- Rename promote-owned IDs to lowercase kebab-case.
 - Keep idiomatic dashed file names such as `staging-content.json`.
 - Validate every environment and operation through an offline plan before any
   deployment.
@@ -130,7 +132,16 @@ operations invoke them through `steps.prepare`, `steps.change`,
 
 - azd core and azd-app schema keys use lower camelCase for modern authored
   fields such as `resourceGroup`, `requiredVersions`, `readyPattern`,
-  `healthCheck`, and `urlPath`.
+  `healthCheck`, and `urlPath`, while the official azd project-name boundary
+  permits lowercase letters, numbers, and hyphens.
+- Kubernetes follows the same semantic split: API fields use lower camelCase
+  while resource names use lowercase DNS-style identifiers with hyphens.
+- GitHub Actions and Docker Compose use different schema-key styles
+  (kebab-case and snake_case respectively), confirming that YAML itself does
+  not define one casing convention.
+- Helm recommends lower camelCase values while using dashed chart and template
+  names. The cross-ecosystem convention is therefore role-based rather than
+  one casing style for every authored token.
 - CLI flags remain kebab-case by Cobra convention.
 - JSON API fields already use lower camelCase.
 - Go exported types use PascalCase and fields use Go identifier conventions.
@@ -141,6 +152,15 @@ operations invoke them through `steps.prepare`, `steps.change`,
 - A conforming promotion runtime uses strict decoding, generated plans, and
   explicit runtime cross-reference validation. The replacement schema should
   mirror those boundaries.
+
+Primary convention sources:
+
+- [Azure Developer CLI `azure.yaml` schema](https://learn.microsoft.com/azure/developer/azure-developer-cli/azd-schema)
+- [YAML 1.2.2 specification](https://yaml.org/spec/1.2.2/)
+- [Kubernetes object names](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/)
+- [GitHub Actions workflow syntax](https://docs.github.com/actions/reference/workflows-and-actions/workflow-syntax)
+- [Docker Compose file reference](https://docs.docker.com/reference/compose-file/)
+- [Helm values best practices](https://helm.sh/docs/chart_best_practices/values/)
 
 ## Impact Scan
 
@@ -163,10 +183,11 @@ operations invoke them through `steps.prepare`, `steps.change`,
 2. The legacy promote fields `chain`, `protected`, `database`, `deploy`,
    `purge`, `rollback`, `notifications`, legacy phase hooks, and deep-merge
    environment overrides are removed.
-3. Promote-owned YAML keys use lower camelCase.
-4. Promote-owned IDs reject `_` and `-`; real azd environment names, paths,
-   external resources, locks, refs, CLI flags, and environment variables remain
-   valid with their native conventions.
+3. Promote-owned YAML schema fields use lower camelCase.
+4. Promote-owned IDs use lowercase kebab-case and reject uppercase letters,
+   underscores, leading or trailing hyphens, and empty segments. Real azd
+   environment names, paths, external resources, locks, refs, CLI flags, and
+   environment variables remain valid with their native conventions.
 5. Chains use nested `{default, targets}` objects. One chain auto-selects;
    multiple chains require one runtime-selected default.
 6. Git policy uses `worktree`, `upstream`, and `ref` states, with no requirement
@@ -174,13 +195,13 @@ operations invoke them through `steps.prepare`, `steps.change`,
 7. Top-level `name` is documented as promotion identity.
 8. `project`, `records`, `results`, `candidate`, and `previousRun` are rejected
    under `promote`.
-9. Predecessor verification imports use stable lower camel case IDs, not
+9. Predecessor verification imports use stable lowercase kebab-case IDs, not
    filesystem paths.
 10. Authentication values use explicit azd secret references.
 11. The schema uses run record, previous run, verification, operation result,
     cleanup, change, and inspection terminology.
 12. Valid minimal and full promote fixtures pass.
-13. Fixtures containing old underscore keys, promote-owned hyphenated IDs, or
+13. Fixtures containing old underscore keys, promote-owned camelCase IDs, or
     unknown fields fail.
 14. Dashed file names and real external names remain valid.
 15. Existing v1.0 and v1.1 schema behavior remains unchanged.
@@ -197,12 +218,13 @@ operations invoke them through `steps.prepare`, `steps.change`,
     environment rule. The former operation `environment` field is rejected.
 22. Approvals and snapshots are inline on environments and operations. Global
     approval lists, named snapshot maps, and snapshot purpose IDs are rejected.
-23. Target `mode` is rejected. Generic process-provider behavior represents
-    validation without a provider-specific mode.
+23. Target `mode` is rejected. `deploy: false` explicitly compiles a
+    validation-only operation without provider steps, operation results,
+    deployment verification, or live-file HTTP verification.
 24. Provider variants are strict and type-specific. Mixed-provider fields fail
     JSON Schema validation.
 25. Encoded duplicate IDs such as `stagingRelease`,
-    `verifyAuthRequired`, and `buildPreview` are unnecessary in the canonical
+    `verify-authRequired`, and `build-preview` are unnecessary in the canonical
     contract.
 
 ## Pre-Completion Interview
@@ -210,8 +232,8 @@ operations invoke them through `steps.prepare`, `steps.change`,
 All material choices are resolved by the user:
 
 - **Default chain:** nested `default: true`; automatic when only one chain.
-- **Separator policy:** audit `_` and `-` only for public promote schema keys
-  and promote-owned identifiers.
+- **Separator policy:** schema fields remain lower camelCase; promote-owned IDs
+  use lowercase kebab-case. External names retain their native conventions.
 - **File naming:** idiomatic dashed file names remain valid.
 - **Domain naming:** `catalog` is not a generic framework concept.
 - **Terminology:** replace evidence, receipt, and proof publicly and internally.
@@ -223,8 +245,8 @@ All material choices are resolved by the user:
   provider, artifacts, auth, and Git policy inherit.
 - **Inline policy:** approvals and snapshots live on the environment or
   operation that owns them.
-- **Provider behavior:** validation uses a generic provider or command rather
-  than target `mode`.
+- **Provider behavior:** validation uses commands plus `deploy: false` rather
+  than target `mode` or a fake deployment provider.
 - **Compatibility:** no aliases because the promote contract is unreleased.
 - **Versioning:** `$schema` v1.2 is the only authored version; durable records
   and API/event formats retain independent internal versions.
@@ -234,8 +256,9 @@ No further interview decision blocks the schema definition.
 ## Gut-Check Results
 
 - **Greenfield reframe:** The recommended schema is the design we would choose
-  from scratch: strict, nested, lower camelCase, convention-driven, and free of
-  stale phase-specific orchestration.
+  from scratch: strict, nested, lower camelCase for schema fields, lowercase
+  kebab-case for authored IDs, convention-driven, and free of stale
+  phase-specific orchestration.
 - **Proportionality:** The schema describes capabilities the runtime already
   owns or has explicitly scheduled. It does not add plugin systems, factories,
   or speculative policy layers.
@@ -248,7 +271,7 @@ No further interview decision blocks the schema definition.
 | Surface                    | Convention                               |
 | -------------------------- | ---------------------------------------- |
 | Promote YAML keys          | lower camelCase                          |
-| Promote-owned IDs          | lower camelCase                          |
+| Promote-owned IDs          | lowercase kebab-case                     |
 | Real azd environment names | existing azd convention; hyphens allowed |
 | Lock/resource selectors    | external syntax preserved                |
 | Go exported types          | public schema concepts in PascalCase     |
@@ -277,7 +300,7 @@ promote:
     upstream: published
 
   artifacts:
-    contentApp:
+    content-app:
       type: static
       path: dist/content-app
       identityPaths:
@@ -289,7 +312,7 @@ promote:
         - path: content-index.json
 
   providers:
-    contentPublisher:
+    content-publisher:
       type: process
       command: node
       args:
@@ -304,22 +327,7 @@ promote:
         ]
       workdir: .
       timeout: 30m
-    contentValidator:
-      type: process
-      command: node
-      args:
-        [
-          scripts/validate-content-app.mjs,
-          --artifact,
-          '{artifact}',
-          --environment,
-          '{environment}',
-          --result,
-          '{result}',
-        ]
-      workdir: .
-      timeout: 30m
-    azureFallback:
+    azure-fallback:
       type: azd
       args: [--all]
       workdir: infra
@@ -327,8 +335,8 @@ promote:
 
   environments:
     dev:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       git:
         worktree: dirtyAllowed
       auth:
@@ -337,30 +345,30 @@ promote:
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: false }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: migrateData
-          - use: publishAssets
-          - use: configureAssetCors
+          - use: migrate-data
+          - use: publish-assets
+          - use: configure-asset-cors
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: run-smoke-tests
             with: { suite: fast }
-          - use: verifyLiveSite
+          - use: verify-live-site
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
     staging:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       auth:
         type: basic
         username: { azd: STAGING_BASIC_AUTH_USERNAME }
@@ -377,30 +385,30 @@ promote:
             ref: refs/heads/environments/staging
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: migrateData
-          - use: publishAssets
-          - use: configureAssetCors
+          - use: migrate-data
+          - use: publish-assets
+          - use: configure-asset-cors
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
+          - use: verify-live-site
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
     prod:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       git:
         worktree: clean
         ref:
@@ -408,7 +416,7 @@ promote:
           refresh: true
       requires:
         previous:
-          verifications: [stagingContent, stagingRouting]
+          verifications: [staging-content, staging-routing]
       approval:
         message: Approve the exact production candidate
         match: PROMOTE
@@ -421,31 +429,31 @@ promote:
             template: refs/tags/releases/{candidate}
       steps:
         prepare:
-          - use: verifyPublisherApproval
-          - use: verifyAuth
+          - use: verify-publisher-approval
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: prepareProductionData
-          - use: prepareProductionRelease
+          - use: prepare-production-data
+          - use: prepare-production-release
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyDeploymentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-deployment-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
   operations:
-    publishContent:
+    publish-content:
       target: prod
       locks: [content:production, deployment:production]
       approval:
@@ -460,47 +468,48 @@ promote:
             template: refs/tags/content/{candidate}
       steps:
         prepare:
-          - use: verifyPreparedContent
-          - use: verifyAuth
+          - use: verify-prepared-content
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyContentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-content-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
-    validateContent:
+    validate-content:
       target: prod
-      provider: contentValidator
+      deploy: false
       locks: [content:production-candidate]
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: preview }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: validate-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
-    activateContent:
+    activate-content:
       target: prod
       locks: [content:production, deployment:production]
       approval:
@@ -515,45 +524,45 @@ promote:
             ref: refs/heads/environments/production
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyContentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-content-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
   commands:
-    verifyAuth:
+    verify-auth:
       effect: inspection
       command: node
       args: [scripts/verify-credentials.mjs, --required, '{required}']
       inspectionOnly: true
       timeout: 5m
 
-    checkAssetStore:
+    check-asset-store:
       command: node
       args: [scripts/check-resource.mjs, content-assets]
       timeout: 5m
 
-    migrateData:
+    migrate-data:
       effect: change
       command: node
       args: [scripts/migrate-data.mjs]
       timeout: 30m
 
-    verifyData:
+    verify-data:
       effect: verification
       command: node
       args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{workflow}-data.json']
@@ -566,17 +575,29 @@ promote:
       args: [scripts/build-content-app.mjs, --mode, '{mode}']
       timeout: 30m
 
-    pruneOutput:
+    prune-output:
       command: node
       args: [scripts/prune-output.mjs, dist/content-app]
       timeout: 10m
 
-    normalizeOutput:
+    normalize-output:
       command: node
       args: [scripts/normalize-output.mjs, dist/content-app]
       timeout: 10m
 
-    verifyOfflineOutput:
+    validate-content:
+      command: node
+      args:
+        [
+          scripts/validate-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+        ]
+      timeout: 30m
+
+    verify-offline-output:
       effect: verification
       command: node
       args:
@@ -589,7 +610,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-offline-output.json'
       timeout: 10m
 
-    publishAssets:
+    publish-assets:
       effect: change
       command: node
       args:
@@ -605,7 +626,7 @@ promote:
         ]
       timeout: 1h
 
-    selectFiles:
+    select-files:
       effect: verification
       command: node
       args:
@@ -625,18 +646,18 @@ promote:
         path: '.azure/promote/verification/{workflow}-selected-files.json'
       timeout: 1h
 
-    removeUnusedFiles:
+    remove-unused-files:
       command: node
       args: [scripts/remove-unused-files.mjs, dist/content-app]
       timeout: 10m
 
-    configureAssetCors:
+    configure-asset-cors:
       effect: change
       command: node
       args: [scripts/configure-asset-cors.mjs, content-assets]
       timeout: 10m
 
-    runSmokeTests:
+    run-smoke-tests:
       effect: verification
       command: node
       args:
@@ -651,7 +672,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-smoke.json'
       timeout: 15m
 
-    verifyLiveSite:
+    verify-live-site:
       effect: verification
       command: node
       args:
@@ -664,13 +685,13 @@ promote:
         path: '.azure/promote/verification/{workflow}-live-site.json'
       timeout: 15m
 
-    prepareProductionData:
+    prepare-production-data:
       effect: change
       command: node
       args: [scripts/prepare-production-data.mjs]
       timeout: 30m
 
-    verifyPublisherApproval:
+    verify-publisher-approval:
       effect: verification
       command: node
       args:
@@ -683,13 +704,13 @@ promote:
         path: '.azure/promote/verification/{workflow}-publisher-approval.json'
       timeout: 5m
 
-    prepareProductionRelease:
+    prepare-production-release:
       effect: change
       command: node
       args: [scripts/prepare-production-release.mjs]
       timeout: 30m
 
-    verifyDeploymentInputs:
+    verify-deployment-inputs:
       effect: verification
       command: node
       args:
@@ -702,7 +723,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-deployment-inputs.json'
       timeout: 10m
 
-    verifyPublishedContent:
+    verify-published-content:
       effect: verification
       command: node
       args:
@@ -715,7 +736,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-published-content.json'
       timeout: 10m
 
-    verifyPreparedContent:
+    verify-prepared-content:
       effect: verification
       command: node
       args:
@@ -728,7 +749,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-prepared-content.json'
       timeout: 10m
 
-    verifyContentInputs:
+    verify-content-inputs:
       effect: verification
       command: node
       args:
@@ -788,7 +809,7 @@ groups contain invocation objects rather than command-name strings:
 
 ```yaml
 commands:
-  verifyAuth:
+  verify-auth:
     command: pnpm
     args: [verify:auth, --required, '{required}']
     timeout: 5m
@@ -799,7 +820,7 @@ commands:
 
 steps:
   prepare:
-    - use: verifyAuth
+    - use: verify-auth
       with: { required: true }
     - use: build
       with: { mode: preview }
@@ -814,10 +835,10 @@ The four lifecycle groups are:
 | `verify`  | Post-change verification and structured result checks.         |
 | `cleanup` | Bounded cleanup that runs through the cleanup lifecycle.       |
 
-`use` is a lower camelCase command ID. `with` is an optional lower camelCase
-map of string, number, or boolean values supplied to that invocation. One
-definition can therefore replace variants such as `verifyAuthRequired` and
-`buildPreview`.
+`use` is a lowercase kebab-case command ID. `with` is an optional lowercase
+kebab-case map of string, number, or boolean values supplied to that
+invocation. One definition can therefore replace variants such as
+`verify-auth-required` and `build-preview`.
 
 ## Operation composition
 
@@ -825,9 +846,9 @@ Every operation selects one real environment through `target`:
 
 ```yaml
 operations:
-  validateContent:
+  validate-content:
     target: prod
-    provider: contentValidator
+    deploy: false
     git:
       ref:
         refresh: false
@@ -842,12 +863,16 @@ Composition follows one complete rule:
 1. The base environment supplies `provider`, `artifacts`, `auth`, and its
    effective Git policy after top-level and environment Git composition.
 2. An operation-authored `provider`, `artifacts`, or `auth` replaces the base
-   value.
+   value. A provider override cannot be combined with `deploy: false`.
 3. Operation `git` merges recursively into base `git`, including `ref`
    members.
 4. `requires`, `steps`, `locks`, `snapshot`, and `approval` are
    operation-owned and never inherit from the base environment.
-5. No other implicit clearing, replacement, or inheritance occurs.
+5. `deploy` defaults to true. `deploy: false` preserves artifact
+   fingerprinting, sealing, lifecycle commands, and final artifact verification
+   while suppressing provider expansion, operation-result creation, deployment
+   verification, and `liveFiles` HTTP verification.
+6. No other implicit clearing, replacement, or inheritance occurs.
 
 This preserves the environment execution context while keeping every
 operation-specific safety boundary visible in the operation.
@@ -890,10 +915,10 @@ purpose IDs are rejected.
 
 Fields from another provider type are rejected by JSON Schema. Target and
 operation `mode` is not part of the contract. A validation workflow uses
-ordinary lifecycle commands or selects a generic provider such as a process
-provider configured for validation. Platform-specific adapters, including the
-first Cloudflare implementation, are project-owned process providers rather
-than central schema variants.
+ordinary lifecycle commands with `deploy: false`, so it does not fabricate a
+deployment operation result. Platform-specific adapters, including the first
+Cloudflare implementation, are project-owned process providers rather than
+central schema variants.
 
 ## Promotion identity and framework state
 
@@ -908,7 +933,7 @@ stable ID instead of repeating that predecessor record's filesystem path:
 ```yaml
 requires:
   previous:
-    verifications: [stagingContent, stagingRouting]
+    verifications: [staging-content, staging-routing]
 ```
 
 Filesystem paths are not accepted in the verification ID list.
@@ -961,7 +986,7 @@ Internal storage directories follow the same model and remain compiler-owned:
 
 1. Top-level `promote` uses `additionalProperties: false`.
 2. All promote-owned mapping IDs use
-   `propertyNames.pattern: ^[a-z][A-Za-z0-9]*$`.
+   `propertyNames.pattern: ^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$`.
 3. Real environment names, file paths, lock names, resource names, and Git refs
    use their external conventions and are not forced to camelCase.
 4. All nested promote objects use `additionalProperties: false`, except maps
@@ -971,15 +996,15 @@ Internal storage directories follow the same model and remain compiler-owned:
 7. Top-level `name` supplies promotion identity. Authored `project`, `records`,
    and `results` properties are rejected.
 8. Authored Git policy uses `git`. The former `candidate` property is rejected.
-9. Predecessor verification imports use lower camel case IDs under
+9. Predecessor verification imports use lowercase kebab-case IDs under
    `requires.previous.verifications`. The former `previousRun` property and
    filesystem paths are rejected.
 10. Auth fields use strict `{azd: NAME}` secret reference objects.
 11. Reusable definitions live under `commands`; lifecycle entries use strict
     `{use, with}` invocation objects.
 12. Lifecycle groups are `prepare`, `change`, `verify`, and `cleanup`.
-13. Operations require `target` and follow the documented base environment
-    composition rule.
+13. Operations require `target`, support explicit `deploy: false`, and follow
+    the documented base environment composition rule.
 14. Approvals and snapshots are inline on their owning environment or
     operation.
 15. Provider variants use strict `oneOf` schemas with no mixed fields.
@@ -999,8 +1024,9 @@ Internal storage directories follow the same model and remain compiler-owned:
    - operations composed from real environments through `target`;
    - inline environment and operation approvals;
    - inline snapshots without one-use IDs or purpose IDs;
-   - generic validation through a process provider instead of target `mode`;
-   - valid process, azd, and Cloudflare Worker provider variants;
+   - validation through lifecycle commands plus `deploy: false` instead of
+     target `mode` or a fake provider;
+   - valid process and azd provider variants;
    - rejection of mixed-provider fields;
    - rejection of bare string command invocations;
    - rejection of global approvals, named snapshots, target hooks, and
@@ -1011,9 +1037,9 @@ Internal storage directories follow the same model and remain compiler-owned:
    - stable predecessor verification IDs;
    - explicit azd secret references;
    - rejection of scalar basic authentication and raw secret names;
-   - camelCase ID enforcement;
+   - lowercase kebab-case ID enforcement;
    - rejection of every old underscore field;
-   - rejection of promote-owned hyphenated IDs;
+   - rejection of promote-owned camelCase and underscore IDs;
    - acceptance of dashed file names and real environment/resource names;
    - strict unknown-property rejection;
    - basic, headers, and serviceToken authentication objects.
@@ -1047,14 +1073,14 @@ Internal storage directories follow the same model and remain compiler-owned:
 - Top-level and target `hooks`, operation `environment`, and target `mode` are
   rejected.
 - Command invocations require `use`; optional `with` values are scalar and
-  lower camelCase.
+  parameter IDs use lowercase kebab-case.
 - Operation composition text and fixtures cover every inherited and
   operation-owned field.
 - Approval and snapshot policy is inline with no global target list, snapshot
   map, or snapshot purpose ID.
-- Strict provider variants reject mixed process, azd, and Cloudflare Worker
-  fields.
-- No promote-owned public key or ID contains `_` or `-`.
+- Strict provider variants reject mixed process and azd fields.
+- No promote-owned ID contains uppercase letters or `_`; multiword IDs use
+  single hyphens between lowercase alphanumeric segments.
 - Internal rename plan covers every exported and persisted concept.
 - No compatibility aliases are introduced.
 - Documentation contains one canonical schema 1.2 promote example.

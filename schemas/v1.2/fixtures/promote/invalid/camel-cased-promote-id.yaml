@@ -1,17 +1,17 @@
-name: invalid-hyphenated-promote-id
+name: invalid-camel-cased-promote-id
 promote:
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: local-publisher
+      provider: localPublisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    local-publisher:
+    localPublisher:
       type: process
       command: publish

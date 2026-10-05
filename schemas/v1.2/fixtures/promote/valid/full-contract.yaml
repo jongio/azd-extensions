@@ -10,7 +10,7 @@ promote:
     upstream: published
 
   artifacts:
-    contentApp:
+    content-app:
       type: static
       path: dist/content-app
       identityPaths:
@@ -22,7 +22,7 @@ promote:
         - path: content-index.json
 
   providers:
-    contentPublisher:
+    content-publisher:
       type: process
       command: node
       args:
@@ -37,22 +37,7 @@ promote:
         ]
       workdir: .
       timeout: 30m
-    contentValidator:
-      type: process
-      command: node
-      args:
-        [
-          scripts/validate-content-app.mjs,
-          --artifact,
-          '{artifact}',
-          --environment,
-          '{environment}',
-          --result,
-          '{result}',
-        ]
-      workdir: .
-      timeout: 30m
-    azureFallback:
+    azure-fallback:
       type: azd
       args: [--all]
       workdir: infra
@@ -60,8 +45,8 @@ promote:
 
   environments:
     dev:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       git:
         worktree: dirtyAllowed
       auth:
@@ -70,30 +55,30 @@ promote:
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: false }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: migrateData
-          - use: publishAssets
-          - use: configureAssetCors
+          - use: migrate-data
+          - use: publish-assets
+          - use: configure-asset-cors
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: run-smoke-tests
             with: { suite: fast }
-          - use: verifyLiveSite
+          - use: verify-live-site
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
     staging:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       auth:
         type: basic
         username: { azd: STAGING_BASIC_AUTH_USERNAME }
@@ -110,30 +95,30 @@ promote:
             ref: refs/heads/environments/staging
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: migrateData
-          - use: publishAssets
-          - use: configureAssetCors
+          - use: migrate-data
+          - use: publish-assets
+          - use: configure-asset-cors
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
+          - use: verify-live-site
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
     prod:
-      provider: contentPublisher
-      artifacts: [contentApp]
+      provider: content-publisher
+      artifacts: [content-app]
       git:
         worktree: clean
         ref:
@@ -141,7 +126,7 @@ promote:
           refresh: true
       requires:
         previous:
-          verifications: [stagingContent, stagingRouting]
+          verifications: [staging-content, staging-routing]
       approval:
         message: Approve the exact production candidate
         match: PROMOTE
@@ -154,31 +139,31 @@ promote:
             template: refs/tags/releases/{candidate}
       steps:
         prepare:
-          - use: verifyPublisherApproval
-          - use: verifyAuth
+          - use: verify-publisher-approval
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         change:
-          - use: prepareProductionData
-          - use: prepareProductionRelease
+          - use: prepare-production-data
+          - use: prepare-production-release
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyDeploymentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-deployment-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
   operations:
-    publishContent:
+    publish-content:
       target: prod
       locks: [content:production, deployment:production]
       approval:
@@ -193,47 +178,48 @@ promote:
             template: refs/tags/content/{candidate}
       steps:
         prepare:
-          - use: verifyPreparedContent
-          - use: verifyAuth
+          - use: verify-prepared-content
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyContentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-content-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
-    validateContent:
+    validate-content:
       target: prod
-      provider: contentValidator
+      deploy: false
       locks: [content:production-candidate]
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: preview }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: validate-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
-    activateContent:
+    activate-content:
       target: prod
       locks: [content:production, deployment:production]
       approval:
@@ -248,45 +234,45 @@ promote:
             ref: refs/heads/environments/production
       steps:
         prepare:
-          - use: verifyAuth
+          - use: verify-auth
             with: { required: true }
-          - use: checkAssetStore
+          - use: check-asset-store
           - use: build
             with: { mode: release }
-          - use: pruneOutput
-          - use: normalizeOutput
+          - use: prune-output
+          - use: normalize-output
         verify:
-          - use: verifyData
-          - use: verifyOfflineOutput
-          - use: selectFiles
-          - use: verifyContentInputs
-          - use: runSmokeTests
+          - use: verify-data
+          - use: verify-offline-output
+          - use: select-files
+          - use: verify-content-inputs
+          - use: run-smoke-tests
             with: { suite: full }
-          - use: verifyLiveSite
-          - use: verifyPublishedContent
+          - use: verify-live-site
+          - use: verify-published-content
         cleanup:
-          - use: removeUnusedFiles
+          - use: remove-unused-files
 
   commands:
-    verifyAuth:
+    verify-auth:
       effect: inspection
       command: node
       args: [scripts/verify-credentials.mjs, --required, '{required}']
       inspectionOnly: true
       timeout: 5m
 
-    checkAssetStore:
+    check-asset-store:
       command: node
       args: [scripts/check-resource.mjs, content-assets]
       timeout: 5m
 
-    migrateData:
+    migrate-data:
       effect: change
       command: node
       args: [scripts/migrate-data.mjs]
       timeout: 30m
 
-    verifyData:
+    verify-data:
       effect: verification
       command: node
       args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{workflow}-data.json']
@@ -299,17 +285,29 @@ promote:
       args: [scripts/build-content-app.mjs, --mode, '{mode}']
       timeout: 30m
 
-    pruneOutput:
+    prune-output:
       command: node
       args: [scripts/prune-output.mjs, dist/content-app]
       timeout: 10m
 
-    normalizeOutput:
+    normalize-output:
       command: node
       args: [scripts/normalize-output.mjs, dist/content-app]
       timeout: 10m
 
-    verifyOfflineOutput:
+    validate-content:
+      command: node
+      args:
+        [
+          scripts/validate-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+        ]
+      timeout: 30m
+
+    verify-offline-output:
       effect: verification
       command: node
       args:
@@ -322,7 +320,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-offline-output.json'
       timeout: 10m
 
-    publishAssets:
+    publish-assets:
       effect: change
       command: node
       args:
@@ -338,7 +336,7 @@ promote:
         ]
       timeout: 1h
 
-    selectFiles:
+    select-files:
       effect: verification
       command: node
       args:
@@ -358,18 +356,18 @@ promote:
         path: '.azure/promote/verification/{workflow}-selected-files.json'
       timeout: 1h
 
-    removeUnusedFiles:
+    remove-unused-files:
       command: node
       args: [scripts/remove-unused-files.mjs, dist/content-app]
       timeout: 10m
 
-    configureAssetCors:
+    configure-asset-cors:
       effect: change
       command: node
       args: [scripts/configure-asset-cors.mjs, content-assets]
       timeout: 10m
 
-    runSmokeTests:
+    run-smoke-tests:
       effect: verification
       command: node
       args:
@@ -384,7 +382,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-smoke.json'
       timeout: 15m
 
-    verifyLiveSite:
+    verify-live-site:
       effect: verification
       command: node
       args:
@@ -397,13 +395,13 @@ promote:
         path: '.azure/promote/verification/{workflow}-live-site.json'
       timeout: 15m
 
-    prepareProductionData:
+    prepare-production-data:
       effect: change
       command: node
       args: [scripts/prepare-production-data.mjs]
       timeout: 30m
 
-    verifyPublisherApproval:
+    verify-publisher-approval:
       effect: verification
       command: node
       args:
@@ -416,13 +414,13 @@ promote:
         path: '.azure/promote/verification/{workflow}-publisher-approval.json'
       timeout: 5m
 
-    prepareProductionRelease:
+    prepare-production-release:
       effect: change
       command: node
       args: [scripts/prepare-production-release.mjs]
       timeout: 30m
 
-    verifyDeploymentInputs:
+    verify-deployment-inputs:
       effect: verification
       command: node
       args:
@@ -435,7 +433,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-deployment-inputs.json'
       timeout: 10m
 
-    verifyPublishedContent:
+    verify-published-content:
       effect: verification
       command: node
       args:
@@ -448,7 +446,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-published-content.json'
       timeout: 10m
 
-    verifyPreparedContent:
+    verify-prepared-content:
       effect: verification
       command: node
       args:
@@ -461,7 +459,7 @@ promote:
         path: '.azure/promote/verification/{workflow}-prepared-content.json'
       timeout: 10m
 
-    verifyContentInputs:
+    verify-content-inputs:
       effect: verification
       command: node
       args:

@@ -2609,12 +2609,12 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteChain"
       },
-      "description": "Named lower camelCase promotion chains. A single chain is selected automatically. When multiple chains exist, runtime validation requires exactly one chain with default set to true."
+      "description": "Named lowercase kebab-case promotion chains. A single chain is selected automatically. When multiple chains exist, runtime validation requires exactly one chain with default set to true."
     },
     "promoteChain": {
       "type": "object",
@@ -2651,28 +2651,50 @@
     "promoteOperations": {
       "type": "object",
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteOperation"
       },
-      "description": "Named lower camelCase operations bound to real azd environments."
+      "description": "Named lowercase kebab-case operations bound to real azd environments."
     },
     "promoteOperation": {
       "type": "object",
       "additionalProperties": false,
       "required": ["target"],
-      "description": "A named workflow composed from one base environment selected by target. The operation inherits provider, artifacts, auth, and git from that environment. Authored provider, artifacts, and auth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, lifecycle steps, locks, snapshots, and approvals are operation-owned and are never inherited. No other implicit composition occurs.",
+      "allOf": [
+        {
+          "if": {
+            "required": ["deploy"],
+            "properties": {
+              "deploy": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": ["provider"]
+            }
+          }
+        }
+      ],
+      "description": "A named workflow composed from one base environment selected by target. The operation inherits provider, artifacts, auth, and git from that environment. Authored provider, artifacts, and auth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, lifecycle steps, locks, snapshots, and approvals are operation-owned and are never inherited. By default the selected provider deploys every artifact. Setting deploy to false explicitly suppresses provider expansion, operation-result creation, deployment verification, and live-file HTTP verification while preserving artifact sealing and lifecycle commands. No other implicit composition occurs.",
       "properties": {
         "target": {
           "type": "string",
           "minLength": 1,
           "description": "Real azd environment used as the operation execution context and composition base."
         },
+        "deploy": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the inherited or replacement provider deploys the selected artifacts. Set to false for validation-only operations that still seal artifacts and run lifecycle commands."
+        },
         "provider": {
           "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Optional lower camelCase provider identifier that replaces the base environment provider."
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Optional lowercase kebab-case provider identifier that replaces the base environment provider. It cannot be authored when deploy is false."
         },
         "artifacts": {
           "type": "array",
@@ -2680,9 +2702,9 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "pattern": "^[a-z][A-Za-z0-9]*$"
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
-          "description": "Optional lower camelCase artifact identifiers that replace the base environment artifacts."
+          "description": "Optional lowercase kebab-case artifact identifiers that replace the base environment artifacts."
         },
         "auth": {
           "$ref": "#/definitions/promoteAuth"
@@ -2720,8 +2742,8 @@
       "properties": {
         "provider": {
           "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Lower camelCase provider identifier."
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case provider identifier."
         },
         "artifacts": {
           "type": "array",
@@ -2729,9 +2751,9 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "pattern": "^[a-z][A-Za-z0-9]*$"
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
-          "description": "Lower camelCase artifact identifiers used by this target."
+          "description": "Lowercase kebab-case artifact identifiers used by this target."
         },
         "auth": {
           "$ref": "#/definitions/promoteAuth"
@@ -2783,9 +2805,9 @@
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "pattern": "^[a-z][A-Za-z0-9]*$"
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
           },
-          "description": "Stable lower camelCase verification identifiers imported from the exact predecessor run record. The compiler owns their filesystem paths."
+          "description": "Stable lowercase kebab-case verification identifiers imported from the exact predecessor run record. The compiler owns their filesystem paths."
         }
       }
     },
@@ -2822,8 +2844,8 @@
       "properties": {
         "use": {
           "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Lower camelCase reusable command identifier."
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case reusable command identifier."
         },
         "with": {
           "$ref": "#/definitions/promoteCommandParameters"
@@ -2834,12 +2856,12 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteCommandParameterValue"
       },
-      "description": "Lower camelCase scalar parameters supplied to one reusable command invocation."
+      "description": "Lowercase kebab-case scalar parameters supplied to one reusable command invocation."
     },
     "promoteCommandParameterValue": {
       "type": ["string", "number", "boolean"]
@@ -2848,12 +2870,12 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteArtifact"
       },
-      "description": "Artifact definitions keyed by lower camelCase identifiers."
+      "description": "Artifact definitions keyed by lowercase kebab-case identifiers."
     },
     "promoteArtifact": {
       "type": "object",
@@ -2914,12 +2936,12 @@
       "type": "object",
       "minProperties": 1,
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteProvider"
       },
-      "description": "Provider definitions keyed by lower camelCase identifiers."
+      "description": "Provider definitions keyed by lowercase kebab-case identifiers."
     },
     "promoteProvider": {
       "oneOf": [
@@ -2987,12 +3009,12 @@
     "promoteCommands": {
       "type": "object",
       "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
       },
       "additionalProperties": {
         "$ref": "#/definitions/promoteCommand"
       },
-      "description": "Reusable bounded command definitions keyed by lower camelCase identifiers. One definition may be invoked repeatedly with different scalar parameters."
+      "description": "Reusable bounded command definitions keyed by lowercase kebab-case identifiers. One definition may be invoked repeatedly with different scalar parameters."
     },
     "promoteCommand": {
       "type": "object",

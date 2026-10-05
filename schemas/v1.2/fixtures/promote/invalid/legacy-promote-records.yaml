@@ -7,13 +7,13 @@ promote:
     path: .azure/promote/records/{target}.json
   environments:
     dev:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    localPublisher:
+    local-publisher:
       type: process
       command: publish

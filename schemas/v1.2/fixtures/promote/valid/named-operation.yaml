@@ -36,11 +36,11 @@ promote:
           - use: smoke
             with: { suite: full }
         cleanup:
-          - use: cleanOutput
+          - use: clean-output
   operations:
-    validateContent:
+    validate-content:
       target: prod
-      provider: validator
+      deploy: false
       git:
         worktree: dirtyAllowed
         ref:
@@ -53,24 +53,20 @@ promote:
         verify:
           - use: smoke
             with: { suite: fast }
+          - use: validate-content
         cleanup:
-          - use: cleanOutput
+          - use: clean-output
   artifacts:
     site:
       type: static
       path: dist
       sealedPaths:
-        - .azure/promote/verification/validateContent-selected-files.json
+        - .azure/promote/verification/validate-content-selected-files.json
   providers:
     publisher:
       type: process
       command: node
       args: [scripts/publish-content.mjs, --artifact, '{artifact}', --result, '{result}']
-      timeout: 30m
-    validator:
-      type: process
-      command: node
-      args: [scripts/validate-content.mjs, --artifact, '{artifact}', --result, '{result}']
       timeout: 30m
   commands:
     build:
@@ -81,7 +77,11 @@ promote:
       command: pnpm
       args: [test:smoke, --suite, '{suite}']
       timeout: 15m
-    cleanOutput:
+    validate-content:
+      command: node
+      args: [scripts/validate-content.mjs, --artifact, '{artifact}']
+      timeout: 30m
+    clean-output:
       command: node
       args: [scripts/clean-output.mjs]
       timeout: 5m

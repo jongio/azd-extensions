@@ -8,16 +8,16 @@ promote:
       targets: [dev-west]
   environments:
     dev-west:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
     staging:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist/site-output
   providers:
-    localPublisher:
+    local-publisher:
       type: process
       command: publish

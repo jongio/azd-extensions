@@ -5,7 +5,7 @@ promote:
       targets: [dev-west, qa-headers, staging-service-token, prod-basic-map]
   environments:
     dev-west:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
       auth:
         type: basic
@@ -13,14 +13,14 @@ promote:
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
       locks: [deployment:dev-west]
     qa-headers:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
       auth:
         type: headers
         headers:
           X-Access-Key: { azd: ACCESS_KEY }
     staging-service-token:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
       auth:
         type: serviceToken
@@ -29,7 +29,7 @@ promote:
         clientSecretHeader: CF-Access-Client-Secret
         clientSecret: { azd: CF_ACCESS_CLIENT_SECRET }
     prod-basic-map:
-      provider: localPublisher
+      provider: local-publisher
       artifacts: [site]
       auth:
         type: basic
@@ -49,7 +49,7 @@ promote:
         - path: search-index.json
           urlPath: /search-index.json
   providers:
-    localPublisher:
+    local-publisher:
       type: process
       command: publish-site
       args: [--environment, '{environment}']

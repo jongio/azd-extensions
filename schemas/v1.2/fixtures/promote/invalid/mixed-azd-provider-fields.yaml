@@ -5,13 +5,13 @@ promote:
       targets: [dev]
   environments:
     dev:
-      provider: azurePublisher
+      provider: azure-publisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    azurePublisher:
+    azure-publisher:
       type: azd
       command: azd

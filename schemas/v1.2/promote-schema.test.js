@@ -37,14 +37,14 @@ const missingProperty = (instancePath, property) =>
 
 const invalidFixtures = [
   ['command-approval', [additionalProperty('/promote/commands/deploy', 'approval')]],
-  ['empty-target-artifacts', [error('/promote/environments/dev/artifacts', 'minItems')]],
   [
-    'hyphenated-promote-id',
+    'camel-cased-promote-id',
     [
       error('/promote/environments/dev/provider', 'pattern'),
-      error('/promote/providers', 'propertyNames', { propertyName: 'local-publisher' }),
+      error('/promote/providers', 'propertyNames', { propertyName: 'localPublisher' }),
     ],
   ],
+  ['empty-target-artifacts', [error('/promote/environments/dev/artifacts', 'minItems')]],
   ['implicit-basic-auth', [error('/promote/environments/dev/auth', 'oneOf')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
@@ -67,8 +67,8 @@ const invalidFixtures = [
   [
     'legacy-operation-environment',
     [
-      missingProperty('/promote/operations/validateContent', 'target'),
-      additionalProperty('/promote/operations/validateContent', 'environment'),
+      missingProperty('/promote/operations/validate-content', 'target'),
+      additionalProperty('/promote/operations/validate-content', 'environment'),
     ],
   ],
   [
@@ -98,15 +98,15 @@ const invalidFixtures = [
   ],
   [
     'mixed-azd-provider-fields',
-    [additionalProperty('/promote/providers/azurePublisher', 'command')],
+    [additionalProperty('/promote/providers/azure-publisher', 'command')],
   ],
   [
     'mixed-process-provider-fields',
-    [additionalProperty('/promote/providers/localPublisher', 'config')],
+    [additionalProperty('/promote/providers/local-publisher', 'config')],
   ],
-  ['missing-hook-timeout', [missingProperty('/promote/commands/inspectTarget', 'timeout')]],
-  ['missing-operation-target', [missingProperty('/promote/operations/validateContent', 'target')]],
-  ['missing-process-command', [missingProperty('/promote/providers/localPublisher', 'command')]],
+  ['missing-hook-timeout', [missingProperty('/promote/commands/inspect-target', 'timeout')]],
+  ['missing-operation-target', [missingProperty('/promote/operations/validate-content', 'target')]],
+  ['missing-process-command', [missingProperty('/promote/providers/local-publisher', 'command')]],
   [
     'missing-required-structures',
     [
@@ -122,7 +122,8 @@ const invalidFixtures = [
       missingProperty('/promote/environments/dev', 'artifacts'),
     ],
   ],
-  ['overlong-hook-timeout', [error('/promote/commands/inspectTarget/timeout', 'pattern')]],
+  ['non-deploying-provider-override', [error('/promote/operations/validate', 'not')]],
+  ['overlong-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['promote-version', [additionalProperty('/promote', 'version')]],
   [
     'raw-auth-secret',
@@ -132,20 +133,20 @@ const invalidFixtures = [
     ],
   ],
   ['string-command-invocation', [error('/promote/environments/dev/steps/prepare/0', 'type')]],
-  ['unbounded-hook-timeout', [error('/promote/commands/inspectTarget/timeout', 'pattern')]],
+  ['unbounded-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['unknown-nested-property', [additionalProperty('/promote/environments/dev', 'unexpected')]],
   ['unsupported-artifact-type', [error('/promote/artifacts/site/type', 'enum')]],
-  ['unsupported-provider-type', [error('/promote/providers/customPublisher', 'oneOf')]],
+  ['unsupported-provider-type', [error('/promote/providers/custom-publisher', 'oneOf')]],
   [
     'verification-import-path',
     [error('/promote/environments/prod/requires/previous/verifications/0', 'pattern')],
   ],
   [
     'verification-effect-without-record',
-    [missingProperty('/promote/commands/verifyTarget', 'verification')],
+    [missingProperty('/promote/commands/verify-target', 'verification')],
   ],
-  ['verification-without-effect', [missingProperty('/promote/commands/verifyTarget', 'effect')]],
-  ['zero-hook-timeout', [error('/promote/commands/inspectTarget/timeout', 'pattern')]],
+  ['verification-without-effect', [missingProperty('/promote/commands/verify-target', 'effect')]],
+  ['zero-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
 ]
 
 async function loadFixture(kind, name) {
@@ -279,7 +280,7 @@ describe('azure.yaml v1.2 promote contract', () => {
       ...Object.values(fixture.promote.operations),
     ].flatMap((target) => Object.values(target.steps ?? {}).flat())
     const verifyAuthParameters = invocations
-      .filter((invocation) => invocation.use === 'verifyAuth')
+      .filter((invocation) => invocation.use === 'verify-auth')
       .map((invocation) => invocation.with)
     const buildModes = invocations
       .filter((invocation) => invocation.use === 'build')
@@ -288,15 +289,15 @@ describe('azure.yaml v1.2 promote contract', () => {
     expect(verifyAuthParameters).toContainEqual({ required: false })
     expect(verifyAuthParameters).toContainEqual({ required: true })
     expect(new Set(buildModes)).toEqual(new Set(['preview', 'release']))
-    expect(fixture.promote.commands).not.toHaveProperty('verifyAuthRequired')
-    expect(fixture.promote.commands).not.toHaveProperty('buildPreview')
+    expect(fixture.promote.commands).not.toHaveProperty('verify-auth-required')
+    expect(fixture.promote.commands).not.toHaveProperty('build-preview')
   })
 
   it('defines operation composition through one target-based rule', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'named-operation')
     const operationDefinition = schema.definitions.promoteOperation
-    const operation = fixture.promote.operations.validateContent
+    const operation = fixture.promote.operations['validate-content']
     const base = fixture.promote.environments.prod
 
     expect(operationDefinition.required).toEqual(['target'])
@@ -306,9 +307,11 @@ describe('azure.yaml v1.2 promote contract', () => {
     expect(operationDefinition.description).toContain('inherits provider, artifacts, auth, and git')
     expect(operationDefinition.description).toContain('git merges recursively')
     expect(operationDefinition.description).toContain('are never inherited')
+    expect(operationDefinition.description).toContain('deploy to false')
 
     expect(operation.target).toBe('prod')
-    expect(operation.provider).toBe('validator')
+    expect(operation.deploy).toBe(false)
+    expect(operation).not.toHaveProperty('provider')
     expect(operation).not.toHaveProperty('artifacts')
     expect(operation).not.toHaveProperty('auth')
     expect(base.provider).toBe('publisher')
@@ -376,7 +379,7 @@ describe('azure.yaml v1.2 promote contract', () => {
     expect(fixture.promote.environments.prod.git).toEqual({
       ref: { refresh: true },
     })
-    expect(fixture.promote.operations.validateContent.git).toEqual({
+    expect(fixture.promote.operations['validate-content'].git).toEqual({
       worktree: 'dirtyAllowed',
       ref: { refresh: false },
     })
@@ -444,7 +447,7 @@ describe('azure.yaml v1.2 promote contract', () => {
     expect(await fixtureNames('invalid')).toEqual(invalidFixtures.map(([name]) => name).sort())
   })
 
-  it('keeps promote-owned objects strict and authored keys lower camelCase', async () => {
+  it('keeps schema fields lower camelCase and authored IDs lowercase kebab-case', async () => {
     const schema = await loadSchema()
     const findings = []
     const lowerCamelCase = /^[a-z][A-Za-z0-9]*$/
@@ -486,7 +489,8 @@ describe('azure.yaml v1.2 promote contract', () => {
       'promoteCommands',
       'promoteCommandParameters',
     ]) {
-      expect(schema.definitions[name].propertyNames.pattern).toBe('^[a-z][A-Za-z0-9]*$')
+      expect(schema.definitions[name].propertyNames.pattern)
+        .toBe('^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$')
     }
 
     expect(findings).toEqual([])
