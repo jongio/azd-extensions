@@ -1,4 +1,4 @@
-name: invalid-flat-target-steps
+name: invalid-legacy-change-lifecycle
 promote:
   chains:
     release:
@@ -7,9 +7,9 @@ promote:
     dev:
       provider: publisher
       artifacts: [site]
-      steps:
-        prepare:
-          - command: build
+      workflow:
+        change:
+          - task: asset-publish
   artifacts:
     site:
       type: static
@@ -18,7 +18,12 @@ promote:
     publisher:
       type: process
       executable: publish
+  tasks:
+    asset-publish:
+      steps:
+        - command: upload
   commands:
-    build:
-      executable: build
+    upload:
+      effect: change
+      executable: upload
       timeout: 5m

@@ -1,4 +1,4 @@
-name: invalid-nested-section
+name: invalid-legacy-section-terminology
 promote:
   chains:
     release:
@@ -9,7 +9,7 @@ promote:
       artifacts: [site]
       workflow:
         prepare:
-          - section: outer
+          - section: file-prep
   artifacts:
     site:
       type: static
@@ -17,15 +17,12 @@ promote:
   providers:
     publisher:
       type: process
-      command: publish
+      executable: publish
   sections:
-    outer:
+    file-prep:
       steps:
-        - section: inner
-    inner:
-      steps:
-        - use: build
+        - command: build
   commands:
     build:
-      command: build
+      executable: build
       timeout: 5m

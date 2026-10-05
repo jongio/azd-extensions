@@ -14,4 +14,4 @@ promote:
   providers:
     azure-publisher:
       type: azd
-      command: azd
+      executable: azd

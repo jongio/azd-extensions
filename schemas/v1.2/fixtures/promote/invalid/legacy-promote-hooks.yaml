@@ -14,9 +14,9 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
   hooks:
     build:
-      command: pnpm
+      executable: pnpm
       args: [build]
       timeout: 30m

@@ -8,8 +8,8 @@ promote:
       provider: local-publisher
       artifacts: [site]
       workflow:
-        change:
-          - section: deployment
+        apply:
+          - task: deployment
   artifacts:
     site:
       type: static
@@ -17,15 +17,15 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
-  sections:
+      executable: publish
+  tasks:
     deployment:
       steps:
-        - use: deploy
+        - command: deploy
   commands:
     deploy:
       effect: change
-      command: publish
+      executable: publish
       timeout: 30m
       approval:
         message: Approve deployment

@@ -9,7 +9,7 @@ promote:
       artifacts: [site]
   operations:
     validate:
-      target: prod
+      environment: prod
       deploy: false
       provider: validator
   artifacts:
@@ -19,7 +19,7 @@ promote:
   providers:
     publisher:
       type: process
-      command: publish
+      executable: publish
     validator:
       type: process
-      command: validate
+      executable: validate

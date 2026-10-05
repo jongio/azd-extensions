@@ -1,4 +1,4 @@
-name: invalid-zero-hook-timeout
+name: invalid-unbounded-command-timeout
 promote:
   chains:
     release:
@@ -14,8 +14,8 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
   commands:
     inspect-target:
-      command: pnpm
-      timeout: 0s
+      executable: pnpm
+      timeout: forever

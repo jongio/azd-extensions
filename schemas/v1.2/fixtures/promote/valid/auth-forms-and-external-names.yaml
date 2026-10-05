@@ -7,7 +7,7 @@ promote:
     dev-west:
       provider: local-publisher
       artifacts: [site]
-      auth:
+      verificationAuth:
         type: basic
         username: { azd: DEV_BASIC_AUTH_USERNAME }
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
@@ -15,14 +15,14 @@ promote:
     qa-headers:
       provider: local-publisher
       artifacts: [site]
-      auth:
+      verificationAuth:
         type: headers
         headers:
           X-Access-Key: { azd: ACCESS_KEY }
     staging-service-token:
       provider: local-publisher
       artifacts: [site]
-      auth:
+      verificationAuth:
         type: serviceToken
         clientIdHeader: CF-Access-Client-Id
         clientId: { azd: CF_ACCESS_CLIENT_ID }
@@ -31,7 +31,7 @@ promote:
     prod-basic-map:
       provider: local-publisher
       artifacts: [site]
-      auth:
+      verificationAuth:
         type: basic
         username: { azd: BASIC_AUTH_USERNAME }
         password: { azd: BASIC_AUTH_PASSWORD }
@@ -51,5 +51,5 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish-site
+      executable: publish-site
       args: [--environment, '{environment}']

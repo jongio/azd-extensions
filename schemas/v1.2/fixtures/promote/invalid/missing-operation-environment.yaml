@@ -1,4 +1,4 @@
-name: invalid-missing-operation-target
+name: invalid-missing-operation-environment
 promote:
   chains:
     release:
@@ -17,7 +17,7 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
     validator:
       type: process
-      command: validate
+      executable: validate

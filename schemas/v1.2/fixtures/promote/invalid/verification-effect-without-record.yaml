@@ -9,7 +9,7 @@ promote:
       artifacts: [site]
       workflow:
         verify:
-          - section: target-verification
+          - task: target-verification
   artifacts:
     site:
       type: static
@@ -17,13 +17,13 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
-  sections:
+      executable: publish
+  tasks:
     target-verification:
       steps:
-        - use: verify-target
+        - command: verify-target
   commands:
     verify-target:
       effect: verification
-      command: pnpm
+      executable: pnpm
       timeout: 5m

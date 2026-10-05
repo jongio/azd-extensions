@@ -15,14 +15,14 @@ unreleased.
 The top-level `name` is the promotion identity. Authored promotion policy does
 not repeat project identity or select framework state paths. Git policy is
 authored under `git`, and predecessor verification imports use stable IDs under
-`requires.previous.verifications`.
+`requires.predecessor.verifications`.
 
 Reusable process definitions are authored under `commands`. Reusable ordered
-command groups are authored under `sections`. Environments and operations
-compose an explicit `workflow` whose `prepare`, `change`, `verify`, and
-`cleanup` lifecycles invoke sections with `section` and optional `with`
-parameters. Sections invoke command steps with `use` and optional `with`
-parameters. Operations compose from one real environment through `target`
+command groups are authored under `tasks`. Environments and operations
+compose an explicit `workflow` whose `prepare`, `apply`, `verify`, and
+`cleanup` lifecycles invoke tasks with `task` and optional `with`
+parameters. Tasks invoke command steps with `command` and optional `with`
+parameters. Operations compose from one real environment through `environment`
 using the complete rule documented below.
 
 ## User decisions
@@ -58,23 +58,23 @@ using the complete rule documented below.
     configure `promote.records` or `promote.results`.
 14. Repository policy is authored under `git`, not `candidate`.
 15. Predecessor verification imports use stable IDs under
-    `requires.previous.verifications`, not authored filesystem paths.
-16. Authentication values use explicit azd secret references. Scalar
-    `auth: basic` defaults are rejected.
+    `requires.predecessor.verifications`, not authored filesystem paths.
+16. Verification-authentication values use explicit azd secret references.
+    Scalar `verificationAuth: basic` defaults are rejected.
 17. Reusable executable definitions use `commands`, reusable ordered command
-    groups use `sections`, and target orchestration uses `workflow`.
-18. Lifecycle groups are `prepare`, `change`, `verify`, and `cleanup`.
-19. Every workflow lifecycle entry invokes one section through `section` and
-    optional scalar `with` parameters. Every section step invokes one command
-    through `use` and optional scalar `with` parameters. Bare strings are
-    rejected and sections cannot nest.
-20. Operations bind to a base environment through `target`. They inherit
-    provider, artifacts, auth, and Git policy only, with recursive Git merging.
-    Requirements, workflow, locks, snapshots, and approvals remain
+    groups use `tasks`, and target orchestration uses `workflow`.
+18. Lifecycle groups are `prepare`, `apply`, `verify`, and `cleanup`.
+19. Every workflow lifecycle entry invokes one task through `task` and
+    optional scalar `with` parameters. Every task step invokes one command
+    through `command` and optional scalar `with` parameters. Bare strings are
+    rejected and tasks cannot nest.
+20. Operations bind to a base environment through `environment`. They inherit
+    provider, artifacts, verification auth, and Git policy only, with recursive
+    Git merging. Requirements, workflow, locks, Git snapshots, and approvals remain
     operation-owned.
 21. Approval policy is inline on the environment or operation that owns the
     boundary. A global approval target list is rejected.
-22. Snapshot policy is inline on its environment or operation. Named one-use
+22. Git snapshot policy is inline on its environment or operation. Named one-use
     snapshot IDs and repeated purpose IDs are rejected.
 23. Target `mode` is removed. Validation uses ordinary command invocations and
     an operation-authored `deploy: false` boundary instead of a fake deployment
@@ -105,7 +105,7 @@ using the complete rule documented below.
 - Rename proof concepts to operation results.
 - Rename finalizers to cleanup steps and mutation boundaries to changed
   resources or change boundaries.
-- Implement reusable parameterized sections and commands with deterministic
+- Implement reusable parameterized tasks and commands with deterministic
   workflow expansion.
 - Implement the documented target-based operation composition rule.
 - Implement progress counts, elapsed time, and historical estimates.
@@ -217,13 +217,13 @@ Primary convention sources:
     downstream adoption expectations.
 18. Reusable definitions are authored under `commands`; top-level and target
     `hooks` are rejected.
-19. Lifecycle groups use `prepare`, `change`, `verify`, and `cleanup`.
-20. Command invocations use `{use, with}` objects, and one definition is reused
+19. Lifecycle groups use `prepare`, `apply`, `verify`, and `cleanup`.
+20. Command invocations use `{command, with}` objects, and one definition is reused
     with different parameter values in the canonical fixture.
-21. Operation composition is defined by `target` and the documented base
-    environment rule. The former operation `environment` field is rejected.
-22. Approvals and snapshots are inline on environments and operations. Global
-    approval lists, named snapshot maps, and snapshot purpose IDs are rejected.
+21. Operation composition is defined by `environment` and the documented base
+    environment rule. The former operation `target` field is rejected.
+22. Approvals and Git snapshots are inline on environments and operations. Global
+    approval lists, named Git snapshot maps, and snapshot purpose IDs are rejected.
 23. Target `mode` is rejected. `deploy: false` explicitly compiles a
     validation-only operation without provider steps, operation results,
     deployment verification, or live-file HTTP verification.
@@ -247,9 +247,9 @@ All material choices are resolved by the user:
   concepts.
 - **Command duplication:** consolidate environment suffixes when behavior is
   invocation-parameter-driven.
-- **Operation composition:** `target` selects the base environment; only
-  provider, artifacts, auth, and Git policy inherit.
-- **Inline policy:** approvals and snapshots live on the environment or
+- **Operation composition:** `environment` selects the base environment; only
+  provider, artifacts, verification auth, and Git policy inherit.
+- **Inline policy:** approvals and Git snapshots live on the environment or
   operation that owns them.
 - **Provider behavior:** validation uses commands plus `deploy: false` rather
   than target `mode` or a fake deployment provider.
@@ -313,14 +313,14 @@ promote:
         - azure.yaml
         - pnpm-lock.yaml
       sealedPaths:
-        - '.azure/promote/verification/{workflow}-selected-files.json'
+        - '.azure/promote/verification/{target}-selected-files.json'
       liveFiles:
         - path: content-index.json
 
   providers:
     content-publisher:
       type: process
-      command: node
+      executable: node
       args:
         [
           scripts/publish-content-app.mjs,
@@ -339,60 +339,60 @@ promote:
       workdir: infra
       timeout: 30m
 
-  sections:
+  tasks:
     access-preflight:
       steps:
-        - use: verify-auth
+        - command: verify-auth
           with: { required: '{auth-required}' }
-        - use: check-asset-store
+        - command: check-asset-store
     build-output:
       steps:
-        - use: build
+        - command: build
           with: { mode: '{build-mode}' }
-        - use: prune-output
-        - use: normalize-output
+        - command: prune-output
+        - command: normalize-output
     data-change:
       steps:
-        - use: migrate-data
+        - command: migrate-data
     asset-publish:
       steps:
-        - use: publish-assets
-        - use: configure-asset-cors
+        - command: publish-assets
+        - command: configure-asset-cors
     output-verification:
       steps:
-        - use: verify-data
-        - use: verify-offline-output
-        - use: select-files
+        - command: verify-data
+        - command: verify-offline-output
+        - command: select-files
     live-verification:
       steps:
-        - use: run-smoke-tests
+        - command: run-smoke-tests
           with: { suite: '{smoke-suite}' }
-        - use: verify-live-site
+        - command: verify-live-site
     cleanup-output:
       steps:
-        - use: remove-unused-files
+        - command: remove-unused-files
     publisher-approval:
       steps:
-        - use: verify-publisher-approval
+        - command: verify-publisher-approval
     production-release-change:
       steps:
-        - use: prepare-production-data
-        - use: prepare-production-release
+        - command: prepare-production-data
+        - command: prepare-production-release
     deployment-input-verification:
       steps:
-        - use: verify-deployment-inputs
+        - command: verify-deployment-inputs
     published-content-verification:
       steps:
-        - use: verify-published-content
+        - command: verify-published-content
     prepared-content-verification:
       steps:
-        - use: verify-prepared-content
+        - command: verify-prepared-content
     content-input-verification:
       steps:
-        - use: verify-content-inputs
+        - command: verify-content-inputs
     deployment-validation:
       steps:
-        - use: validate-content
+        - command: validate-content
 
   environments:
     dev:
@@ -400,30 +400,30 @@ promote:
       artifacts: [content-app]
       git:
         worktree: dirtyAllowed
-      auth:
+      verificationAuth:
         type: basic
         username: { azd: DEV_BASIC_AUTH_USERNAME }
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
       workflow:
         prepare:
-          - section: access-preflight
+          - task: access-preflight
             with: { auth-required: false }
-          - section: build-output
+          - task: build-output
             with: { build-mode: release }
-        change:
-          - section: data-change
-          - section: asset-publish
+        apply:
+          - task: data-change
+          - task: asset-publish
         verify:
-          - section: output-verification
-          - section: live-verification
+          - task: output-verification
+          - task: live-verification
             with: { smoke-suite: fast }
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
     staging:
       provider: content-publisher
       artifacts: [content-app]
-      auth:
+      verificationAuth:
         type: basic
         username: { azd: STAGING_BASIC_AUTH_USERNAME }
         password: { azd: STAGING_BASIC_AUTH_PASSWORD }
@@ -431,7 +431,7 @@ promote:
         message: Approve the exact staging candidate
         match: PROMOTE
         automation: allowed
-      snapshot:
+      gitSnapshot:
         mode: publish
         recovery: manual
         refs:
@@ -439,19 +439,19 @@ promote:
             ref: refs/heads/environments/staging
       workflow:
         prepare:
-          - section: access-preflight
+          - task: access-preflight
             with: { auth-required: true }
-          - section: build-output
+          - task: build-output
             with: { build-mode: release }
-        change:
-          - section: data-change
-          - section: asset-publish
+        apply:
+          - task: data-change
+          - task: asset-publish
         verify:
-          - section: output-verification
-          - section: live-verification
+          - task: output-verification
+          - task: live-verification
             with: { smoke-suite: full }
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
     prod:
       provider: content-publisher
@@ -462,90 +462,90 @@ promote:
           exact: origin/main
           refresh: true
       requires:
-        previous:
+        predecessor:
           verifications: [staging-content, staging-routing]
       approval:
         message: Approve the exact production candidate
         match: PROMOTE
         automation: allowed
-      snapshot:
+      gitSnapshot:
         mode: publish
         recovery: manual
         refs:
           - kind: tag
-            template: refs/tags/releases/{candidate}
+            template: refs/tags/releases/{gitSha}
       workflow:
         prepare:
-          - section: publisher-approval
-          - section: access-preflight
+          - task: publisher-approval
+          - task: access-preflight
             with: { auth-required: true }
-          - section: build-output
+          - task: build-output
             with: { build-mode: release }
-        change:
-          - section: production-release-change
+        apply:
+          - task: production-release-change
         verify:
-          - section: output-verification
-          - section: deployment-input-verification
-          - section: live-verification
+          - task: output-verification
+          - task: deployment-input-verification
+          - task: live-verification
             with: { smoke-suite: full }
-          - section: published-content-verification
+          - task: published-content-verification
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
   operations:
     publish-content:
-      target: prod
+      environment: prod
       locks: [content:production, deployment:production]
       approval:
         message: Approve publishing the reviewed content
         match: PUBLISH
         automation: denied
-      snapshot:
+      gitSnapshot:
         mode: publish
         recovery: manual
         refs:
           - kind: tag
-            template: refs/tags/content/{candidate}
+            template: refs/tags/content/{gitSha}
       workflow:
         prepare:
-          - section: prepared-content-verification
-          - section: access-preflight
+          - task: prepared-content-verification
+          - task: access-preflight
             with: { auth-required: true }
-          - section: build-output
+          - task: build-output
             with: { build-mode: release }
         verify:
-          - section: output-verification
-          - section: content-input-verification
-          - section: live-verification
+          - task: output-verification
+          - task: content-input-verification
+          - task: live-verification
             with: { smoke-suite: full }
-          - section: published-content-verification
+          - task: published-content-verification
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
     validate-content:
-      target: prod
+      environment: prod
       deploy: false
       locks: [content:production-candidate]
       workflow:
         prepare:
-          - section: access-preflight
+          - task: access-preflight
             with: { auth-required: true }
-          - section: build-output
+          - task: build-output
             with: { build-mode: preview }
         verify:
-          - section: output-verification
-          - section: deployment-validation
+          - task: output-verification
+          - task: deployment-validation
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
     activate-content:
-      target: prod
+      environment: prod
       locks: [content:production, deployment:production]
       approval:
         message: Approve activation of the exact candidate
         match: ACTIVATE
         automation: denied
-      snapshot:
+      gitSnapshot:
         mode: verify
         recovery: manual
         refs:
@@ -553,63 +553,63 @@ promote:
             ref: refs/heads/environments/production
       workflow:
         prepare:
-          - section: access-preflight
+          - task: access-preflight
             with: { auth-required: true }
-          - section: build-output
+          - task: build-output
             with: { build-mode: release }
         verify:
-          - section: output-verification
-          - section: content-input-verification
-          - section: live-verification
+          - task: output-verification
+          - task: content-input-verification
+          - task: live-verification
             with: { smoke-suite: full }
-          - section: published-content-verification
+          - task: published-content-verification
         cleanup:
-          - section: cleanup-output
+          - task: cleanup-output
 
   commands:
     verify-auth:
       effect: inspection
-      command: node
+      executable: node
       args: [scripts/verify-credentials.mjs, --required, '{required}']
       inspectionOnly: true
       timeout: 5m
 
     check-asset-store:
-      command: node
+      executable: node
       args: [scripts/check-resource.mjs, content-assets]
       timeout: 5m
 
     migrate-data:
       effect: change
-      command: node
+      executable: node
       args: [scripts/migrate-data.mjs]
       timeout: 30m
 
     verify-data:
       effect: verification
-      command: node
-      args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{workflow}-data.json']
+      executable: node
+      args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{target}-data.json']
       verification:
-        path: '.azure/promote/verification/{workflow}-data.json'
+        path: '.azure/promote/verification/{target}-data.json'
       timeout: 10m
 
     build:
-      command: node
+      executable: node
       args: [scripts/build-content-app.mjs, --mode, '{mode}']
       timeout: 30m
 
     prune-output:
-      command: node
+      executable: node
       args: [scripts/prune-output.mjs, dist/content-app]
       timeout: 10m
 
     normalize-output:
-      command: node
+      executable: node
       args: [scripts/normalize-output.mjs, dist/content-app]
       timeout: 10m
 
     validate-content:
-      command: node
+      executable: node
       args:
         [
           scripts/validate-content-app.mjs,
@@ -622,20 +622,20 @@ promote:
 
     verify-offline-output:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-offline-output.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-offline-output.json',
+          '.azure/promote/verification/{target}-offline-output.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-offline-output.json'
+        path: '.azure/promote/verification/{target}-offline-output.json'
       timeout: 10m
 
     publish-assets:
       effect: change
-      command: node
+      executable: node
       args:
         [
           scripts/publish-assets.mjs,
@@ -651,7 +651,7 @@ promote:
 
     select-files:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/select-files.mjs,
@@ -663,126 +663,126 @@ promote:
           --export-dir,
           dist/content-app,
           --selection-record,
-          '.azure/promote/verification/{workflow}-selected-files.json',
+          '.azure/promote/verification/{target}-selected-files.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-selected-files.json'
+        path: '.azure/promote/verification/{target}-selected-files.json'
       timeout: 1h
 
     remove-unused-files:
-      command: node
+      executable: node
       args: [scripts/remove-unused-files.mjs, dist/content-app]
       timeout: 10m
 
     configure-asset-cors:
       effect: change
-      command: node
+      executable: node
       args: [scripts/configure-asset-cors.mjs, content-assets]
       timeout: 10m
 
     run-smoke-tests:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/run-smoke-tests.mjs,
           --suite,
           '{suite}',
           --record,
-          '.azure/promote/verification/{workflow}-smoke.json',
+          '.azure/promote/verification/{target}-smoke.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-smoke.json'
+        path: '.azure/promote/verification/{target}-smoke.json'
       timeout: 15m
 
     verify-live-site:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-live-site.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-live-site.json',
+          '.azure/promote/verification/{target}-live-site.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-live-site.json'
+        path: '.azure/promote/verification/{target}-live-site.json'
       timeout: 15m
 
     prepare-production-data:
       effect: change
-      command: node
+      executable: node
       args: [scripts/prepare-production-data.mjs]
       timeout: 30m
 
     verify-publisher-approval:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-publisher-approval.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-publisher-approval.json',
+          '.azure/promote/verification/{target}-publisher-approval.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-publisher-approval.json'
+        path: '.azure/promote/verification/{target}-publisher-approval.json'
       timeout: 5m
 
     prepare-production-release:
       effect: change
-      command: node
+      executable: node
       args: [scripts/prepare-production-release.mjs]
       timeout: 30m
 
     verify-deployment-inputs:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-deployment-inputs.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-deployment-inputs.json',
+          '.azure/promote/verification/{target}-deployment-inputs.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-deployment-inputs.json'
+        path: '.azure/promote/verification/{target}-deployment-inputs.json'
       timeout: 10m
 
     verify-published-content:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-published-content.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-published-content.json',
+          '.azure/promote/verification/{target}-published-content.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-published-content.json'
+        path: '.azure/promote/verification/{target}-published-content.json'
       timeout: 10m
 
     verify-prepared-content:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-prepared-content.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-prepared-content.json',
+          '.azure/promote/verification/{target}-prepared-content.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-prepared-content.json'
+        path: '.azure/promote/verification/{target}-prepared-content.json'
       timeout: 10m
 
     verify-content-inputs:
       effect: verification
-      command: node
+      executable: node
       args:
         [
           scripts/verify-content-inputs.mjs,
           --record,
-          '.azure/promote/verification/{workflow}-content-inputs.json',
+          '.azure/promote/verification/{target}-content-inputs.json',
         ]
       verification:
-        path: '.azure/promote/verification/{workflow}-content-inputs.json'
+        path: '.azure/promote/verification/{target}-content-inputs.json'
       timeout: 10m
 ```
 
@@ -821,42 +821,42 @@ Git policy composes in one ordered sequence:
 1. Top-level `promote.git` is the base policy for every environment.
 2. Environment `git` recursively merges into that base, including `ref`
    members. Authored members replace the same member; omitted members inherit.
-3. An operation starts from its target environment's effective Git policy and
+3. An operation starts from its base environment's effective Git policy and
    recursively merges operation `git` by the same rule.
 4. No layer implicitly clears an inherited member.
 
-## Reusable sections, commands, and workflows
+## Reusable tasks, commands, and workflows
 
 Reusable executable definitions are authored under `commands`. Reusable
-ordered command groups are authored under `sections`. Targets compose a
-`workflow` from section invocations:
+ordered command groups are authored under `tasks`. Targets compose a
+`workflow` from task invocations:
 
 ```yaml
 commands:
   verify-auth:
-    command: pnpm
+    executable: pnpm
     args: [verify:auth, --required, '{required}']
     timeout: 5m
   build:
-    command: pnpm
+    executable: pnpm
     args: [build, --mode, '{mode}']
     timeout: 30m
 
-sections:
+tasks:
   hosting-preflight:
     steps:
-      - use: verify-auth
+      - command: verify-auth
         with: { required: '{auth-required}' }
   file-prep:
     steps:
-      - use: build
+      - command: build
         with: { mode: '{build-mode}' }
 
 workflow:
   prepare:
-    - section: hosting-preflight
+    - task: hosting-preflight
       with: { auth-required: true }
-    - section: file-prep
+    - task: file-prep
       with: { build-mode: preview }
 ```
 
@@ -865,45 +865,46 @@ The four lifecycle groups are:
 | Group     | Meaning                                                        |
 | --------- | -------------------------------------------------------------- |
 | `prepare` | Bounded inspection and preparation before the change boundary. |
-| `change`  | Project commands that may change external or durable state.    |
-| `verify`  | Post-change verification and structured result checks.         |
+| `apply`   | Project commands that may change external or durable state.    |
+| `verify`  | Post-apply verification and structured result checks.          |
 | `cleanup` | Bounded cleanup that runs through the cleanup lifecycle.       |
 
-Workflow entries use a lowercase kebab-case `section` ID. Section steps use a
-lowercase kebab-case command ID under `use`. Both invocation types accept an
+Workflow entries use a lowercase kebab-case `task` ID. Task steps use a
+lowercase kebab-case command ID under `command`. Both invocation types accept an
 optional lowercase kebab-case `with` map of string, number, or boolean values.
-An exact section parameter placeholder such as `'{auth-required}'` preserves
-the supplied scalar type when passed into a command step. Sections cannot
-invoke other sections; the compiler flattens them deterministically and
-retains section identity in expanded plans.
+An exact task parameter placeholder such as `'{auth-required}'` preserves
+the supplied scalar type when passed into a command step. Tasks cannot
+invoke other tasks; the compiler flattens them deterministically and
+retains task identity in expanded plans.
 
 ## Operation composition
 
-Every operation selects one real environment through `target`:
+Every operation selects one real environment through `environment`:
 
 ```yaml
 operations:
   validate-content:
-    target: prod
+    environment: prod
     deploy: false
     git:
       ref:
         refresh: false
     workflow:
       prepare:
-        - section: file-prep
+        - task: file-prep
           with: { build-mode: preview }
 ```
 
 Composition follows one complete rule:
 
-1. The base environment supplies `provider`, `artifacts`, `auth`, and its
+1. The base environment supplies `provider`, `artifacts`, `verificationAuth`, and its
    effective Git policy after top-level and environment Git composition.
-2. An operation-authored `provider`, `artifacts`, or `auth` replaces the base
-   value. A provider override cannot be combined with `deploy: false`.
+2. An operation-authored `provider`, `artifacts`, or `verificationAuth`
+   replaces the base value. A provider override cannot be combined with
+   `deploy: false`.
 3. Operation `git` merges recursively into base `git`, including `ref`
    members.
-4. `requires`, `workflow`, `locks`, `snapshot`, and `approval` are
+4. `requires`, `workflow`, `locks`, `gitSnapshot`, and `approval` are
    operation-owned and never inherit from the base environment.
 5. `deploy` defaults to true. `deploy: false` preserves artifact
    fingerprinting, sealing, lifecycle commands, and final artifact verification
@@ -914,7 +915,7 @@ Composition follows one complete rule:
 This preserves the environment execution context while keeping every
 operation-specific safety boundary visible in the operation.
 
-## Inline approvals and snapshots
+## Inline approvals and Git snapshots
 
 Approval policy is placed on the environment or operation that owns the
 boundary:
@@ -926,10 +927,10 @@ approval:
   automation: allowed
 ```
 
-Snapshot policy is also inline:
+Git snapshot policy is also inline:
 
 ```yaml
-snapshot:
+gitSnapshot:
   mode: publish
   recovery: manual
   refs:
@@ -938,17 +939,17 @@ snapshot:
 ```
 
 The parent environment or operation supplies the policy identity and purpose.
-Global approval target lists, named snapshot maps, and authored snapshot
+Global approval target lists, named Git snapshot maps, and authored snapshot
 purpose IDs are rejected.
 
 ## Provider variants and validation behavior
 
 `providers` uses strict type-specific schemas:
 
-| Type      | Allowed fields                                                    |
-| --------- | ----------------------------------------------------------------- |
-| `process` | `type`, required `command`, optional `args`, `workdir`, `timeout` |
-| `azd`     | `type`, optional `args`, `workdir`, `timeout`                     |
+| Type      | Allowed fields                                                       |
+| --------- | -------------------------------------------------------------------- |
+| `process` | `type`, required `executable`, optional `args`, `workdir`, `timeout` |
+| `azd`     | `type`, optional `args`, `workdir`, `timeout`                        |
 
 Fields from another provider type are rejected by JSON Schema. Target and
 operation `mode` is not part of the contract. A validation workflow uses
@@ -969,7 +970,7 @@ stable ID instead of repeating that predecessor record's filesystem path:
 
 ```yaml
 requires:
-  previous:
+  predecessor:
     verifications: [staging-content, staging-routing]
 ```
 
@@ -977,18 +978,18 @@ Filesystem paths are not accepted in the verification ID list.
 
 ## Authentication references
 
-Authentication values are explicit references to secrets in the target azd
-environment:
+Verification-authentication values are explicit references to secrets in the
+target azd environment:
 
 ```yaml
-auth:
+verificationAuth:
   type: basic
   username: { azd: BASIC_AUTH_USERNAME }
   password: { azd: BASIC_AUTH_PASSWORD }
 ```
 
-The scalar `auth: basic` form is rejected because it depends on undeclared,
-consumer-specific environment variable defaults.
+The scalar `verificationAuth: basic` form is rejected because it depends on
+undeclared, consumer-specific environment variable defaults.
 
 ## Public terminology and internal type map
 
@@ -1034,19 +1035,19 @@ Internal storage directories follow the same model and remain compiler-owned:
    and `results` properties are rejected.
 8. Authored Git policy uses `git`. The former `candidate` property is rejected.
 9. Predecessor verification imports use lowercase kebab-case IDs under
-   `requires.previous.verifications`. The former `previousRun` property and
+   `requires.predecessor.verifications`. The former `previousRun` property and
    filesystem paths are rejected.
-10. Auth fields use strict `{azd: NAME}` secret reference objects.
+10. `verificationAuth` fields use strict `{azd: NAME}` secret reference objects.
 11. Reusable executable definitions live under `commands`; reusable ordered
-    command groups live under `sections`; targets compose them under
+    command groups live under `tasks`; targets compose them under
     `workflow`.
-12. Workflow lifecycle groups are `prepare`, `change`, `verify`, and
-    `cleanup`. Workflow entries use strict `{section, with}` invocations, and
-    section steps use strict `{use, with}` command invocations. Sections cannot
+12. Workflow lifecycle groups are `prepare`, `apply`, `verify`, and
+    `cleanup`. Workflow entries use strict `{task, with}` invocations, and
+    task steps use strict `{command, with}` command invocations. Tasks cannot
     nest.
-13. Operations require `target`, support explicit `deploy: false`, and follow
+13. Operations require `environment`, support explicit `deploy: false`, and follow
     the documented base environment composition rule.
-14. Approvals and snapshots are inline on their owning environment or
+14. Approvals and Git snapshots are inline on their owning environment or
     operation.
 15. Provider variants use strict `oneOf` schemas with no mixed fields.
 16. JSON Schema validates structure. Cross-reference existence and exactly one
@@ -1060,31 +1061,31 @@ Internal storage directories follow the same model and remain compiler-owned:
    - complete valid promote configuration;
    - minimal one-chain promote configuration;
    - multiple-chain default examples;
-   - reusable parameterized section and command invocations;
-   - explicit prepare, change, verify, and cleanup workflows;
-   - operations composed from real environments through `target`;
+   - reusable parameterized task and command invocations;
+   - explicit prepare, apply, verify, and cleanup workflows;
+   - operations composed from real environments through `environment`;
    - inline environment and operation approvals;
-   - inline snapshots without one-use IDs or purpose IDs;
+   - inline Git snapshots without one-use IDs or purpose IDs;
    - validation through lifecycle commands plus `deploy: false` instead of
      target `mode` or a fake provider;
    - valid process and azd provider variants;
    - rejection of mixed-provider fields;
-   - rejection of flat target steps, nested sections, empty sections, and bare
+   - rejection of flat target steps, nested tasks, empty tasks, and bare
      string command invocations;
    - rejection of global approvals, named snapshots, target hooks, and
-     operation `environment`;
+     operation `target`;
    - top-level name as promotion identity;
    - rejection of authored project, record, and result path policy;
    - Git policy under `git`;
    - stable predecessor verification IDs;
    - explicit azd secret references;
-   - rejection of scalar basic authentication and raw secret names;
+   - rejection of scalar basic verification authentication and raw secret names;
    - lowercase kebab-case ID enforcement;
    - rejection of every old underscore field;
    - rejection of promote-owned camelCase and underscore IDs;
    - acceptance of dashed file names and real environment/resource names;
    - strict unknown-property rejection;
-   - basic, headers, and serviceToken authentication objects.
+   - basic, headers, and serviceToken verification-authentication objects.
 3. Add a representative full-contract fixture using neutral application,
    resource, lock, domain, path, and verification names.
 4. Run `pnpm test`, `pnpm validate-schema --offline`, `pnpm check`, and
@@ -1111,16 +1112,16 @@ Internal storage directories follow the same model and remain compiler-owned:
 - Top-level `name` documents promotion identity.
 - `project`, `records`, `results`, `candidate`, and `previousRun` are rejected.
 - Predecessor verification imports reject filesystem paths.
-- Authentication rejects implicit defaults and raw secret names.
-- Top-level and target `hooks`, operation `environment`, and target `mode` are
+- Verification authentication rejects implicit defaults and raw secret names.
+- Top-level and target `hooks`, operation `target`, and target `mode` are
   rejected.
-- Workflow invocations require `section`; command invocations require `use`;
+- Workflow invocations require `task`; command invocations require `command`;
   optional `with` values are scalar and parameter IDs use lowercase
   kebab-case.
 - Operation composition text and fixtures cover every inherited and
   operation-owned field.
-- Approval and snapshot policy is inline with no global target list, snapshot
-  map, or snapshot purpose ID.
+- Approval and Git snapshot policy is inline with no global target list, named
+  Git snapshot map, or snapshot purpose ID.
 - Strict provider variants reject mixed process and azd fields.
 - No promote-owned ID contains uppercase letters or `_`; multiword IDs use
   single hyphens between lowercase alphanumeric segments.
@@ -1143,11 +1144,11 @@ Internal storage directories follow the same model and remain compiler-owned:
   policy.
 - Git policy, predecessor verification imports, and auth secret references use
   the final schema 1.2 shape.
-- Reusable parameterized sections and commands plus explicit workflows replace
+- Reusable parameterized tasks and commands plus explicit workflows replace
   authored hooks, flat command lists, and string references.
-- Operations compose through `target` using the documented base environment
+- Operations compose through `environment` using the documented base environment
   rule.
-- Approvals and snapshots are inline, target `mode` is absent, and provider
+- Approvals and Git snapshots are inline, target `mode` is absent, and provider
   variants are strict.
 - The changelog states that the stale promote section is replaced before
   public release.

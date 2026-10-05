@@ -1,4 +1,4 @@
-name: invalid-flat-target-steps
+name: invalid-nested-task
 promote:
   chains:
     release:
@@ -7,9 +7,9 @@ promote:
     dev:
       provider: publisher
       artifacts: [site]
-      steps:
+      workflow:
         prepare:
-          - command: build
+          - task: outer
   artifacts:
     site:
       type: static
@@ -18,6 +18,13 @@ promote:
     publisher:
       type: process
       executable: publish
+  tasks:
+    outer:
+      steps:
+        - task: inner
+    inner:
+      steps:
+        - command: build
   commands:
     build:
       executable: build

@@ -44,10 +44,10 @@ const invalidFixtures = [
       error('/promote/providers', 'propertyNames', { propertyName: 'localPublisher' }),
     ],
   ],
-  ['empty-section', [error('/promote/sections/empty/steps', 'minItems')]],
+  ['empty-task', [error('/promote/tasks/empty/steps', 'minItems')]],
   ['empty-target-artifacts', [error('/promote/environments/dev/artifacts', 'minItems')]],
   ['flat-target-steps', [additionalProperty('/promote/environments/dev', 'steps')]],
-  ['implicit-basic-auth', [error('/promote/environments/dev/auth', 'oneOf')]],
+  ['implicit-basic-auth', [error('/promote/environments/dev/verificationAuth', 'oneOf')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
   ['legacy-catalog-concept', [additionalProperty('/promote', 'catalog')]],
@@ -63,14 +63,24 @@ const invalidFixtures = [
     'legacy-named-snapshots',
     [
       additionalProperty('/promote', 'snapshots'),
-      error('/promote/environments/staging/snapshot', 'type'),
+      additionalProperty('/promote/environments/staging', 'snapshot'),
     ],
   ],
   [
-    'legacy-operation-environment',
+    'legacy-operation-target',
     [
-      missingProperty('/promote/operations/validate-content', 'target'),
-      additionalProperty('/promote/operations/validate-content', 'environment'),
+      missingProperty('/promote/operations/validate-content', 'environment'),
+      additionalProperty('/promote/operations/validate-content', 'target'),
+    ],
+  ],
+  ['legacy-change-lifecycle', [additionalProperty('/promote/environments/dev/workflow', 'change')]],
+  [
+    'legacy-executable-command',
+    [
+      missingProperty('/promote/providers/publisher', 'executable'),
+      additionalProperty('/promote/providers/publisher', 'command'),
+      missingProperty('/promote/commands/build', 'executable'),
+      additionalProperty('/promote/commands/build', 'command'),
     ],
   ],
   [
@@ -90,6 +100,30 @@ const invalidFixtures = [
   ['legacy-promote-project', [additionalProperty('/promote', 'project')]],
   ['legacy-promote-records', [additionalProperty('/promote', 'records')]],
   ['legacy-promote-results', [additionalProperty('/promote', 'results')]],
+  [
+    'legacy-section-terminology',
+    [
+      additionalProperty('/promote', 'sections'),
+      missingProperty('/promote/environments/dev/workflow/prepare/0', 'task'),
+      additionalProperty('/promote/environments/dev/workflow/prepare/0', 'section'),
+    ],
+  ],
+  [
+    'legacy-step-use',
+    [
+      missingProperty('/promote/tasks/file-prep/steps/0', 'command'),
+      additionalProperty('/promote/tasks/file-prep/steps/0', 'use'),
+    ],
+  ],
+  [
+    'legacy-target-policy-names',
+    [
+      additionalProperty('/promote/environments/dev', 'auth'),
+      additionalProperty('/promote/environments/dev', 'snapshot'),
+      missingProperty('/promote/environments/dev/requires', 'predecessor'),
+      additionalProperty('/promote/environments/dev/requires', 'previous'),
+    ],
+  ],
   ['legacy-target-hooks', [additionalProperty('/promote/environments/dev', 'hooks')]],
   [
     'legacy-underscore-keys',
@@ -100,15 +134,15 @@ const invalidFixtures = [
   ],
   [
     'mixed-azd-provider-fields',
-    [additionalProperty('/promote/providers/azure-publisher', 'command')],
+    [additionalProperty('/promote/providers/azure-publisher', 'executable')],
   ],
   [
     'mixed-process-provider-fields',
     [additionalProperty('/promote/providers/local-publisher', 'config')],
   ],
-  ['missing-hook-timeout', [missingProperty('/promote/commands/inspect-target', 'timeout')]],
-  ['missing-operation-target', [missingProperty('/promote/operations/validate-content', 'target')]],
-  ['missing-process-command', [missingProperty('/promote/providers/local-publisher', 'command')]],
+  ['missing-command-timeout', [missingProperty('/promote/commands/inspect-target', 'timeout')]],
+  ['missing-operation-environment', [missingProperty('/promote/operations/validate-content', 'environment')]],
+  ['missing-process-executable', [missingProperty('/promote/providers/local-publisher', 'executable')]],
   [
     'missing-required-structures',
     [
@@ -125,37 +159,37 @@ const invalidFixtures = [
     ],
   ],
   [
-    'nested-section',
+    'nested-task',
     [
-      missingProperty('/promote/sections/outer/steps/0', 'use'),
-      additionalProperty('/promote/sections/outer/steps/0', 'section'),
+      missingProperty('/promote/tasks/outer/steps/0', 'command'),
+      additionalProperty('/promote/tasks/outer/steps/0', 'task'),
     ],
   ],
   ['non-deploying-provider-override', [error('/promote/operations/validate', 'not')]],
-  ['overlong-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
+  ['overlong-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['promote-version', [additionalProperty('/promote', 'version')]],
   [
     'raw-auth-secret',
     [
-      error('/promote/environments/dev/auth/username', 'type'),
-      error('/promote/environments/dev/auth/password', 'type'),
+      error('/promote/environments/dev/verificationAuth/username', 'type'),
+      error('/promote/environments/dev/verificationAuth/password', 'type'),
     ],
   ],
-  ['string-command-invocation', [error('/promote/sections/build-output/steps/0', 'type')]],
-  ['unbounded-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
+  ['string-command-invocation', [error('/promote/tasks/build-output/steps/0', 'type')]],
+  ['unbounded-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['unknown-nested-property', [additionalProperty('/promote/environments/dev', 'unexpected')]],
   ['unsupported-artifact-type', [error('/promote/artifacts/site/type', 'enum')]],
   ['unsupported-provider-type', [error('/promote/providers/custom-publisher', 'oneOf')]],
   [
     'verification-import-path',
-    [error('/promote/environments/prod/requires/previous/verifications/0', 'pattern')],
+    [error('/promote/environments/prod/requires/predecessor/verifications/0', 'pattern')],
   ],
   [
     'verification-effect-without-record',
     [missingProperty('/promote/commands/verify-target', 'verification')],
   ],
   ['verification-without-effect', [missingProperty('/promote/commands/verify-target', 'effect')]],
-  ['zero-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
+  ['zero-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
 ]
 
 async function loadFixture(kind, name) {
@@ -266,7 +300,7 @@ describe('azure.yaml v1.2 promote contract', () => {
     }
   })
 
-  it('uses reusable sections, parameterized commands, and explicit lifecycle groups', async () => {
+  it('uses reusable tasks, parameterized commands, and explicit lifecycle groups', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'full-contract')
     const promoteProperties = schema.definitions.promoteConfig.properties
@@ -274,67 +308,67 @@ describe('azure.yaml v1.2 promote contract', () => {
     const workflowProperties = schema.definitions.promoteWorkflow.properties
 
     expect(promoteProperties.commands.$ref).toBe('#/definitions/promoteCommands')
-    expect(promoteProperties.sections.$ref).toBe('#/definitions/promoteSections')
+    expect(promoteProperties.tasks.$ref).toBe('#/definitions/promoteTasks')
     expect(promoteProperties).not.toHaveProperty('hooks')
     expect(targetProperties.workflow.$ref).toBe('#/definitions/promoteWorkflow')
     expect(targetProperties).not.toHaveProperty('steps')
     expect(targetProperties).not.toHaveProperty('hooks')
     expect(Object.keys(workflowProperties).sort()).toEqual([
-      'change',
+      'apply',
       'cleanup',
       'prepare',
       'verify',
     ])
-    expect(schema.definitions.promoteSection.required).toEqual(['steps'])
-    expect(schema.definitions.promoteSection.properties.steps.$ref)
+    expect(schema.definitions.promoteTask.required).toEqual(['steps'])
+    expect(schema.definitions.promoteTask.properties.steps.$ref)
       .toBe('#/definitions/promoteCommandInvocations')
 
-    const sectionInvocations = [
+    const taskInvocations = [
       ...Object.values(fixture.promote.environments),
       ...Object.values(fixture.promote.operations),
     ].flatMap((target) => Object.values(target.workflow ?? {}).flat())
-    const authParameters = sectionInvocations
-      .filter((invocation) => invocation.section === 'access-preflight')
+    const authParameters = taskInvocations
+      .filter((invocation) => invocation.task === 'access-preflight')
       .map((invocation) => invocation.with)
-    const buildModes = sectionInvocations
-      .filter((invocation) => invocation.section === 'build-output')
+    const buildModes = taskInvocations
+      .filter((invocation) => invocation.task === 'build-output')
       .map((invocation) => invocation.with['build-mode'])
 
     expect(authParameters).toContainEqual({ 'auth-required': false })
     expect(authParameters).toContainEqual({ 'auth-required': true })
     expect(new Set(buildModes)).toEqual(new Set(['preview', 'release']))
-    expect(fixture.promote.sections['access-preflight'].steps[0]).toEqual({
-      use: 'verify-auth',
+    expect(fixture.promote.tasks['access-preflight'].steps[0]).toEqual({
+      command: 'verify-auth',
       with: { required: '{auth-required}' },
     })
     expect(fixture.promote.commands).not.toHaveProperty('verify-auth-required')
     expect(fixture.promote.commands).not.toHaveProperty('build-preview')
   })
 
-  it('defines operation composition through one target-based rule', async () => {
+  it('defines operation composition through one environment-based rule', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'named-operation')
     const operationDefinition = schema.definitions.promoteOperation
     const operation = fixture.promote.operations['validate-content']
     const base = fixture.promote.environments.prod
 
-    expect(operationDefinition.required).toEqual(['target'])
-    expect(operationDefinition.properties).not.toHaveProperty('environment')
+    expect(operationDefinition.required).toEqual(['environment'])
+    expect(operationDefinition.properties).not.toHaveProperty('target')
     expect(operationDefinition.properties).not.toHaveProperty('mode')
     expect(operationDefinition.properties.git.$ref).toBe('#/definitions/promoteGitOverride')
-    expect(operationDefinition.description).toContain('inherits provider, artifacts, auth, and git')
+    expect(operationDefinition.description).toContain('inherits provider, artifacts, verificationAuth, and git')
     expect(operationDefinition.description).toContain('git merges recursively')
     expect(operationDefinition.description).toContain('are never inherited')
     expect(operationDefinition.description).toContain('deploy to false')
 
-    expect(operation.target).toBe('prod')
+    expect(operation.environment).toBe('prod')
     expect(operation.deploy).toBe(false)
     expect(operation).not.toHaveProperty('provider')
     expect(operation).not.toHaveProperty('artifacts')
-    expect(operation).not.toHaveProperty('auth')
+    expect(operation).not.toHaveProperty('verificationAuth')
     expect(base.provider).toBe('publisher')
     expect(base.artifacts).toEqual(['site'])
-    expect(base.auth.type).toBe('headers')
+    expect(base.verificationAuth.type).toBe('headers')
     expect(fixture.promote.git).toEqual({
       worktree: 'clean',
       upstream: 'published',
@@ -346,35 +380,35 @@ describe('azure.yaml v1.2 promote contract', () => {
       ref: { refresh: false },
     })
     expect(base.workflow.prepare[0]).toEqual({
-      section: 'build-output',
+      task: 'build-output',
       with: { mode: 'release' },
     })
     expect(operation.workflow.prepare[0]).toEqual({
-      section: 'build-output',
+      task: 'build-output',
       with: { mode: 'preview' },
     })
     expect(base).toHaveProperty('approval')
-    expect(base).toHaveProperty('snapshot')
+    expect(base).toHaveProperty('gitSnapshot')
     expect(operation).not.toHaveProperty('approval')
-    expect(operation).not.toHaveProperty('snapshot')
+    expect(operation).not.toHaveProperty('gitSnapshot')
   })
 
-  it('keeps approvals and snapshots inline and removes one-use policy identifiers', async () => {
+  it('keeps approvals and Git snapshots inline and removes one-use policy identifiers', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'full-contract')
     const promoteProperties = schema.definitions.promoteConfig.properties
     const targetProperties = schema.definitions.promoteTarget.properties
     const commandProperties = schema.definitions.promoteCommand.properties
-    const snapshotDefinition = schema.definitions.promoteSnapshot
+    const snapshotDefinition = schema.definitions.promoteGitSnapshot
 
     expect(promoteProperties).not.toHaveProperty('approvals')
     expect(promoteProperties).not.toHaveProperty('snapshots')
     expect(targetProperties.approval.$ref).toBe('#/definitions/promoteApproval')
-    expect(targetProperties.snapshot.$ref).toBe('#/definitions/promoteSnapshot')
+    expect(targetProperties.gitSnapshot.$ref).toBe('#/definitions/promoteGitSnapshot')
     expect(commandProperties).not.toHaveProperty('approval')
     expect(snapshotDefinition.required).toEqual(['mode', 'refs'])
     expect(snapshotDefinition.properties).not.toHaveProperty('purpose')
-    expect(fixture.promote.environments.staging.snapshot).toEqual({
+    expect(fixture.promote.environments.staging.gitSnapshot).toEqual({
       mode: 'publish',
       recovery: 'manual',
       refs: [{ kind: 'branch', ref: 'refs/heads/environments/staging' }],
@@ -419,7 +453,7 @@ describe('azure.yaml v1.2 promote contract', () => {
     ])
 
     const expectedProperties = {
-      promoteProcessProvider: ['args', 'command', 'timeout', 'type', 'workdir'],
+      promoteProcessProvider: ['args', 'executable', 'timeout', 'type', 'workdir'],
       promoteAzdProvider: ['args', 'timeout', 'type', 'workdir'],
     }
 
@@ -510,7 +544,7 @@ describe('azure.yaml v1.2 promote contract', () => {
       'promoteOperations',
       'promoteArtifacts',
       'promoteProviders',
-      'promoteSections',
+      'promoteTasks',
       'promoteCommands',
       'promoteCommandParameters',
     ]) {

@@ -1,4 +1,4 @@
-name: invalid-legacy-target-hooks
+name: invalid-missing-process-executable
 promote:
   chains:
     release:
@@ -7,8 +7,6 @@ promote:
     dev:
       provider: local-publisher
       artifacts: [site]
-      hooks:
-        before: [build]
   artifacts:
     site:
       type: static
@@ -16,9 +14,3 @@ promote:
   providers:
     local-publisher:
       type: process
-      executable: publish
-  commands:
-    build:
-      executable: pnpm
-      args: [build]
-      timeout: 30m

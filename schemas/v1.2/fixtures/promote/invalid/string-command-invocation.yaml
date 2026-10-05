@@ -9,7 +9,7 @@ promote:
       artifacts: [site]
       workflow:
         prepare:
-          - section: build-output
+          - task: build-output
   artifacts:
     site:
       type: static
@@ -17,12 +17,12 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
-  sections:
+      executable: publish
+  tasks:
     build-output:
       steps: [build]
   commands:
     build:
-      command: pnpm
+      executable: pnpm
       args: [build]
       timeout: 30m

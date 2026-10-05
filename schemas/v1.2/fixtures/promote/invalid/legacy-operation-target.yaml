@@ -1,12 +1,15 @@
-name: invalid-unbounded-hook-timeout
+name: invalid-legacy-operation-target
 promote:
   chains:
     release:
-      targets: [dev]
+      targets: [prod]
   environments:
-    dev:
+    prod:
       provider: local-publisher
       artifacts: [site]
+  operations:
+    validate-content:
+      target: prod
   artifacts:
     site:
       type: static
@@ -14,8 +17,4 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
-  commands:
-    inspect-target:
-      command: pnpm
-      timeout: forever
+      executable: publish

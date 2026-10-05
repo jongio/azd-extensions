@@ -1,4 +1,4 @@
-name: invalid-overlong-hook-timeout
+name: invalid-zero-command-timeout
 promote:
   chains:
     release:
@@ -14,8 +14,8 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
   commands:
     inspect-target:
-      command: pnpm
-      timeout: 2h
+      executable: pnpm
+      timeout: 0s

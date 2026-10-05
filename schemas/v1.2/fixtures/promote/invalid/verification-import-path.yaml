@@ -11,7 +11,7 @@ promote:
       provider: local-publisher
       artifacts: [site]
       requires:
-        previous:
+        predecessor:
           verifications:
             - .azure/promote/verification/dev-content.json
   artifacts:
@@ -21,4 +21,4 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish

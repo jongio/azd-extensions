@@ -7,7 +7,7 @@ promote:
     dev:
       provider: local-publisher
       artifacts: [site]
-      auth: basic
+      verificationAuth: basic
   artifacts:
     site:
       type: static
@@ -15,4 +15,4 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish

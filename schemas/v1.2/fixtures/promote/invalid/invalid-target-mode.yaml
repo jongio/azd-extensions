@@ -15,4 +15,4 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish

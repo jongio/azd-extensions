@@ -14,7 +14,7 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
   chain: release
   protected: [prod]
   database: {}

@@ -1,15 +1,12 @@
-name: invalid-legacy-operation-environment
+name: invalid-missing-command-timeout
 promote:
   chains:
     release:
-      targets: [prod]
+      targets: [dev]
   environments:
-    prod:
+    dev:
       provider: local-publisher
       artifacts: [site]
-  operations:
-    validate-content:
-      environment: prod
   artifacts:
     site:
       type: static
@@ -17,4 +14,7 @@ promote:
   providers:
     local-publisher:
       type: process
-      command: publish
+      executable: publish
+  commands:
+    inspect-target:
+      executable: pnpm
