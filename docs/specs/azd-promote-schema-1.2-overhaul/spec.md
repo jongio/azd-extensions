@@ -119,7 +119,7 @@ operations invoke them through `steps.prepare`, `steps.change`,
 - No credential changes.
 - No azd-promote runtime implementation.
 - No provider protocol implementation.
-- No BBQDB changes.
+- No downstream consumer changes.
 - No backward-compatible aliases for old experimental promote names.
 - No authored `promote.version` field.
 - No rename of core azd v1.0/v1.1 keys.
