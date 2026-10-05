@@ -1,7 +1,5 @@
 name: invalid-unbounded-hook-timeout
 promote:
-  project:
-    id: invalidUnboundedHookTimeout
   chains:
     release:
       targets: [dev]
@@ -17,7 +15,7 @@ promote:
     localPublisher:
       type: process
       command: publish
-  hooks:
+  commands:
     inspectTarget:
       command: pnpm
       timeout: forever

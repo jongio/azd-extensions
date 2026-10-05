@@ -1,7 +1,5 @@
 name: invalid-hyphenated-promote-id
 promote:
-  project:
-    id: invalidHyphenatedId
   chains:
     release:
       targets: [dev]

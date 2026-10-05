@@ -1,7 +1,5 @@
 name: invalid-unsupported-provider-type
 promote:
-  project:
-    id: invalidUnsupportedProviderType
   chains:
     release:
       targets: [dev]
@@ -15,4 +13,4 @@ promote:
       path: dist
   providers:
     customPublisher:
-      type: customPublisher
+      type: cloudflareWorker

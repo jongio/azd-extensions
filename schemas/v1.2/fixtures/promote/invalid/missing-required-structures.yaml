@@ -1,7 +1,5 @@
 name: invalid-missing-required-structures
 promote:
-  project:
-    id: invalidMissingStructures
   chains:
     release:
       targets: [dev]

@@ -1,0 +1,25 @@
+name: invalid-legacy-named-snapshots
+promote:
+  chains:
+    release:
+      targets: [staging]
+  snapshots:
+    stagingRelease:
+      purpose: verifiedStaging
+      mode: publish
+      refs:
+        - kind: branch
+          ref: refs/heads/environments/staging
+  environments:
+    staging:
+      provider: localPublisher
+      artifacts: [site]
+      snapshot: stagingRelease
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    localPublisher:
+      type: process
+      command: publish

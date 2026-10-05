@@ -1,7 +1,5 @@
 name: invalid-missing-hook-timeout
 promote:
-  project:
-    id: invalidMissingHookTimeout
   chains:
     release:
       targets: [dev]
@@ -17,6 +15,6 @@ promote:
     localPublisher:
       type: process
       command: publish
-  hooks:
+  commands:
     inspectTarget:
       command: pnpm

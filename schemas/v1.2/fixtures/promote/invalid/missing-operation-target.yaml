@@ -1,12 +1,15 @@
-name: invalid-legacy-phase-fields
+name: invalid-missing-operation-target
 promote:
   chains:
     release:
-      targets: [dev]
+      targets: [prod]
   environments:
-    dev:
+    prod:
       provider: localPublisher
       artifacts: [site]
+  operations:
+    validateContent:
+      provider: validator
   artifacts:
     site:
       type: static
@@ -15,10 +18,6 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}
+    validator:
+      type: process
+      command: validate

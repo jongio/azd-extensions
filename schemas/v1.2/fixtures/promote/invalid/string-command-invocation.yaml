@@ -1,4 +1,4 @@
-name: invalid-legacy-phase-fields
+name: invalid-string-command-invocation
 promote:
   chains:
     release:
@@ -7,6 +7,8 @@ promote:
     dev:
       provider: localPublisher
       artifacts: [site]
+      steps:
+        prepare: [build]
   artifacts:
     site:
       type: static
@@ -15,10 +17,8 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}
+  commands:
+    build:
+      command: pnpm
+      args: [build]
+      timeout: 30m

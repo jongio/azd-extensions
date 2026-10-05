@@ -1,7 +1,5 @@
 name: invalid-legacy-underscore-keys
 promote:
-  project:
-    id: invalidLegacyKeys
   default_chain: release
   chains:
     release:

@@ -1,14 +1,12 @@
 name: invalid-target-mode
 promote:
-  project:
-    id: invalidTargetMode
   chains:
     release:
       targets: [dev]
   environments:
     dev:
       provider: localPublisher
-      mode: preview
+      mode: validate
       artifacts: [site]
   artifacts:
     site:

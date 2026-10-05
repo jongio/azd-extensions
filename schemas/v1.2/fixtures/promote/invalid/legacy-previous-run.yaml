@@ -1,12 +1,18 @@
-name: invalid-legacy-phase-fields
+name: invalid-legacy-previous-run
 promote:
   chains:
     release:
-      targets: [dev]
+      targets: [dev, prod]
   environments:
     dev:
       provider: localPublisher
       artifacts: [site]
+    prod:
+      provider: localPublisher
+      artifacts: [site]
+      previousRun:
+        files:
+          - .azure/promote/verification/dev-content.json
   artifacts:
     site:
       type: static
@@ -15,10 +21,3 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}

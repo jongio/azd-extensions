@@ -1,7 +1,5 @@
 name: invalid-verification-effect-without-record
 promote:
-  project:
-    id: invalidVerificationEffectWithoutRecord
   chains:
     release:
       targets: [dev]
@@ -9,8 +7,9 @@ promote:
     dev:
       provider: localPublisher
       artifacts: [site]
-      hooks:
-        before: [verifyTarget]
+      steps:
+        verify:
+          - use: verifyTarget
   artifacts:
     site:
       type: static
@@ -19,7 +18,7 @@ promote:
     localPublisher:
       type: process
       command: publish
-  hooks:
+  commands:
     verifyTarget:
       effect: verification
       command: pnpm

@@ -1,7 +1,5 @@
 name: invalid-live-url-path
 promote:
-  project:
-    id: invalidLiveUrlPath
   chains:
     release:
       targets: [dev]

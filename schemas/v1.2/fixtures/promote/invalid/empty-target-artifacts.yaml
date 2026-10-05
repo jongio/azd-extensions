@@ -1,7 +1,5 @@
 name: invalid-empty-target-artifacts
 promote:
-  project:
-    id: invalidEmptyTargetArtifacts
   chains:
     release:
       targets: [dev]

@@ -1,7 +1,5 @@
 name: invalid-unsupported-artifact-type
 promote:
-  project:
-    id: invalidUnsupportedArtifactType
   chains:
     release:
       targets: [dev]

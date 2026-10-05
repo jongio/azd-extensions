@@ -1,7 +1,5 @@
 name: invalid-missing-process-command
 promote:
-  project:
-    id: invalidMissingProcessCommand
   chains:
     release:
       targets: [dev]

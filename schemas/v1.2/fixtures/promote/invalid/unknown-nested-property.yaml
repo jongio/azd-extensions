@@ -1,7 +1,5 @@
 name: invalid-unknown-nested-property
 promote:
-  project:
-    id: invalidUnknownNestedProperty
   chains:
     release:
       targets: [dev]

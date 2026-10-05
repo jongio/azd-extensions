@@ -1,7 +1,5 @@
 name: invalid-missing-target-bindings
 promote:
-  project:
-    id: invalidMissingTargetBindings
   chains:
     release:
       targets: [dev]

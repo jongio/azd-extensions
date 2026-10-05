@@ -12,7 +12,7 @@
     "name": {
       "type": "string",
       "title": "Name of the application",
-      "description": "The application name. Only lowercase letters, numbers, and hyphens (-) are allowed. The name must start and end with a letter or number.",
+      "description": "The application name and stable promotion identity when promote is configured. Only lowercase letters, numbers, and hyphens (-) are allowed. The name must start and end with a letter or number.",
       "pattern": "^[a-z0-9]([-a-z0-9]*[a-z0-9])?$",
       "minLength": 2
     },
@@ -2578,19 +2578,10 @@
     "promoteConfig": {
       "type": "object",
       "title": "Environment promotion configuration",
-      "description": "Configures projects, chains, targets, operations, artifacts, providers, reusable hooks, candidate policy, approvals, run records, operation results, and snapshots.",
+      "description": "Configures chains, environments, operations, artifacts, strict providers, reusable parameterized commands, ordered Git policy composition, inline approvals and snapshots, and predecessor verification imports. Project identity and framework state paths are derived by azd promote.",
       "additionalProperties": false,
-      "required": [
-        "project",
-        "chains",
-        "environments",
-        "artifacts",
-        "providers"
-      ],
+      "required": ["chains", "environments", "artifacts", "providers"],
       "properties": {
-        "project": {
-          "$ref": "#/definitions/promoteProject"
-        },
         "chains": {
           "$ref": "#/definitions/promoteChains"
         },
@@ -2606,37 +2597,11 @@
         "providers": {
           "$ref": "#/definitions/promoteProviders"
         },
-        "hooks": {
-          "$ref": "#/definitions/promoteHooks"
+        "commands": {
+          "$ref": "#/definitions/promoteCommands"
         },
-        "candidate": {
-          "$ref": "#/definitions/promoteCandidate"
-        },
-        "approvals": {
-          "$ref": "#/definitions/promoteApprovals"
-        },
-        "results": {
-          "$ref": "#/definitions/promoteResults"
-        },
-        "records": {
-          "$ref": "#/definitions/promoteRecords"
-        },
-        "snapshots": {
-          "$ref": "#/definitions/promoteSnapshots"
-        }
-      }
-    },
-    "promoteProject": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "id"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Stable lower camelCase project identifier used in promotion records and results."
+        "git": {
+          "$ref": "#/definitions/promoteGit"
         }
       }
     },
@@ -2654,9 +2619,7 @@
     "promoteChain": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "targets"
-      ],
+      "required": ["targets"],
       "properties": {
         "default": {
           "type": "boolean",
@@ -2698,27 +2661,18 @@
     "promoteOperation": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "environment"
-      ],
+      "required": ["target"],
+      "description": "A named workflow composed from one base environment selected by target. The operation inherits provider, artifacts, auth, and git from that environment. Authored provider, artifacts, and auth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, lifecycle steps, locks, snapshots, and approvals are operation-owned and are never inherited. No other implicit composition occurs.",
       "properties": {
-        "environment": {
+        "target": {
           "type": "string",
           "minLength": 1,
-          "description": "Real azd environment in which this operation executes."
+          "description": "Real azd environment used as the operation execution context and composition base."
         },
         "provider": {
           "type": "string",
           "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Lower camelCase provider identifier."
-        },
-        "mode": {
-          "type": "string",
-          "enum": [
-            "deploy",
-            "validate"
-          ],
-          "description": "Provider or operation mode selected for this target."
+          "description": "Optional lower camelCase provider identifier that replaces the base environment provider."
         },
         "artifacts": {
           "type": "array",
@@ -2728,16 +2682,16 @@
             "type": "string",
             "pattern": "^[a-z][A-Za-z0-9]*$"
           },
-          "description": "Lower camelCase artifact identifiers used by this target."
+          "description": "Optional lower camelCase artifact identifiers that replace the base environment artifacts."
         },
         "auth": {
           "$ref": "#/definitions/promoteAuth"
         },
-        "previousRun": {
-          "$ref": "#/definitions/promotePreviousRun"
+        "requires": {
+          "$ref": "#/definitions/promoteRequirements"
         },
-        "hooks": {
-          "$ref": "#/definitions/promoteLifecycleHooks"
+        "steps": {
+          "$ref": "#/definitions/promoteLifecycleSteps"
         },
         "locks": {
           "type": "array",
@@ -2749,35 +2703,25 @@
           "description": "External lock names. Lock naming is provider-defined and is not restricted to lower camelCase."
         },
         "snapshot": {
-          "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Lower camelCase snapshot policy identifier."
+          "$ref": "#/definitions/promoteSnapshot"
         },
-        "candidate": {
-          "$ref": "#/definitions/promoteCandidate"
+        "git": {
+          "$ref": "#/definitions/promoteGitOverride"
+        },
+        "approval": {
+          "$ref": "#/definitions/promoteApproval"
         }
       }
     },
     "promoteTarget": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "provider",
-        "artifacts"
-      ],
+      "required": ["provider", "artifacts"],
       "properties": {
         "provider": {
           "type": "string",
           "pattern": "^[a-z][A-Za-z0-9]*$",
           "description": "Lower camelCase provider identifier."
-        },
-        "mode": {
-          "type": "string",
-          "enum": [
-            "deploy",
-            "validate"
-          ],
-          "description": "Provider or operation mode selected for this target."
         },
         "artifacts": {
           "type": "array",
@@ -2792,11 +2736,11 @@
         "auth": {
           "$ref": "#/definitions/promoteAuth"
         },
-        "previousRun": {
-          "$ref": "#/definitions/promotePreviousRun"
+        "requires": {
+          "$ref": "#/definitions/promoteRequirements"
         },
-        "hooks": {
-          "$ref": "#/definitions/promoteLifecycleHooks"
+        "steps": {
+          "$ref": "#/definitions/promoteLifecycleSteps"
         },
         "locks": {
           "type": "array",
@@ -2808,60 +2752,97 @@
           "description": "External lock names. Lock naming is provider-defined and is not restricted to lower camelCase."
         },
         "snapshot": {
-          "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$",
-          "description": "Lower camelCase snapshot policy identifier."
+          "$ref": "#/definitions/promoteSnapshot"
         },
-        "candidate": {
-          "$ref": "#/definitions/promoteCandidate"
+        "git": {
+          "$ref": "#/definitions/promoteGitOverride"
+        },
+        "approval": {
+          "$ref": "#/definitions/promoteApproval"
         }
       }
     },
-    "promotePreviousRun": {
+    "promoteRequirements": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "files"
-      ],
+      "required": ["previous"],
       "properties": {
-        "files": {
+        "previous": {
+          "$ref": "#/definitions/promotePreviousRequirements"
+        }
+      }
+    },
+    "promotePreviousRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["verifications"],
+      "properties": {
+        "verifications": {
           "type": "array",
           "minItems": 1,
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "minLength": 1
+            "pattern": "^[a-z][A-Za-z0-9]*$"
           },
-          "description": "Files materialized by and verified against the exact previous run record before target hooks execute."
+          "description": "Stable lower camelCase verification identifiers imported from the exact predecessor run record. The compiler owns their filesystem paths."
         }
       }
     },
-    "promoteLifecycleHooks": {
+    "promoteLifecycleSteps": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "before": {
-          "$ref": "#/definitions/promoteHookReferences"
+        "prepare": {
+          "$ref": "#/definitions/promoteCommandInvocations"
         },
-        "apply": {
-          "$ref": "#/definitions/promoteHookReferences"
+        "change": {
+          "$ref": "#/definitions/promoteCommandInvocations"
         },
-        "after": {
-          "$ref": "#/definitions/promoteHookReferences"
+        "verify": {
+          "$ref": "#/definitions/promoteCommandInvocations"
         },
         "cleanup": {
-          "$ref": "#/definitions/promoteHookReferences"
+          "$ref": "#/definitions/promoteCommandInvocations"
         }
       },
-      "description": "Reusable hook identifiers grouped by target lifecycle. Cleanup hooks run through the bounded cleanup lifecycle."
+      "description": "Reusable command invocations grouped by explicit prepare, change, verify, and cleanup lifecycles."
     },
-    "promoteHookReferences": {
+    "promoteCommandInvocations": {
       "type": "array",
       "uniqueItems": true,
       "items": {
-        "type": "string",
-        "pattern": "^[a-z][A-Za-z0-9]*$"
+        "$ref": "#/definitions/promoteCommandInvocation"
       }
+    },
+    "promoteCommandInvocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["use"],
+      "properties": {
+        "use": {
+          "type": "string",
+          "pattern": "^[a-z][A-Za-z0-9]*$",
+          "description": "Lower camelCase reusable command identifier."
+        },
+        "with": {
+          "$ref": "#/definitions/promoteCommandParameters"
+        }
+      }
+    },
+    "promoteCommandParameters": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][A-Za-z0-9]*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteCommandParameterValue"
+      },
+      "description": "Lower camelCase scalar parameters supplied to one reusable command invocation."
+    },
+    "promoteCommandParameterValue": {
+      "type": ["string", "number", "boolean"]
     },
     "promoteArtifacts": {
       "type": "object",
@@ -2877,16 +2858,11 @@
     "promoteArtifact": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "type",
-        "path"
-      ],
+      "required": ["type", "path"],
       "properties": {
         "type": {
           "type": "string",
-          "enum": [
-            "static"
-          ]
+          "enum": ["static"]
         },
         "path": {
           "type": "string",
@@ -2907,7 +2883,7 @@
             "type": "string",
             "minLength": 1
           },
-          "description": "Additional files sealed into the candidate identity."
+          "description": "Additional files sealed into the promotion artifact identity."
         },
         "liveFiles": {
           "type": "array",
@@ -2915,16 +2891,14 @@
           "items": {
             "$ref": "#/definitions/promoteLiveFile"
           },
-          "description": "Deployed files whose bytes must match the sealed artifact after apply and after hooks complete."
+          "description": "Deployed files whose bytes must match the sealed artifact after the change and verify lifecycles complete."
         }
       }
     },
     "promoteLiveFile": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "path"
-      ],
+      "required": ["path"],
       "properties": {
         "path": {
           "type": "string",
@@ -2948,49 +2922,23 @@
       "description": "Provider definitions keyed by lower camelCase identifiers."
     },
     "promoteProvider": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type"
-      ],
-      "allOf": [
+      "oneOf": [
         {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "process"
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "command"
-            ]
-          }
+          "$ref": "#/definitions/promoteProcessProvider"
         },
         {
-          "if": {
-            "properties": {
-              "type": {
-                "const": "cloudflareWorker"
-              }
-            }
-          },
-          "then": {
-            "required": [
-              "config"
-            ]
-          }
+          "$ref": "#/definitions/promoteAzdProvider"
         }
       ],
+      "description": "Strict provider definition selected by its type discriminator. Fields from different provider types cannot be mixed."
+    },
+    "promoteProcessProvider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "command"],
       "properties": {
         "type": {
-          "type": "string",
-          "enum": [
-            "process",
-            "azd",
-            "cloudflareWorker"
-          ]
+          "const": "process"
         },
         "command": {
           "type": "string",
@@ -3009,64 +2957,54 @@
         "timeout": {
           "type": "string",
           "minLength": 1
-        },
-        "config": {
-          "type": "string",
-          "minLength": 1
-        },
-        "variables": {
-          "type": "object",
-          "propertyNames": {
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "additionalProperties": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "description": "Maps provider variable names to azd environment variable names."
-        },
-        "secrets": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
-          },
-          "description": "Azd environment variable names resolved as provider secrets."
-        },
-        "message": {
-          "type": "string"
         }
       }
     },
-    "promoteHooks": {
+    "promoteAzdProvider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type"],
+      "properties": {
+        "type": {
+          "const": "azd"
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "workdir": {
+          "type": "string",
+          "minLength": 1
+        },
+        "timeout": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "promoteCommands": {
       "type": "object",
       "propertyNames": {
         "pattern": "^[a-z][A-Za-z0-9]*$"
       },
       "additionalProperties": {
-        "$ref": "#/definitions/promoteHook"
+        "$ref": "#/definitions/promoteCommand"
       },
-      "description": "Reusable bounded hooks keyed by lower camelCase identifiers."
+      "description": "Reusable bounded command definitions keyed by lower camelCase identifiers. One definition may be invoked repeatedly with different scalar parameters."
     },
-    "promoteHook": {
+    "promoteCommand": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "command",
-        "timeout"
-      ],
+      "required": ["command", "timeout"],
       "allOf": [
         {
           "if": {
-            "required": [
-              "verification"
-            ]
+            "required": ["verification"]
           },
           "then": {
-            "required": [
-              "effect"
-            ],
+            "required": ["effect"],
             "properties": {
               "effect": {
                 "const": "verification"
@@ -3076,9 +3014,7 @@
         },
         {
           "if": {
-            "required": [
-              "effect"
-            ],
+            "required": ["effect"],
             "properties": {
               "effect": {
                 "const": "verification"
@@ -3086,21 +3022,15 @@
             }
           },
           "then": {
-            "required": [
-              "verification"
-            ]
+            "required": ["verification"]
           }
         }
       ],
       "properties": {
         "effect": {
           "type": "string",
-          "enum": [
-            "verification",
-            "change",
-            "inspection"
-          ],
-          "description": "Classifies whether the hook verifies state, changes external state, or performs bounded inspection."
+          "enum": ["verification", "change", "inspection"],
+          "description": "Classifies whether the command verifies state, changes external state, or performs bounded inspection."
         },
         "command": {
           "type": "string",
@@ -3129,7 +3059,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "description": "Environment variables supplied to the hook process."
+          "description": "Environment variables supplied to the command process."
         },
         "timeout": {
           "type": "string",
@@ -3139,9 +3069,6 @@
         "verification": {
           "$ref": "#/definitions/promoteVerification"
         },
-        "approval": {
-          "$ref": "#/definitions/promoteHookApproval"
-        },
         "inspectionOnly": {
           "type": "boolean"
         }
@@ -3150,24 +3077,19 @@
     "promoteVerification": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "path"
-      ],
+      "required": ["path"],
       "properties": {
         "path": {
           "type": "string",
           "minLength": 1,
-          "description": "Path to the structured verification record produced by this hook."
+          "description": "Path to the structured verification record produced by this command."
         }
       }
     },
-    "promoteHookApproval": {
+    "promoteApproval": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "message",
-        "match"
-      ],
+      "required": ["message", "match"],
       "properties": {
         "message": {
           "type": "string",
@@ -3179,44 +3101,33 @@
         },
         "automation": {
           "type": "string",
-          "enum": [
-            "allowed",
-            "denied"
-          ],
+          "enum": ["allowed", "denied"],
           "default": "denied"
         }
       }
     },
-    "promoteCandidate": {
+    "promoteGit": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "worktree": {
           "type": "string",
-          "enum": [
-            "clean",
-            "dirtyAllowed"
-          ]
+          "enum": ["clean", "dirtyAllowed"]
         },
         "upstream": {
           "type": "string",
-          "enum": [
-            "published",
-            "optional"
-          ]
+          "enum": ["published", "optional"]
         },
         "ref": {
-          "$ref": "#/definitions/promoteCandidateRef"
+          "$ref": "#/definitions/promoteGitRef"
         }
       },
-      "description": "Candidate repository policy expressed as worktree, upstream, and exact ref semantic states."
+      "description": "Git repository policy expressed as worktree, upstream, and exact ref semantic states. The promote-level policy is the base. Environment-authored members recursively merge into that base, including ref members. Omitted members inherit and authored members replace the same member."
     },
-    "promoteCandidateRef": {
+    "promoteGitRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "exact"
-      ],
+      "required": ["exact"],
       "properties": {
         "exact": {
           "type": "string",
@@ -3230,88 +3141,47 @@
         }
       }
     },
-    "promoteApprovals": {
+    "promoteGitOverride": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "targets",
-        "message",
-        "match"
-      ],
+      "minProperties": 1,
       "properties": {
-        "targets": {
-          "type": "array",
-          "minItems": 1,
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          },
-          "description": "Real environment names and lower camelCase operation identifiers requiring approval."
-        },
-        "message": {
+        "worktree": {
           "type": "string",
-          "minLength": 1
+          "enum": ["clean", "dirtyAllowed"]
         },
-        "match": {
+        "upstream": {
           "type": "string",
-          "minLength": 1
+          "enum": ["published", "optional"]
         },
-        "automation": {
-          "type": "string",
-          "enum": [
-            "allowed",
-            "denied"
-          ],
-          "default": "denied"
+        "ref": {
+          "$ref": "#/definitions/promoteGitRefOverride"
         }
-      }
+      },
+      "description": "Partial environment or operation Git override recursively merged into the effective parent Git policy."
     },
-    "promoteResults": {
+    "promoteGitRefOverride": {
       "type": "object",
       "additionalProperties": false,
+      "minProperties": 1,
       "properties": {
-        "path": {
+        "exact": {
           "type": "string",
           "minLength": 1,
-          "description": "Path template for structured operation results."
+          "description": "Optional replacement for the base exact Git ref."
+        },
+        "refresh": {
+          "type": "boolean",
+          "description": "Optional replacement for the base ref refresh behavior."
         }
       }
-    },
-    "promoteRecords": {
-      "type": "object",
-      "additionalProperties": false,
-      "properties": {
-        "path": {
-          "type": "string",
-          "minLength": 1,
-          "description": "Path template for durable run records."
-        }
-      }
-    },
-    "promoteSnapshots": {
-      "type": "object",
-      "propertyNames": {
-        "pattern": "^[a-z][A-Za-z0-9]*$"
-      },
-      "additionalProperties": {
-        "$ref": "#/definitions/promoteSnapshot"
-      },
-      "description": "Git snapshot policies keyed by lower camelCase identifiers."
     },
     "promoteSnapshot": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "purpose",
-        "mode",
-        "refs"
-      ],
+      "required": ["mode", "refs"],
+      "description": "Inline Git snapshot policy owned by one environment or operation. Its purpose is derived from that parent target, so no separate snapshot identifier or purpose is authored.",
       "properties": {
-        "purpose": {
-          "type": "string",
-          "pattern": "^[a-z][A-Za-z0-9]*$"
-        },
         "remote": {
           "type": "string",
           "minLength": 1,
@@ -3319,17 +3189,11 @@
         },
         "mode": {
           "type": "string",
-          "enum": [
-            "publish",
-            "verify"
-          ]
+          "enum": ["publish", "verify"]
         },
         "recovery": {
           "type": "string",
-          "enum": [
-            "manual",
-            "none"
-          ],
+          "enum": ["manual", "none"],
           "default": "manual"
         },
         "refs": {
@@ -3344,28 +3208,19 @@
     "promoteSnapshotRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "kind"
-      ],
+      "required": ["kind"],
       "oneOf": [
         {
-          "required": [
-            "ref"
-          ]
+          "required": ["ref"]
         },
         {
-          "required": [
-            "template"
-          ]
+          "required": ["template"]
         }
       ],
       "properties": {
         "kind": {
           "type": "string",
-          "enum": [
-            "branch",
-            "tag"
-          ]
+          "enum": ["branch", "tag"]
         },
         "ref": {
           "type": "string",
@@ -3382,12 +3237,6 @@
     "promoteAuth": {
       "oneOf": [
         {
-          "type": "string",
-          "enum": [
-            "basic"
-          ]
-        },
-        {
           "$ref": "#/definitions/promoteBasicAuth"
         },
         {
@@ -3397,37 +3246,28 @@
           "$ref": "#/definitions/promoteServiceTokenAuth"
         }
       ],
-      "description": "Authentication resolved from the target azd environment. The scalar basic form uses conventional basic-auth environment variables."
+      "description": "Authentication resolved through explicit secret references in the target azd environment."
     },
     "promoteBasicAuth": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "type",
-        "username",
-        "password"
-      ],
+      "required": ["type", "username", "password"],
       "properties": {
         "type": {
           "const": "basic"
         },
         "username": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          "$ref": "#/definitions/promoteAzdSecretReference"
         },
         "password": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          "$ref": "#/definitions/promoteAzdSecretReference"
         }
       }
     },
     "promoteHeadersAuth": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "type",
-        "headers"
-      ],
+      "required": ["type", "headers"],
       "properties": {
         "type": {
           "const": "headers"
@@ -3439,23 +3279,16 @@
             "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
           },
           "additionalProperties": {
-            "type": "string",
-            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+            "$ref": "#/definitions/promoteAzdSecretReference"
           },
-          "description": "Maps external HTTP header names to azd environment variable names."
+          "description": "Maps external HTTP header names to explicit azd secret references."
         }
       }
     },
     "promoteServiceTokenAuth": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "type",
-        "clientIdHeader",
-        "clientId",
-        "clientSecretHeader",
-        "clientSecret"
-      ],
+      "required": ["type", "clientIdHeader", "clientId", "clientSecretHeader", "clientSecret"],
       "properties": {
         "type": {
           "const": "serviceToken"
@@ -3465,16 +3298,26 @@
           "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
         },
         "clientId": {
-          "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          "$ref": "#/definitions/promoteAzdSecretReference"
         },
         "clientSecretHeader": {
           "type": "string",
           "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
         },
         "clientSecret": {
+          "$ref": "#/definitions/promoteAzdSecretReference"
+        }
+      }
+    },
+    "promoteAzdSecretReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["azd"],
+      "properties": {
+        "azd": {
           "type": "string",
-          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "description": "Name of an azd environment value that must be resolved as a secret."
         }
       }
     }

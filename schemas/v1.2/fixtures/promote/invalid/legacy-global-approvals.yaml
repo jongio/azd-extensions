@@ -1,8 +1,12 @@
-name: invalid-legacy-phase-fields
+name: invalid-legacy-global-approvals
 promote:
   chains:
     release:
       targets: [dev]
+  approvals:
+    targets: [dev]
+    message: Approve dev
+    match: PROMOTE
   environments:
     dev:
       provider: localPublisher
@@ -15,10 +19,3 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}

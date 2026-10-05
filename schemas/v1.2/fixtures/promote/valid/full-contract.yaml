@@ -1,37 +1,13 @@
 name: full-contract
 promote:
-  project:
-    id: sampleApp
-
   chains:
     release:
       default: true
       targets: [dev, staging, prod]
 
-  candidate:
+  git:
     worktree: clean
     upstream: published
-
-  approvals:
-    targets: [staging, prod, publishContent, activateContent]
-    message: Approve the exact candidate and reviewed content
-    match: PROMOTE
-    automation: allowed
-
-  records:
-    path: '.azure/promote/records/{target}.json'
-
-  results:
-    path: '.azure/promote/results/{target}/{artifact}.json'
-
-  snapshots:
-    stagingRelease:
-      purpose: verifiedStaging
-      mode: publish
-      recovery: manual
-      refs:
-        - kind: branch
-          ref: refs/heads/environments/staging
 
   artifacts:
     contentApp:
@@ -46,152 +22,256 @@ promote:
         - path: content-index.json
 
   providers:
-    cloudflare:
-      type: cloudflareWorker
-      config: deploy/content-app/wrangler.jsonc
-      secrets:
-        - DEPLOY_API_TOKEN
-      variables:
-        CONTENT_APP_REGION: DEPLOY_REGION
-      message: sampleApp {environment} promotion
+    contentPublisher:
+      type: process
+      command: node
+      args:
+        [
+          scripts/publish-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+          --result,
+          '{result}',
+        ]
+      workdir: .
+      timeout: 30m
+    contentValidator:
+      type: process
+      command: node
+      args:
+        [
+          scripts/validate-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+          --result,
+          '{result}',
+        ]
+      workdir: .
+      timeout: 30m
+    azureFallback:
+      type: azd
+      args: [--all]
+      workdir: infra
+      timeout: 30m
 
   environments:
     dev:
-      provider: cloudflare
+      provider: contentPublisher
       artifacts: [contentApp]
-      candidate:
+      git:
         worktree: dirtyAllowed
-      auth: basic
-      hooks:
-        before:
-          [
-            verifyCredentials,
-            checkAssetStore,
-            migrateData,
-            verifyData,
-            buildContentApp,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
-        apply: [publishAssets, configureAssetCors]
-        after: [runSmokeTests, verifyLiveSite]
+      auth:
+        type: basic
+        username: { azd: DEV_BASIC_AUTH_USERNAME }
+        password: { azd: DEV_BASIC_AUTH_PASSWORD }
+      steps:
+        prepare:
+          - use: verifyAuth
+            with: { required: false }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: release }
+          - use: pruneOutput
+          - use: normalizeOutput
+        change:
+          - use: migrateData
+          - use: publishAssets
+          - use: configureAssetCors
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+          - use: runSmokeTests
+            with: { suite: fast }
+          - use: verifyLiveSite
+        cleanup:
+          - use: removeUnusedFiles
 
     staging:
-      provider: cloudflare
+      provider: contentPublisher
       artifacts: [contentApp]
-      auth: basic
-      snapshot: stagingRelease
-      hooks:
-        before:
-          [
-            verifyCredentials,
-            checkAssetStore,
-            migrateData,
-            verifyData,
-            buildContentApp,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
-        apply: [publishAssets, configureAssetCors]
-        after: [runSmokeTests, verifyLiveSite]
+      auth:
+        type: basic
+        username: { azd: STAGING_BASIC_AUTH_USERNAME }
+        password: { azd: STAGING_BASIC_AUTH_PASSWORD }
+      approval:
+        message: Approve the exact staging candidate
+        match: PROMOTE
+        automation: allowed
+      snapshot:
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/staging
+      steps:
+        prepare:
+          - use: verifyAuth
+            with: { required: true }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: release }
+          - use: pruneOutput
+          - use: normalizeOutput
+        change:
+          - use: migrateData
+          - use: publishAssets
+          - use: configureAssetCors
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+          - use: runSmokeTests
+            with: { suite: full }
+          - use: verifyLiveSite
+        cleanup:
+          - use: removeUnusedFiles
 
     prod:
-      provider: cloudflare
+      provider: contentPublisher
       artifacts: [contentApp]
-      candidate:
+      git:
         worktree: clean
         ref:
           exact: origin/main
           refresh: true
-      previousRun:
-        files:
-          - .azure/promote/verification/staging-content.json
-          - .azure/promote/verification/staging-routing.json
-      hooks:
-        before:
-          [
-            prepareProductionData,
-            verifyPublisherApproval,
-            prepareProductionRelease,
-            verifyCredentials,
-            checkAssetStore,
-            verifyData,
-            buildContentApp,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
-        apply: [verifyDeploymentInputs, deployContentApp]
-        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+      requires:
+        previous:
+          verifications: [stagingContent, stagingRouting]
+      approval:
+        message: Approve the exact production candidate
+        match: PROMOTE
+        automation: allowed
+      snapshot:
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: tag
+            template: refs/tags/releases/{candidate}
+      steps:
+        prepare:
+          - use: verifyPublisherApproval
+          - use: verifyAuth
+            with: { required: true }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: release }
+          - use: pruneOutput
+          - use: normalizeOutput
+        change:
+          - use: prepareProductionData
+          - use: prepareProductionRelease
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+          - use: verifyDeploymentInputs
+          - use: runSmokeTests
+            with: { suite: full }
+          - use: verifyLiveSite
+          - use: verifyPublishedContent
+        cleanup:
+          - use: removeUnusedFiles
 
   operations:
     publishContent:
-      environment: prod
-      hooks:
-        before:
-          [
-            verifyPreparedContent,
-            verifyCredentials,
-            checkAssetStore,
-            verifyData,
-            buildContentApp,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
-        apply: [verifyContentInputs, deployContentApp]
-        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+      target: prod
+      locks: [content:production, deployment:production]
+      approval:
+        message: Approve publishing the reviewed content
+        match: PUBLISH
+        automation: denied
+      snapshot:
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: tag
+            template: refs/tags/content/{candidate}
+      steps:
+        prepare:
+          - use: verifyPreparedContent
+          - use: verifyAuth
+            with: { required: true }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: release }
+          - use: pruneOutput
+          - use: normalizeOutput
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+          - use: verifyContentInputs
+          - use: runSmokeTests
+            with: { suite: full }
+          - use: verifyLiveSite
+          - use: verifyPublishedContent
+        cleanup:
+          - use: removeUnusedFiles
 
     validateContent:
-      environment: prod
-      mode: validate
-      hooks:
-        before:
-          [
-            verifyCredentials,
-            checkAssetStore,
-            verifyData,
-            buildContentPreview,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
+      target: prod
+      provider: contentValidator
+      locks: [content:production-candidate]
+      steps:
+        prepare:
+          - use: verifyAuth
+            with: { required: true }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: preview }
+          - use: pruneOutput
+          - use: normalizeOutput
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+        cleanup:
+          - use: removeUnusedFiles
 
     activateContent:
-      environment: prod
-      hooks:
-        before:
-          [
-            verifyCredentials,
-            checkAssetStore,
-            verifyData,
-            buildContentApp,
-            pruneOutput,
-            normalizeOutput,
-            verifyOfflineOutput,
-            selectFiles,
-            removeUnusedFiles,
-          ]
-        apply: [verifyContentInputs, deployContentApp]
-        after: [runSmokeTests, verifyLiveSite, verifyPublishedContent]
+      target: prod
+      locks: [content:production, deployment:production]
+      approval:
+        message: Approve activation of the exact candidate
+        match: ACTIVATE
+        automation: denied
+      snapshot:
+        mode: verify
+        recovery: manual
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/production
+      steps:
+        prepare:
+          - use: verifyAuth
+            with: { required: true }
+          - use: checkAssetStore
+          - use: build
+            with: { mode: release }
+          - use: pruneOutput
+          - use: normalizeOutput
+        verify:
+          - use: verifyData
+          - use: verifyOfflineOutput
+          - use: selectFiles
+          - use: verifyContentInputs
+          - use: runSmokeTests
+            with: { suite: full }
+          - use: verifyLiveSite
+          - use: verifyPublishedContent
+        cleanup:
+          - use: removeUnusedFiles
 
-  hooks:
-    verifyCredentials:
+  commands:
+    verifyAuth:
       effect: inspection
       command: node
-      args: [scripts/verify-credentials.mjs]
+      args: [scripts/verify-credentials.mjs, --required, '{required}']
       inspectionOnly: true
       timeout: 5m
 
@@ -209,24 +289,14 @@ promote:
     verifyData:
       effect: verification
       command: node
-      args:
-        [
-          scripts/verify-data.mjs,
-          --record,
-          '.azure/promote/verification/{workflow}-data.json',
-        ]
+      args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{workflow}-data.json']
       verification:
         path: '.azure/promote/verification/{workflow}-data.json'
       timeout: 10m
 
-    buildContentApp:
+    build:
       command: node
-      args: [scripts/build-content-app.mjs]
-      timeout: 30m
-
-    buildContentPreview:
-      command: node
-      args: [scripts/build-content-preview.mjs]
+      args: [scripts/build-content-app.mjs, --mode, '{mode}']
       timeout: 30m
 
     pruneOutput:
@@ -305,6 +375,8 @@ promote:
       args:
         [
           scripts/run-smoke-tests.mjs,
+          --suite,
+          '{suite}',
           --record,
           '.azure/promote/verification/{workflow}-smoke.json',
         ]
@@ -362,12 +434,6 @@ promote:
       verification:
         path: '.azure/promote/verification/{workflow}-deployment-inputs.json'
       timeout: 10m
-
-    deployContentApp:
-      effect: change
-      command: node
-      args: [scripts/deploy-content-app.mjs]
-      timeout: 30m
 
     verifyPublishedContent:
       effect: verification

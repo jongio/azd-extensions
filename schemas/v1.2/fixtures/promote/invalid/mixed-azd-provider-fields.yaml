@@ -1,18 +1,17 @@
-name: invalid-promote-version
+name: invalid-mixed-azd-provider-fields
 promote:
-  version: 4
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: localPublisher
+      provider: azurePublisher
       artifacts: [site]
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    localPublisher:
-      type: process
-      command: publish
+    azurePublisher:
+      type: azd
+      command: azd

@@ -1,4 +1,4 @@
-name: invalid-legacy-phase-fields
+name: invalid-legacy-promote-hooks
 promote:
   chains:
     release:
@@ -15,10 +15,8 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}
+  hooks:
+    build:
+      command: pnpm
+      args: [build]
+      timeout: 30m

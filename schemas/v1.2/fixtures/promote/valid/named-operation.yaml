@@ -1,20 +1,60 @@
 name: named-promotion-operation
 promote:
-  project:
-    id: namedPromotionOperation
   chains:
     release:
       targets: [prod]
+  git:
+    worktree: clean
+    upstream: published
+    ref:
+      exact: origin/main
+      refresh: false
   environments:
     prod:
-      provider: cloudflare
+      provider: publisher
       artifacts: [site]
+      auth:
+        type: headers
+        headers:
+          X-Release-Token: { azd: RELEASE_TOKEN }
+      git:
+        ref:
+          refresh: true
+      approval:
+        message: Approve production promotion
+        match: PROMOTE
+      snapshot:
+        mode: publish
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/production
+      steps:
+        prepare:
+          - use: build
+            with: { mode: release }
+        verify:
+          - use: smoke
+            with: { suite: full }
+        cleanup:
+          - use: cleanOutput
   operations:
     validateContent:
-      environment: prod
-      mode: validate
-      hooks:
-        before: [buildPreview]
+      target: prod
+      provider: validator
+      git:
+        worktree: dirtyAllowed
+        ref:
+          refresh: false
+      locks: [content:production-candidate]
+      steps:
+        prepare:
+          - use: build
+            with: { mode: preview }
+        verify:
+          - use: smoke
+            with: { suite: fast }
+        cleanup:
+          - use: cleanOutput
   artifacts:
     site:
       type: static
@@ -22,11 +62,26 @@ promote:
       sealedPaths:
         - .azure/promote/verification/validateContent-selected-files.json
   providers:
-    cloudflare:
-      type: cloudflareWorker
-      config: deploy/content-app/wrangler.jsonc
-  hooks:
-    buildPreview:
-      command: pnpm
-      args: [build]
+    publisher:
+      type: process
+      command: node
+      args: [scripts/publish-content.mjs, --artifact, '{artifact}', --result, '{result}']
       timeout: 30m
+    validator:
+      type: process
+      command: node
+      args: [scripts/validate-content.mjs, --artifact, '{artifact}', --result, '{result}']
+      timeout: 30m
+  commands:
+    build:
+      command: pnpm
+      args: [build, --mode, '{mode}']
+      timeout: 30m
+    smoke:
+      command: pnpm
+      args: [test:smoke, --suite, '{suite}']
+      timeout: 15m
+    cleanOutput:
+      command: node
+      args: [scripts/clean-output.mjs]
+      timeout: 5m

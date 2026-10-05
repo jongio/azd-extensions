@@ -1,22 +1,23 @@
-name: multiple-promotion-chains
+name: invalid-verification-import-path
 promote:
   chains:
     release:
-      default: true
-      targets: [dev-west, staging]
-    preview:
-      targets: [dev-west]
+      targets: [dev, prod]
   environments:
-    dev-west:
+    dev:
       provider: localPublisher
       artifacts: [site]
-    staging:
+    prod:
       provider: localPublisher
       artifacts: [site]
+      requires:
+        previous:
+          verifications:
+            - .azure/promote/verification/dev-content.json
   artifacts:
     site:
       type: static
-      path: dist/site-output
+      path: dist
   providers:
     localPublisher:
       type: process

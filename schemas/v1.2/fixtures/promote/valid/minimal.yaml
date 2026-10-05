@@ -1,7 +1,5 @@
 name: minimal-promotion
 promote:
-  project:
-    id: minimalPromotion
   chains:
     release:
       targets: [dev]

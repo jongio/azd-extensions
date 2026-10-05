@@ -1,7 +1,5 @@
 name: invalid-legacy-catalog-concept
 promote:
-  project:
-    id: invalidCatalogConcept
   chains:
     release:
       targets: [prod]

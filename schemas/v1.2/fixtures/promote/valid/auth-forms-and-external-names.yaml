@@ -1,7 +1,5 @@
 name: auth-forms-and-external-names
 promote:
-  project:
-    id: authFormsAndExternalNames
   chains:
     release:
       targets: [dev-west, qa-headers, staging-service-token, prod-basic-map]
@@ -9,7 +7,10 @@ promote:
     dev-west:
       provider: localPublisher
       artifacts: [site]
-      auth: basic
+      auth:
+        type: basic
+        username: { azd: DEV_BASIC_AUTH_USERNAME }
+        password: { azd: DEV_BASIC_AUTH_PASSWORD }
       locks: [deployment:dev-west]
     qa-headers:
       provider: localPublisher
@@ -17,24 +18,24 @@ promote:
       auth:
         type: headers
         headers:
-          X-Access-Key: ACCESS_KEY
+          X-Access-Key: { azd: ACCESS_KEY }
     staging-service-token:
       provider: localPublisher
       artifacts: [site]
       auth:
         type: serviceToken
         clientIdHeader: CF-Access-Client-Id
-        clientId: CF_ACCESS_CLIENT_ID
+        clientId: { azd: CF_ACCESS_CLIENT_ID }
         clientSecretHeader: CF-Access-Client-Secret
-        clientSecret: CF_ACCESS_CLIENT_SECRET
+        clientSecret: { azd: CF_ACCESS_CLIENT_SECRET }
     prod-basic-map:
       provider: localPublisher
       artifacts: [site]
       auth:
         type: basic
-        username: BASIC_AUTH_USERNAME
-        password: BASIC_AUTH_PASSWORD
-      candidate:
+        username: { azd: BASIC_AUTH_USERNAME }
+        password: { azd: BASIC_AUTH_PASSWORD }
+      git:
         ref:
           exact: origin/release-2026-10
           refresh: true
@@ -52,6 +53,3 @@ promote:
       type: process
       command: publish-site
       args: [--environment, '{environment}']
-      variables:
-        DEPLOY_REGION: AZURE_LOCATION
-      secrets: [PUBLISH_TOKEN]

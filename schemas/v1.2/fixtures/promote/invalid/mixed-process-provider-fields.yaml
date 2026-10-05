@@ -1,4 +1,4 @@
-name: invalid-legacy-phase-fields
+name: invalid-mixed-process-provider-fields
 promote:
   chains:
     release:
@@ -15,10 +15,4 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}
+      config: workers/site/wrangler.jsonc

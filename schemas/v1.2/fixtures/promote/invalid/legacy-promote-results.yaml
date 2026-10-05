@@ -1,8 +1,10 @@
-name: invalid-legacy-phase-fields
+name: invalid-legacy-promote-results
 promote:
   chains:
     release:
       targets: [dev]
+  results:
+    path: .azure/promote/results/{target}/{artifact}.json
   environments:
     dev:
       provider: localPublisher
@@ -15,10 +17,3 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}

@@ -1,4 +1,4 @@
-name: invalid-legacy-phase-fields
+name: invalid-command-approval
 promote:
   chains:
     release:
@@ -7,6 +7,9 @@ promote:
     dev:
       provider: localPublisher
       artifacts: [site]
+      steps:
+        change:
+          - use: deploy
   artifacts:
     site:
       type: static
@@ -15,10 +18,11 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}
+  commands:
+    deploy:
+      effect: change
+      command: publish
+      timeout: 30m
+      approval:
+        message: Approve deployment
+        match: DEPLOY

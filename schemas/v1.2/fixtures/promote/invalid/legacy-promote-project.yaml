@@ -1,5 +1,7 @@
-name: invalid-legacy-phase-fields
+name: invalid-legacy-promote-project
 promote:
+  project:
+    id: invalidLegacyPromoteProject
   chains:
     release:
       targets: [dev]
@@ -15,10 +17,3 @@ promote:
     localPublisher:
       type: process
       command: publish
-  chain: release
-  protected: [prod]
-  database: {}
-  deploy: {}
-  purge: {}
-  rollback: {}
-  notifications: {}

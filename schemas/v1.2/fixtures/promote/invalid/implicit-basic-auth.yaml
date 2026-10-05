@@ -1,18 +1,18 @@
-name: invalid-missing-cloudflare-config
+name: invalid-implicit-basic-auth
 promote:
-  project:
-    id: invalidMissingCloudflareConfig
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: cloudflare
+      provider: localPublisher
       artifacts: [site]
+      auth: basic
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    cloudflare:
-      type: cloudflareWorker
+    localPublisher:
+      type: process
+      command: publish
