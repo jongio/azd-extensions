@@ -2578,7 +2578,7 @@
     "promoteConfig": {
       "type": "object",
       "title": "Environment promotion configuration",
-      "description": "Configures chains, environments, operations, artifacts, strict providers, reusable parameterized commands, ordered Git policy composition, inline approvals and snapshots, and predecessor verification imports. Project identity and framework state paths are derived by azd promote.",
+      "description": "Configures chains, environments, operations, artifacts, strict providers, reusable workflow sections, reusable parameterized commands, ordered Git policy composition, inline approvals and snapshots, and predecessor verification imports. Project identity and framework state paths are derived by azd promote.",
       "additionalProperties": false,
       "required": ["chains", "environments", "artifacts", "providers"],
       "properties": {
@@ -2596,6 +2596,9 @@
         },
         "providers": {
           "$ref": "#/definitions/promoteProviders"
+        },
+        "sections": {
+          "$ref": "#/definitions/promoteSections"
         },
         "commands": {
           "$ref": "#/definitions/promoteCommands"
@@ -2679,7 +2682,7 @@
           }
         }
       ],
-      "description": "A named workflow composed from one base environment selected by target. The operation inherits provider, artifacts, auth, and git from that environment. Authored provider, artifacts, and auth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, lifecycle steps, locks, snapshots, and approvals are operation-owned and are never inherited. By default the selected provider deploys every artifact. Setting deploy to false explicitly suppresses provider expansion, operation-result creation, deployment verification, and live-file HTTP verification while preserving artifact sealing and lifecycle commands. No other implicit composition occurs.",
+      "description": "A named workflow composed from one base environment selected by target. The operation inherits provider, artifacts, auth, and git from that environment. Authored provider, artifacts, and auth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, workflow, locks, snapshots, and approvals are operation-owned and are never inherited. By default the selected provider deploys every artifact. Setting deploy to false explicitly suppresses provider expansion, operation-result creation, deployment verification, and live-file HTTP verification while preserving artifact sealing and lifecycle commands. No other implicit composition occurs.",
       "properties": {
         "target": {
           "type": "string",
@@ -2712,8 +2715,8 @@
         "requires": {
           "$ref": "#/definitions/promoteRequirements"
         },
-        "steps": {
-          "$ref": "#/definitions/promoteLifecycleSteps"
+        "workflow": {
+          "$ref": "#/definitions/promoteWorkflow"
         },
         "locks": {
           "type": "array",
@@ -2761,8 +2764,8 @@
         "requires": {
           "$ref": "#/definitions/promoteRequirements"
         },
-        "steps": {
-          "$ref": "#/definitions/promoteLifecycleSteps"
+        "workflow": {
+          "$ref": "#/definitions/promoteWorkflow"
         },
         "locks": {
           "type": "array",
@@ -2811,27 +2814,71 @@
         }
       }
     },
-    "promoteLifecycleSteps": {
+    "promoteWorkflow": {
       "type": "object",
       "additionalProperties": false,
       "properties": {
         "prepare": {
-          "$ref": "#/definitions/promoteCommandInvocations"
+          "$ref": "#/definitions/promoteSectionInvocations"
         },
         "change": {
-          "$ref": "#/definitions/promoteCommandInvocations"
+          "$ref": "#/definitions/promoteSectionInvocations"
         },
         "verify": {
-          "$ref": "#/definitions/promoteCommandInvocations"
+          "$ref": "#/definitions/promoteSectionInvocations"
         },
         "cleanup": {
-          "$ref": "#/definitions/promoteCommandInvocations"
+          "$ref": "#/definitions/promoteSectionInvocations"
         }
       },
-      "description": "Reusable command invocations grouped by explicit prepare, change, verify, and cleanup lifecycles."
+      "description": "Ordered reusable section invocations grouped by explicit prepare, change, verify, and cleanup lifecycles. Targets invoke sections rather than individual commands."
+    },
+    "promoteSectionInvocations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/promoteSectionInvocation"
+      }
+    },
+    "promoteSectionInvocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["section"],
+      "properties": {
+        "section": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case reusable section identifier."
+        },
+        "with": {
+          "$ref": "#/definitions/promoteCommandParameters"
+        }
+      }
+    },
+    "promoteSections": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteSection"
+      },
+      "description": "Reusable ordered command-step groups keyed by lowercase kebab-case identifiers. Sections cannot invoke other sections."
+    },
+    "promoteSection": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["steps"],
+      "properties": {
+        "steps": {
+          "$ref": "#/definitions/promoteCommandInvocations"
+        }
+      }
     },
     "promoteCommandInvocations": {
       "type": "array",
+      "minItems": 1,
       "uniqueItems": true,
       "items": {
         "$ref": "#/definitions/promoteCommandInvocation"

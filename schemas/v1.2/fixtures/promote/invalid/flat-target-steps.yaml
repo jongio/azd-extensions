@@ -1,28 +1,24 @@
-name: invalid-string-command-invocation
+name: invalid-flat-target-steps
 promote:
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: local-publisher
+      provider: publisher
       artifacts: [site]
-      workflow:
+      steps:
         prepare:
-          - section: build-output
+          - use: build
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    local-publisher:
+    publisher:
       type: process
       command: publish
-  sections:
-    build-output:
-      steps: [build]
   commands:
     build:
-      command: pnpm
-      args: [build]
-      timeout: 30m
+      command: build
+      timeout: 5m

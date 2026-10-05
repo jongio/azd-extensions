@@ -43,6 +43,61 @@ promote:
       workdir: infra
       timeout: 30m
 
+  sections:
+    access-preflight:
+      steps:
+        - use: verify-auth
+          with: { required: '{auth-required}' }
+        - use: check-asset-store
+    build-output:
+      steps:
+        - use: build
+          with: { mode: '{build-mode}' }
+        - use: prune-output
+        - use: normalize-output
+    data-change:
+      steps:
+        - use: migrate-data
+    asset-publish:
+      steps:
+        - use: publish-assets
+        - use: configure-asset-cors
+    output-verification:
+      steps:
+        - use: verify-data
+        - use: verify-offline-output
+        - use: select-files
+    live-verification:
+      steps:
+        - use: run-smoke-tests
+          with: { suite: '{smoke-suite}' }
+        - use: verify-live-site
+    cleanup-output:
+      steps:
+        - use: remove-unused-files
+    publisher-approval:
+      steps:
+        - use: verify-publisher-approval
+    production-release-change:
+      steps:
+        - use: prepare-production-data
+        - use: prepare-production-release
+    deployment-input-verification:
+      steps:
+        - use: verify-deployment-inputs
+    published-content-verification:
+      steps:
+        - use: verify-published-content
+    prepared-content-verification:
+      steps:
+        - use: verify-prepared-content
+    content-input-verification:
+      steps:
+        - use: verify-content-inputs
+    deployment-validation:
+      steps:
+        - use: validate-content
+
   environments:
     dev:
       provider: content-publisher
@@ -53,28 +108,21 @@ promote:
         type: basic
         username: { azd: DEV_BASIC_AUTH_USERNAME }
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: false }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: false }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: migrate-data
-          - use: publish-assets
-          - use: configure-asset-cors
+          - section: data-change
+          - section: asset-publish
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: run-smoke-tests
-            with: { suite: fast }
-          - use: verify-live-site
+          - section: output-verification
+          - section: live-verification
+            with: { smoke-suite: fast }
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     staging:
       provider: content-publisher
@@ -93,28 +141,21 @@ promote:
         refs:
           - kind: branch
             ref: refs/heads/environments/staging
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: migrate-data
-          - use: publish-assets
-          - use: configure-asset-cors
+          - section: data-change
+          - section: asset-publish
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
+          - section: output-verification
+          - section: live-verification
+            with: { smoke-suite: full }
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     prod:
       provider: content-publisher
@@ -137,30 +178,23 @@ promote:
         refs:
           - kind: tag
             template: refs/tags/releases/{candidate}
-      steps:
+      workflow:
         prepare:
-          - use: verify-publisher-approval
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: publisher-approval
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: prepare-production-data
-          - use: prepare-production-release
+          - section: production-release-change
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-deployment-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: deployment-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
   operations:
     publish-content:
@@ -176,48 +210,37 @@ promote:
         refs:
           - kind: tag
             template: refs/tags/content/{candidate}
-      steps:
+      workflow:
         prepare:
-          - use: verify-prepared-content
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: prepared-content-verification
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-content-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: content-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     validate-content:
       target: prod
       deploy: false
       locks: [content:production-candidate]
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: preview }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: preview }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: validate-content
+          - section: output-verification
+          - section: deployment-validation
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     activate-content:
       target: prod
@@ -232,26 +255,20 @@ promote:
         refs:
           - kind: branch
             ref: refs/heads/environments/production
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-content-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: content-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
   commands:
     verify-auth:

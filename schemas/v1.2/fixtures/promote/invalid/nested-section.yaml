@@ -1,29 +1,31 @@
-name: invalid-verification-effect-without-record
+name: invalid-nested-section
 promote:
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: local-publisher
+      provider: publisher
       artifacts: [site]
       workflow:
-        verify:
-          - section: target-verification
+        prepare:
+          - section: outer
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    local-publisher:
+    publisher:
       type: process
       command: publish
   sections:
-    target-verification:
+    outer:
       steps:
-        - use: verify-target
+        - section: inner
+    inner:
+      steps:
+        - use: build
   commands:
-    verify-target:
-      effect: verification
-      command: pnpm
+    build:
+      command: build
       timeout: 5m

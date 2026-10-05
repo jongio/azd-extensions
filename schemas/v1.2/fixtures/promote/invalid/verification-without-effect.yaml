@@ -7,9 +7,9 @@ promote:
     dev:
       provider: local-publisher
       artifacts: [site]
-      steps:
+      workflow:
         verify:
-          - use: verify-target
+          - section: target-verification
   artifacts:
     site:
       type: static
@@ -18,6 +18,10 @@ promote:
     local-publisher:
       type: process
       command: publish
+  sections:
+    target-verification:
+      steps:
+        - use: verify-target
   commands:
     verify-target:
       command: pnpm

@@ -7,9 +7,9 @@ promote:
     dev:
       provider: local-publisher
       artifacts: [site]
-      steps:
+      workflow:
         change:
-          - use: deploy
+          - section: deployment
   artifacts:
     site:
       type: static
@@ -18,6 +18,10 @@ promote:
     local-publisher:
       type: process
       command: publish
+  sections:
+    deployment:
+      steps:
+        - use: deploy
   commands:
     deploy:
       effect: change

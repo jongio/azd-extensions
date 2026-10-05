@@ -28,15 +28,15 @@ promote:
         refs:
           - kind: branch
             ref: refs/heads/environments/production
-      steps:
+      workflow:
         prepare:
-          - use: build
+          - section: build-output
             with: { mode: release }
         verify:
-          - use: smoke
+          - section: smoke-tests
             with: { suite: full }
         cleanup:
-          - use: clean-output
+          - section: cleanup-output
   operations:
     validate-content:
       target: prod
@@ -46,16 +46,16 @@ promote:
         ref:
           refresh: false
       locks: [content:production-candidate]
-      steps:
+      workflow:
         prepare:
-          - use: build
+          - section: build-output
             with: { mode: preview }
         verify:
-          - use: smoke
+          - section: smoke-tests
             with: { suite: fast }
-          - use: validate-content
+          - section: content-validation
         cleanup:
-          - use: clean-output
+          - section: cleanup-output
   artifacts:
     site:
       type: static
@@ -68,6 +68,21 @@ promote:
       command: node
       args: [scripts/publish-content.mjs, --artifact, '{artifact}', --result, '{result}']
       timeout: 30m
+  sections:
+    build-output:
+      steps:
+        - use: build
+          with: { mode: '{mode}' }
+    smoke-tests:
+      steps:
+        - use: smoke
+          with: { suite: '{suite}' }
+    content-validation:
+      steps:
+        - use: validate-content
+    cleanup-output:
+      steps:
+        - use: clean-output
   commands:
     build:
       command: pnpm

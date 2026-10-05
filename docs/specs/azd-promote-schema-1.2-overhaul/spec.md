@@ -17,11 +17,13 @@ not repeat project identity or select framework state paths. Git policy is
 authored under `git`, and predecessor verification imports use stable IDs under
 `requires.previous.verifications`.
 
-Reusable process definitions are authored under `commands`. Environments and
-operations invoke them through `steps.prepare`, `steps.change`,
-`steps.verify`, and `steps.cleanup` objects containing `use` and optional
-`with` parameters. Operations compose from one real environment through
-`target` using the complete rule documented below.
+Reusable process definitions are authored under `commands`. Reusable ordered
+command groups are authored under `sections`. Environments and operations
+compose an explicit `workflow` whose `prepare`, `change`, `verify`, and
+`cleanup` lifecycles invoke sections with `section` and optional `with`
+parameters. Sections invoke command steps with `use` and optional `with`
+parameters. Operations compose from one real environment through `target`
+using the complete rule documented below.
 
 ## User decisions
 
@@ -59,13 +61,16 @@ operations invoke them through `steps.prepare`, `steps.change`,
     `requires.previous.verifications`, not authored filesystem paths.
 16. Authentication values use explicit azd secret references. Scalar
     `auth: basic` defaults are rejected.
-17. Reusable authored definitions use `commands`, not `hooks`.
+17. Reusable executable definitions use `commands`, reusable ordered command
+    groups use `sections`, and target orchestration uses `workflow`.
 18. Lifecycle groups are `prepare`, `change`, `verify`, and `cleanup`.
-19. Every lifecycle entry is an invocation object with `use` and optional
-    scalar `with` parameters. Bare command-name strings are rejected.
+19. Every workflow lifecycle entry invokes one section through `section` and
+    optional scalar `with` parameters. Every section step invokes one command
+    through `use` and optional scalar `with` parameters. Bare strings are
+    rejected and sections cannot nest.
 20. Operations bind to a base environment through `target`. They inherit
     provider, artifacts, auth, and Git policy only, with recursive Git merging.
-    Requirements, steps, locks, snapshots, and approvals remain
+    Requirements, workflow, locks, snapshots, and approvals remain
     operation-owned.
 21. Approval policy is inline on the environment or operation that owns the
     boundary. A global approval target list is rejected.
@@ -100,7 +105,8 @@ operations invoke them through `steps.prepare`, `steps.change`,
 - Rename proof concepts to operation results.
 - Rename finalizers to cleanup steps and mutation boundaries to changed
   resources or change boundaries.
-- Implement reusable parameterized commands and explicit lifecycle expansion.
+- Implement reusable parameterized sections and commands with deterministic
+  workflow expansion.
 - Implement the documented target-based operation composition rule.
 - Implement progress counts, elapsed time, and historical estimates.
 
@@ -108,7 +114,7 @@ operations invoke them through `steps.prepare`, `steps.change`,
 
 - Migrate authored `azure.yaml` files to the final schema 1.2 promote contract.
 - Consolidate duplicate build, asset, verification, and smoke-test commands
-  where behavior is equivalent.
+  and command sequences where behavior is equivalent.
 - Rename promote-owned IDs to lowercase kebab-case.
 - Keep idiomatic dashed file names such as `staging-content.json`.
 - Validate every environment and operation through an offline plan before any
@@ -333,6 +339,61 @@ promote:
       workdir: infra
       timeout: 30m
 
+  sections:
+    access-preflight:
+      steps:
+        - use: verify-auth
+          with: { required: '{auth-required}' }
+        - use: check-asset-store
+    build-output:
+      steps:
+        - use: build
+          with: { mode: '{build-mode}' }
+        - use: prune-output
+        - use: normalize-output
+    data-change:
+      steps:
+        - use: migrate-data
+    asset-publish:
+      steps:
+        - use: publish-assets
+        - use: configure-asset-cors
+    output-verification:
+      steps:
+        - use: verify-data
+        - use: verify-offline-output
+        - use: select-files
+    live-verification:
+      steps:
+        - use: run-smoke-tests
+          with: { suite: '{smoke-suite}' }
+        - use: verify-live-site
+    cleanup-output:
+      steps:
+        - use: remove-unused-files
+    publisher-approval:
+      steps:
+        - use: verify-publisher-approval
+    production-release-change:
+      steps:
+        - use: prepare-production-data
+        - use: prepare-production-release
+    deployment-input-verification:
+      steps:
+        - use: verify-deployment-inputs
+    published-content-verification:
+      steps:
+        - use: verify-published-content
+    prepared-content-verification:
+      steps:
+        - use: verify-prepared-content
+    content-input-verification:
+      steps:
+        - use: verify-content-inputs
+    deployment-validation:
+      steps:
+        - use: validate-content
+
   environments:
     dev:
       provider: content-publisher
@@ -343,28 +404,21 @@ promote:
         type: basic
         username: { azd: DEV_BASIC_AUTH_USERNAME }
         password: { azd: DEV_BASIC_AUTH_PASSWORD }
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: false }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: false }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: migrate-data
-          - use: publish-assets
-          - use: configure-asset-cors
+          - section: data-change
+          - section: asset-publish
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: run-smoke-tests
-            with: { suite: fast }
-          - use: verify-live-site
+          - section: output-verification
+          - section: live-verification
+            with: { smoke-suite: fast }
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     staging:
       provider: content-publisher
@@ -383,28 +437,21 @@ promote:
         refs:
           - kind: branch
             ref: refs/heads/environments/staging
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: migrate-data
-          - use: publish-assets
-          - use: configure-asset-cors
+          - section: data-change
+          - section: asset-publish
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
+          - section: output-verification
+          - section: live-verification
+            with: { smoke-suite: full }
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     prod:
       provider: content-publisher
@@ -427,30 +474,23 @@ promote:
         refs:
           - kind: tag
             template: refs/tags/releases/{candidate}
-      steps:
+      workflow:
         prepare:
-          - use: verify-publisher-approval
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: publisher-approval
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         change:
-          - use: prepare-production-data
-          - use: prepare-production-release
+          - section: production-release-change
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-deployment-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: deployment-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
   operations:
     publish-content:
@@ -466,48 +506,37 @@ promote:
         refs:
           - kind: tag
             template: refs/tags/content/{candidate}
-      steps:
+      workflow:
         prepare:
-          - use: verify-prepared-content
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: prepared-content-verification
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-content-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: content-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     validate-content:
       target: prod
       deploy: false
       locks: [content:production-candidate]
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: preview }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: preview }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: validate-content
+          - section: output-verification
+          - section: deployment-validation
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
     activate-content:
       target: prod
@@ -522,26 +551,20 @@ promote:
         refs:
           - kind: branch
             ref: refs/heads/environments/production
-      steps:
+      workflow:
         prepare:
-          - use: verify-auth
-            with: { required: true }
-          - use: check-asset-store
-          - use: build
-            with: { mode: release }
-          - use: prune-output
-          - use: normalize-output
+          - section: access-preflight
+            with: { auth-required: true }
+          - section: build-output
+            with: { build-mode: release }
         verify:
-          - use: verify-data
-          - use: verify-offline-output
-          - use: select-files
-          - use: verify-content-inputs
-          - use: run-smoke-tests
-            with: { suite: full }
-          - use: verify-live-site
-          - use: verify-published-content
+          - section: output-verification
+          - section: content-input-verification
+          - section: live-verification
+            with: { smoke-suite: full }
+          - section: published-content-verification
         cleanup:
-          - use: remove-unused-files
+          - section: cleanup-output
 
   commands:
     verify-auth:
@@ -802,10 +825,11 @@ Git policy composes in one ordered sequence:
    recursively merges operation `git` by the same rule.
 4. No layer implicitly clears an inherited member.
 
-## Reusable commands and lifecycle invocations
+## Reusable sections, commands, and workflows
 
-Reusable executable definitions are authored under `commands`. Lifecycle
-groups contain invocation objects rather than command-name strings:
+Reusable executable definitions are authored under `commands`. Reusable
+ordered command groups are authored under `sections`. Targets compose a
+`workflow` from section invocations:
 
 ```yaml
 commands:
@@ -818,12 +842,22 @@ commands:
     args: [build, --mode, '{mode}']
     timeout: 30m
 
-steps:
+sections:
+  hosting-preflight:
+    steps:
+      - use: verify-auth
+        with: { required: '{auth-required}' }
+  file-prep:
+    steps:
+      - use: build
+        with: { mode: '{build-mode}' }
+
+workflow:
   prepare:
-    - use: verify-auth
-      with: { required: true }
-    - use: build
-      with: { mode: preview }
+    - section: hosting-preflight
+      with: { auth-required: true }
+    - section: file-prep
+      with: { build-mode: preview }
 ```
 
 The four lifecycle groups are:
@@ -835,10 +869,13 @@ The four lifecycle groups are:
 | `verify`  | Post-change verification and structured result checks.         |
 | `cleanup` | Bounded cleanup that runs through the cleanup lifecycle.       |
 
-`use` is a lowercase kebab-case command ID. `with` is an optional lowercase
-kebab-case map of string, number, or boolean values supplied to that
-invocation. One definition can therefore replace variants such as
-`verify-auth-required` and `build-preview`.
+Workflow entries use a lowercase kebab-case `section` ID. Section steps use a
+lowercase kebab-case command ID under `use`. Both invocation types accept an
+optional lowercase kebab-case `with` map of string, number, or boolean values.
+An exact section parameter placeholder such as `'{auth-required}'` preserves
+the supplied scalar type when passed into a command step. Sections cannot
+invoke other sections; the compiler flattens them deterministically and
+retains section identity in expanded plans.
 
 ## Operation composition
 
@@ -852,10 +889,10 @@ operations:
     git:
       ref:
         refresh: false
-    steps:
+    workflow:
       prepare:
-        - use: build
-          with: { mode: preview }
+        - section: file-prep
+          with: { build-mode: preview }
 ```
 
 Composition follows one complete rule:
@@ -866,7 +903,7 @@ Composition follows one complete rule:
    value. A provider override cannot be combined with `deploy: false`.
 3. Operation `git` merges recursively into base `git`, including `ref`
    members.
-4. `requires`, `steps`, `locks`, `snapshot`, and `approval` are
+4. `requires`, `workflow`, `locks`, `snapshot`, and `approval` are
    operation-owned and never inherit from the base environment.
 5. `deploy` defaults to true. `deploy: false` preserves artifact
    fingerprinting, sealing, lifecycle commands, and final artifact verification
@@ -1000,9 +1037,13 @@ Internal storage directories follow the same model and remain compiler-owned:
    `requires.previous.verifications`. The former `previousRun` property and
    filesystem paths are rejected.
 10. Auth fields use strict `{azd: NAME}` secret reference objects.
-11. Reusable definitions live under `commands`; lifecycle entries use strict
-    `{use, with}` invocation objects.
-12. Lifecycle groups are `prepare`, `change`, `verify`, and `cleanup`.
+11. Reusable executable definitions live under `commands`; reusable ordered
+    command groups live under `sections`; targets compose them under
+    `workflow`.
+12. Workflow lifecycle groups are `prepare`, `change`, `verify`, and
+    `cleanup`. Workflow entries use strict `{section, with}` invocations, and
+    section steps use strict `{use, with}` command invocations. Sections cannot
+    nest.
 13. Operations require `target`, support explicit `deploy: false`, and follow
     the documented base environment composition rule.
 14. Approvals and snapshots are inline on their owning environment or
@@ -1019,8 +1060,8 @@ Internal storage directories follow the same model and remain compiler-owned:
    - complete valid promote configuration;
    - minimal one-chain promote configuration;
    - multiple-chain default examples;
-   - reusable parameterized command invocations;
-   - explicit prepare, change, verify, and cleanup lifecycles;
+   - reusable parameterized section and command invocations;
+   - explicit prepare, change, verify, and cleanup workflows;
    - operations composed from real environments through `target`;
    - inline environment and operation approvals;
    - inline snapshots without one-use IDs or purpose IDs;
@@ -1028,7 +1069,8 @@ Internal storage directories follow the same model and remain compiler-owned:
      target `mode` or a fake provider;
    - valid process and azd provider variants;
    - rejection of mixed-provider fields;
-   - rejection of bare string command invocations;
+   - rejection of flat target steps, nested sections, empty sections, and bare
+     string command invocations;
    - rejection of global approvals, named snapshots, target hooks, and
      operation `environment`;
    - top-level name as promotion identity;
@@ -1072,8 +1114,9 @@ Internal storage directories follow the same model and remain compiler-owned:
 - Authentication rejects implicit defaults and raw secret names.
 - Top-level and target `hooks`, operation `environment`, and target `mode` are
   rejected.
-- Command invocations require `use`; optional `with` values are scalar and
-  parameter IDs use lowercase kebab-case.
+- Workflow invocations require `section`; command invocations require `use`;
+  optional `with` values are scalar and parameter IDs use lowercase
+  kebab-case.
 - Operation composition text and fixtures cover every inherited and
   operation-owned field.
 - Approval and snapshot policy is inline with no global target list, snapshot
@@ -1100,8 +1143,8 @@ Internal storage directories follow the same model and remain compiler-owned:
   policy.
 - Git policy, predecessor verification imports, and auth secret references use
   the final schema 1.2 shape.
-- Reusable parameterized commands and explicit lifecycle groups replace
-  authored hooks and string references.
+- Reusable parameterized sections and commands plus explicit workflows replace
+  authored hooks, flat command lists, and string references.
 - Operations compose through `target` using the documented base environment
   rule.
 - Approvals and snapshots are inline, target `mode` is absent, and provider

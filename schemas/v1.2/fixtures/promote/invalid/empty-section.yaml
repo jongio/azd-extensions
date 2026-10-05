@@ -1,28 +1,23 @@
-name: invalid-string-command-invocation
+name: invalid-empty-section
 promote:
   chains:
     release:
       targets: [dev]
   environments:
     dev:
-      provider: local-publisher
+      provider: publisher
       artifacts: [site]
       workflow:
         prepare:
-          - section: build-output
+          - section: empty
   artifacts:
     site:
       type: static
       path: dist
   providers:
-    local-publisher:
+    publisher:
       type: process
       command: publish
   sections:
-    build-output:
-      steps: [build]
-  commands:
-    build:
-      command: pnpm
-      args: [build]
-      timeout: 30m
+    empty:
+      steps: []

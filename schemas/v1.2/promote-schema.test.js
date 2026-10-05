@@ -44,7 +44,9 @@ const invalidFixtures = [
       error('/promote/providers', 'propertyNames', { propertyName: 'localPublisher' }),
     ],
   ],
+  ['empty-section', [error('/promote/sections/empty/steps', 'minItems')]],
   ['empty-target-artifacts', [error('/promote/environments/dev/artifacts', 'minItems')]],
+  ['flat-target-steps', [additionalProperty('/promote/environments/dev', 'steps')]],
   ['implicit-basic-auth', [error('/promote/environments/dev/auth', 'oneOf')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
@@ -122,6 +124,13 @@ const invalidFixtures = [
       missingProperty('/promote/environments/dev', 'artifacts'),
     ],
   ],
+  [
+    'nested-section',
+    [
+      missingProperty('/promote/sections/outer/steps/0', 'use'),
+      additionalProperty('/promote/sections/outer/steps/0', 'section'),
+    ],
+  ],
   ['non-deploying-provider-override', [error('/promote/operations/validate', 'not')]],
   ['overlong-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['promote-version', [additionalProperty('/promote', 'version')]],
@@ -132,7 +141,7 @@ const invalidFixtures = [
       error('/promote/environments/dev/auth/password', 'type'),
     ],
   ],
-  ['string-command-invocation', [error('/promote/environments/dev/steps/prepare/0', 'type')]],
+  ['string-command-invocation', [error('/promote/sections/build-output/steps/0', 'type')]],
   ['unbounded-hook-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['unknown-nested-property', [additionalProperty('/promote/environments/dev', 'unexpected')]],
   ['unsupported-artifact-type', [error('/promote/artifacts/site/type', 'enum')]],
@@ -257,38 +266,47 @@ describe('azure.yaml v1.2 promote contract', () => {
     }
   })
 
-  it('uses reusable parameterized commands and explicit lifecycle groups', async () => {
+  it('uses reusable sections, parameterized commands, and explicit lifecycle groups', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'full-contract')
     const promoteProperties = schema.definitions.promoteConfig.properties
     const targetProperties = schema.definitions.promoteTarget.properties
-    const lifecycleProperties = schema.definitions.promoteLifecycleSteps.properties
+    const workflowProperties = schema.definitions.promoteWorkflow.properties
 
     expect(promoteProperties.commands.$ref).toBe('#/definitions/promoteCommands')
+    expect(promoteProperties.sections.$ref).toBe('#/definitions/promoteSections')
     expect(promoteProperties).not.toHaveProperty('hooks')
-    expect(targetProperties.steps.$ref).toBe('#/definitions/promoteLifecycleSteps')
+    expect(targetProperties.workflow.$ref).toBe('#/definitions/promoteWorkflow')
+    expect(targetProperties).not.toHaveProperty('steps')
     expect(targetProperties).not.toHaveProperty('hooks')
-    expect(Object.keys(lifecycleProperties).sort()).toEqual([
+    expect(Object.keys(workflowProperties).sort()).toEqual([
       'change',
       'cleanup',
       'prepare',
       'verify',
     ])
+    expect(schema.definitions.promoteSection.required).toEqual(['steps'])
+    expect(schema.definitions.promoteSection.properties.steps.$ref)
+      .toBe('#/definitions/promoteCommandInvocations')
 
-    const invocations = [
+    const sectionInvocations = [
       ...Object.values(fixture.promote.environments),
       ...Object.values(fixture.promote.operations),
-    ].flatMap((target) => Object.values(target.steps ?? {}).flat())
-    const verifyAuthParameters = invocations
-      .filter((invocation) => invocation.use === 'verify-auth')
+    ].flatMap((target) => Object.values(target.workflow ?? {}).flat())
+    const authParameters = sectionInvocations
+      .filter((invocation) => invocation.section === 'access-preflight')
       .map((invocation) => invocation.with)
-    const buildModes = invocations
-      .filter((invocation) => invocation.use === 'build')
-      .map((invocation) => invocation.with.mode)
+    const buildModes = sectionInvocations
+      .filter((invocation) => invocation.section === 'build-output')
+      .map((invocation) => invocation.with['build-mode'])
 
-    expect(verifyAuthParameters).toContainEqual({ required: false })
-    expect(verifyAuthParameters).toContainEqual({ required: true })
+    expect(authParameters).toContainEqual({ 'auth-required': false })
+    expect(authParameters).toContainEqual({ 'auth-required': true })
     expect(new Set(buildModes)).toEqual(new Set(['preview', 'release']))
+    expect(fixture.promote.sections['access-preflight'].steps[0]).toEqual({
+      use: 'verify-auth',
+      with: { required: '{auth-required}' },
+    })
     expect(fixture.promote.commands).not.toHaveProperty('verify-auth-required')
     expect(fixture.promote.commands).not.toHaveProperty('build-preview')
   })
@@ -327,8 +345,14 @@ describe('azure.yaml v1.2 promote contract', () => {
       worktree: 'dirtyAllowed',
       ref: { refresh: false },
     })
-    expect(base.steps.prepare[0].with).toEqual({ mode: 'release' })
-    expect(operation.steps.prepare[0].with).toEqual({ mode: 'preview' })
+    expect(base.workflow.prepare[0]).toEqual({
+      section: 'build-output',
+      with: { mode: 'release' },
+    })
+    expect(operation.workflow.prepare[0]).toEqual({
+      section: 'build-output',
+      with: { mode: 'preview' },
+    })
     expect(base).toHaveProperty('approval')
     expect(base).toHaveProperty('snapshot')
     expect(operation).not.toHaveProperty('approval')
@@ -486,6 +510,7 @@ describe('azure.yaml v1.2 promote contract', () => {
       'promoteOperations',
       'promoteArtifacts',
       'promoteProviders',
+      'promoteSections',
       'promoteCommands',
       'promoteCommandParameters',
     ]) {
