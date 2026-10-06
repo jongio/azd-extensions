@@ -3353,7 +3353,7 @@
           "$ref": "#/definitions/promoteServiceTokenVerificationAuth"
         }
       ],
-      "description": "Authentication resolved through explicit secret references in the target azd environment."
+      "description": "Authentication for compiler-generated HTTP live-file verification. Secrets are resolved through explicit references in the target azd environment; this policy does not authenticate arbitrary commands or provider processes."
     },
     "promoteBasicVerificationAuth": {
       "type": "object",
@@ -3388,7 +3388,7 @@
           "additionalProperties": {
             "$ref": "#/definitions/promoteAzdSecretReference"
           },
-          "description": "Maps external HTTP header names to explicit azd secret references."
+          "description": "Maps external HTTP header names to explicit azd secret references. Header names must also be unique case-insensitively at runtime."
         }
       }
     },
@@ -3402,14 +3402,16 @@
         },
         "clientIdHeader": {
           "type": "string",
-          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
+          "description": "HTTP header carrying the resolved client ID. It must differ case-insensitively from clientSecretHeader."
         },
         "clientId": {
           "$ref": "#/definitions/promoteAzdSecretReference"
         },
         "clientSecretHeader": {
           "type": "string",
-          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
+          "description": "HTTP header carrying the resolved client secret. It must differ case-insensitively from clientIdHeader."
         },
         "clientSecret": {
           "$ref": "#/definitions/promoteAzdSecretReference"

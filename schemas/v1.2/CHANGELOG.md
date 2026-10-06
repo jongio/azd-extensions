@@ -19,6 +19,7 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 - Git repository policy is authored under `git`. The former `candidate` property is rejected.
 - Predecessor verification imports use stable IDs under `requires.predecessor.verifications`. The former `previousRun` property and authored predecessor verification paths are rejected.
 - Verification-authentication values use explicit `{azd: SECRET_NAME}` references. Scalar `verificationAuth: basic` defaults and raw secret names are rejected.
+- Runtime decoding enforces the same strict basic, headers, and service-token variants as JSON Schema, including empty foreign members. HTTP header names must be unique case-insensitively.
 - Reusable executable definitions are authored under `commands`; reusable ordered command groups are authored under `tasks`. Targets compose a `workflow` with `prepare`, `apply`, `verify`, and `cleanup` lifecycle groups using `{task, with}` invocations, while task steps use `{command, with}` command invocations. Tasks cannot nest.
 - Every command requires an explicit `effect`: `none`, `inspection`, `verification`, or `change`. The retired `inspectionOnly` boolean is rejected; `capture: metadata-only` expresses output-capture policy without implying effect.
 - Command and provider templates reject unknown or unavailable tokens and unused command parameters. Literal braces use `{{` and `}}`. Direct host execution uses the unambiguous `$host` selector.
