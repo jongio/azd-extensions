@@ -21,9 +21,13 @@
 |-----------|-------------|--------|---------|
 | [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.5.0 | [🌐](https://jongio.github.io/azd-rest/) |
-| [**azd pack**](pack/) | Installs both of the above in one step as `jongio.azd` | v0.1.0 | [📦](pack/README.md) |
+| [**azd pack**](pack/) | Installs every currently published extension in one step as `jongio.azd` | v0.1.0 | [📦](pack/README.md) |
 
 > **Note:** `azd exec` is now a built-in command in Azure Developer CLI v1.25.1+. No extension needed. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
+>
+> `azd promote` is staged for the next pack version but remains hidden until its
+> repository, website, registry metadata, and release artifacts are public and
+> reachable. The aggregator keeps pack v0.1.0 active until that release exists.
 
 ## Quick Start
 
@@ -39,7 +43,7 @@ azd extension source add -n jongio -t url -l "https://jongio.github.io/azd-exten
 # List available extensions
 azd extension list --source jongio
 
-# Install both in one step, via the pack
+# Install every currently published extension via the pack
 azd extension install jongio.azd
 
 # Or install individually
@@ -133,18 +137,21 @@ pnpm dev
 
 | Category | Technology |
 |----------|------------|
-| Framework | Astro 6 + TypeScript |
+| Framework | Astro 7 + TypeScript |
 | Styling | Tailwind CSS 4 |
 | CI/CD | GitHub Actions |
 
 ## Registry
 
-The `public/registry.json` file is the extension source that azd reads. It auto-updates daily via GitHub Actions.
+The `public/registry.json` file is the extension source that azd reads. GitHub
+Actions poll extension registries hourly, react immediately to configured
+release notifications, and support manual dispatch. No-op polls skip the site
+build and deployment.
 
 ### Manual Update
 
 ```bash
-gh workflow run update-registry.yml
+gh workflow run publish.yml
 ```
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
@@ -176,5 +183,5 @@ MIT. See [LICENSE](LICENSE)
 ---
 
 <div align="center">
-  <sub>Built by <a href="https://github.com/jongio">Jon Gallant</a> with Astro 6 and Tailwind CSS 4</sub>
+  <sub>Built by <a href="https://github.com/jongio">Jon Gallant</a> with Astro 7 and Tailwind CSS 4</sub>
 </div>

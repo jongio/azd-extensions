@@ -1,6 +1,6 @@
 #!/usr/bin/env pwsh
-# Install all azd extensions locally by running 'mage build' in each sibling extension repo.
-# This builds and installs each extension using 'azd x build'.
+# Install all azd extensions locally using each sibling repository's supported
+# development build command.
 #
 # First-time setup: ensures the jongio extension source is registered and each extension
 # is installed from the registry (so azd knows about it). Subsequent runs just rebuild
@@ -26,7 +26,14 @@ $registryUrl = "https://jongio.github.io/azd-extensions/registry.json"
 # Extension repos relative to the parent directory
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" }
+    @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" },
+    @{
+        Name = "azd-promote"
+        Id = "jongio.azd.promote"
+        Path = Join-Path $parentDir "azd-promote\cli"
+        BuildCommand = "azd"
+        BuildArguments = "x build"
+    }
 )
 
 # Ensure the jongio extension source is registered
@@ -38,6 +45,20 @@ function Ensure-ExtensionSource {
         if ($LASTEXITCODE -ne 0) {
             Write-Host "  ⚠️  Failed to add extension source, continuing anyway" -ForegroundColor Yellow
         }
+    }
+}
+
+function Ensure-AzdExtensionTooling {
+    azd x version 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        return
+    }
+
+    Write-Host "Installing azd extension development tooling..." -ForegroundColor Cyan
+    azd extension source add azd --location https://aka.ms/azd/extensions/registry --type url 2>&1 | Out-Null
+    azd extension install microsoft.azd.extensions --source azd 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to install microsoft.azd.extensions"
     }
 }
 
@@ -132,6 +153,7 @@ $skipped = @()
 Write-Host "`n🚀 Installing all azd extensions locally...`n" -ForegroundColor Cyan
 
 Ensure-ExtensionSource
+Ensure-AzdExtensionTooling
 
 # Read config.json once for all registration checks (#66, avoid N+1 reads)
 $configPath = Join-Path $env:USERPROFILE ".azd\config.json"
@@ -163,17 +185,19 @@ foreach ($ext in $extensions) {
     $buildable += $ext
 }
 
-# Phase 2: Launch all builds concurrently (#65, parallel mage build)
+# Phase 2: Launch all repository-specific builds concurrently.
 $buildJobs = @()
 foreach ($ext in $buildable) {
     $name = $ext.Name
     $cliDir = $ext.Path
+    $buildCommand = if ($ext.BuildCommand) { $ext.BuildCommand } else { "mage" }
+    $buildArguments = if ($ext.BuildArguments) { $ext.BuildArguments } else { "build" }
 
     Write-Host "  Launching build for $name..." -ForegroundColor White
 
     $psi = [System.Diagnostics.ProcessStartInfo]::new()
-    $psi.FileName = "mage"
-    $psi.Arguments = "build"
+    $psi.FileName = $buildCommand
+    $psi.Arguments = $buildArguments
     $psi.WorkingDirectory = $cliDir
     $psi.UseShellExecute = $false
     $psi.RedirectStandardOutput = $true

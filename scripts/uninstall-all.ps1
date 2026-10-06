@@ -22,7 +22,8 @@ $extensions = @(
     # retired still needs a way to get it off their machine. This is now the
     # only surface that mentions it, since the registry entry is gone.
     @{ Name = "azd-copilot"; Id = "jongio.azd.copilot" },
-    @{ Name = "azd-rest";    Id = "jongio.azd.rest" }
+    @{ Name = "azd-rest";    Id = "jongio.azd.rest" },
+    @{ Name = "azd-promote"; Id = "jongio.azd.promote" }
 )
 
 Write-Host "`n🗑️  Uninstalling all azd extensions...`n" -ForegroundColor Cyan

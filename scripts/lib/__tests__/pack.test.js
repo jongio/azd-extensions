@@ -24,6 +24,14 @@ describe('extension pack manifest', () => {
     expect(manifest.dependencies.length).toBeGreaterThan(0);
   });
 
+  it('installs promote with app and rest', () => {
+    expect(manifest.dependencies.map((dependency) => dependency.id)).toEqual([
+      'jongio.azd.app',
+      'jongio.azd.rest',
+      'jongio.azd.promote',
+    ]);
+  });
+
   it.each(executableKeys)('omits %s so azd still treats it as a pack', (key) => {
     expect(manifest[key]).toBeUndefined();
   });
@@ -55,5 +63,15 @@ describe('extension pack registry entry', () => {
     expect(packEntry.id).toBe(manifest.id);
     expect(packVersion.version).toBe(String(manifest.version));
     expect(packVersion.dependencies).toEqual(manifest.dependencies);
+  });
+
+  it('preserves the published app-and-rest pack until promote is available', () => {
+    expect(packEntry.versions[0]).toMatchObject({
+      version: '0.1.0',
+      dependencies: [
+        { id: 'jongio.azd.app' },
+        { id: 'jongio.azd.rest' },
+      ],
+    });
   });
 });

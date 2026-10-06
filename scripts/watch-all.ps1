@@ -1,7 +1,7 @@
 #!/usr/bin/env pwsh
 # Watch all azd extensions for changes and auto-rebuild.
-# Runs 'mage watch' (azd x watch) in each sibling extension repo concurrently,
-# with color-coded prefixed output so you can see which extension is rebuilding.
+# Runs each sibling repository's supported watch command concurrently, with
+# color-coded prefixed output so you can see which extension is rebuilding.
 #
 # Usage: pwsh scripts/watch-all.ps1
 # Stop:  Ctrl+C
@@ -22,8 +22,29 @@ $parentDir = Split-Path -Parent $repoDir
 # Extension repos relative to the parent directory
 $extensions = @(
     @{ Name = "app";     Color = "Cyan";    Path = Join-Path $parentDir "azd-app\cli" },
-    @{ Name = "rest";    Color = "Yellow";  Path = Join-Path $parentDir "azd-rest\cli" }
+    @{ Name = "rest";    Color = "Yellow";  Path = Join-Path $parentDir "azd-rest\cli" },
+    @{
+        Name = "promote"
+        Color = "Magenta"
+        Path = Join-Path $parentDir "azd-promote\cli"
+        WatchCommand = "azd"
+        WatchArguments = "x watch"
+    }
 )
+
+function Ensure-AzdExtensionTooling {
+    azd x version 2>&1 | Out-Null
+    if ($LASTEXITCODE -eq 0) {
+        return
+    }
+
+    Write-Host "Installing azd extension development tooling..." -ForegroundColor Cyan
+    azd extension source add azd --location https://aka.ms/azd/extensions/registry --type url 2>&1 | Out-Null
+    azd extension install microsoft.azd.extensions --source azd 2>&1 | Out-Null
+    if ($LASTEXITCODE -ne 0) {
+        throw "Failed to install microsoft.azd.extensions"
+    }
+}
 
 # Validate all repos exist before starting
 $missing = @()
@@ -37,6 +58,8 @@ if ($missing.Count -gt 0) {
     $missing | ForEach-Object { Write-Host "   - $_" -ForegroundColor Yellow }
     exit 1
 }
+
+Ensure-AzdExtensionTooling
 
 Write-Host ""
 Write-Host "Watching all extensions for changes..." -ForegroundColor White
@@ -52,13 +75,15 @@ foreach ($ext in $extensions) {
     $name = $ext.Name
     $color = $ext.Color
     $cliDir = $ext.Path
+    $watchCommand = if ($ext.WatchCommand) { $ext.WatchCommand } else { "mage" }
+    $watchArguments = if ($ext.WatchArguments) { $ext.WatchArguments } else { "watch" }
 
     Write-Host "   [$name] watching $cliDir" -ForegroundColor $color
 
-    # Launch mage watch as a background process with UTF-8 output capture
+    # Launch the repository-specific watcher with UTF-8 output capture.
     $psi = [System.Diagnostics.ProcessStartInfo]::new()
-    $psi.FileName = "mage"
-    $psi.Arguments = "watch"
+    $psi.FileName = $watchCommand
+    $psi.Arguments = $watchArguments
     $psi.WorkingDirectory = $cliDir
     $psi.UseShellExecute = $false
     $psi.RedirectStandardOutput = $true

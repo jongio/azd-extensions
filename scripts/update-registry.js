@@ -9,7 +9,11 @@
 import { readFileSync, writeFileSync } from 'fs';
 import { compareSemver } from './lib/semver.js';
 import { batchHeadRequests } from './lib/http.js';
-import { isAllowedArtifactUrl, isExtensionPackVersion } from './lib/validate.js';
+import {
+  filterResolvablePackVersions,
+  isAllowedArtifactUrl,
+  isExtensionPackVersion,
+} from './lib/validate.js';
 import {
   ALLOWED_HASH_ALGORITHMS,
   MIN_REQUIRED_PLATFORMS,
@@ -220,6 +224,32 @@ async function main() {
         console.log(`  URL-filtered ${ext.id}: ${before} -> ${ext.versions.length} versions`);
       }
     }
+
+    // A newer pack version may intentionally depend on an extension that is
+    // staged but not public yet. Keep older resolvable pack versions available,
+    // and activate the newer version automatically once every dependency has at
+    // least one installable version in this generated registry.
+    const installableExtensions = aggregatedRegistry.extensions.filter(
+      (ext) => Array.isArray(ext.versions) && ext.versions.length > 0,
+    );
+
+    for (const ext of aggregatedRegistry.extensions) {
+      if (!Array.isArray(ext.versions)) continue;
+      const before = ext.versions.length;
+      ext.versions = filterResolvablePackVersions(
+        ext.versions,
+        installableExtensions,
+      );
+      if (ext.versions.length < before) {
+        console.log(
+          `  Dependency-filtered ${ext.id}: ${before} -> ${ext.versions.length} versions`,
+        );
+      }
+    }
+
+    aggregatedRegistry.extensions = aggregatedRegistry.extensions.filter(
+      (ext) => Array.isArray(ext.versions) && ext.versions.length > 0,
+    );
 
     // Write aggregated registry
     console.log(`\nWriting ${REGISTRY_FILE}...`);

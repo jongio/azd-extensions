@@ -2,7 +2,7 @@
 
 ## Overview
 
-Comprehensive azd extensions registry website showcasing the active azd extensions: **azd-app** and **azd-rest**. Built with Astro 6, TypeScript, Tailwind CSS 4, and automated workflows.
+Comprehensive azd extensions registry website showcasing the currently published azd extensions: **azd-app** and **azd-rest**. **azd-promote** is staged and becomes visible only after its public registry release is installable. Built with Astro 7, TypeScript, Tailwind CSS 4, and automated workflows.
 
 ## Extensions
 
@@ -18,6 +18,12 @@ Comprehensive azd extensions registry website showcasing the active azd extensio
 - **Purpose**: Make authenticated REST API calls to Azure services
 - **Key Features**: Automatic OAuth scope detection, token management, MCP server integration
 
+### 3. azd-promote
+
+- **Publication state**: Staged until the repository, website, registry metadata, and release artifacts are public
+- **Purpose**: Deterministic, durable environment promotion
+- **Key Features**: Compiled plans, approvals, locks, verification evidence, cancellation, and exact-context resume
+
 ## Archived extensions
 
 These are no longer listed in the registry. The repositories remain available read-only.
@@ -30,7 +36,7 @@ These are no longer listed in the registry. The repositories remain available re
 ### 1. Core Functionality
 
 - **Registry System**: Created `registry.json` following the official azd extension schema
-- **Modern Website**: Built with Astro 6, TypeScript, and Tailwind CSS 4
+- **Modern Website**: Built with Astro 7, TypeScript, and Tailwind CSS 4
 - **Extension Showcase**: Responsive showcase component for each extension with:
   - Extension metadata (ID, version, namespace)
   - Description and tags
@@ -165,7 +171,7 @@ azd-extensions/
 
 ### Modern UI/UX
 
-- Astro 6 for static site generation
+- Astro 7 for static site generation
 - TypeScript for type safety
 - Tailwind CSS 4 for styling
 - Responsive design

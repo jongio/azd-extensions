@@ -128,6 +128,69 @@ export function validatePackDependencies(extId, version, knownIds) {
 }
 
 /**
+ * Remove pack versions whose dependencies are not installable from the
+ * aggregated registry yet.
+ *
+ * This supports staged extension launches without changing an existing pack
+ * version in place. For example, pack 0.1.0 can continue serving app and rest
+ * while pack 0.2.0 remains withheld until promote has a reachable public
+ * release.
+ *
+ * @param {{ version: string, dependencies?: { id?: string, version?: string }[], artifacts?: Record<string, unknown> }[]} versions
+ * @param {{ id?: string, versions?: { version?: string }[] }[]} availableExtensions extensions with installable versions
+ * @returns {typeof versions}
+ */
+export function filterResolvablePackVersions(versions, availableExtensions) {
+  const available = new Map(
+    availableExtensions
+      .filter((extension) => extension.id)
+      .map((extension) => [
+        extension.id,
+        (extension.versions || [])
+          .map((version) => version.version)
+          .filter(Boolean),
+      ]),
+  );
+
+  function satisfies(version, constraint) {
+    const match = /^(>=|>|<=|<|=)?\s*(\d+(?:\.\d+){0,2})$/.exec(
+      constraint.trim(),
+    );
+    if (!match) {
+      return false;
+    }
+    const comparison = compareSemver(version, match[2]);
+    switch (match[1] || '=') {
+      case '>=':
+        return comparison >= 0;
+      case '>':
+        return comparison > 0;
+      case '<=':
+        return comparison <= 0;
+      case '<':
+        return comparison < 0;
+      default:
+        return comparison === 0;
+    }
+  }
+
+  return versions.filter((version) => {
+    if (!isExtensionPackVersion(version)) {
+      return true;
+    }
+    return (version.dependencies || []).every((dependency) => {
+      if (!dependency.id || !dependency.version) {
+        return false;
+      }
+      const installableVersions = available.get(dependency.id) || [];
+      return installableVersions.some((candidate) =>
+        satisfies(candidate, dependency.version),
+      );
+    });
+  });
+}
+
+/**
  * Validate that versions are in strictly ascending semver order.
  *
  * @param {string} extId

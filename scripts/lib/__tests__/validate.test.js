@@ -6,6 +6,7 @@ import {
   validateChecksums,
   validateAllVersions,
   validatePackDependencies,
+  filterResolvablePackVersions,
 } from '../validate.js';
 
 describe('isAllowedHost', () => {
@@ -53,6 +54,10 @@ const BINARY_VERSION = {
 };
 
 const KNOWN_IDS = ['jongio.azd.app', 'jongio.azd.rest'];
+const AVAILABLE_EXTENSIONS = [
+  { id: 'jongio.azd.app', versions: [{ version: '0.20.0' }] },
+  { id: 'jongio.azd.rest', versions: [{ version: '0.5.0' }] },
+];
 
 describe('isExtensionPackVersion', () => {
   it('identifies a dependency-only version as a pack', () => {
@@ -139,5 +144,54 @@ describe('validatePackDependencies', () => {
   it('rejects a pack with no dependencies at all', () => {
     const results = validatePackDependencies('jongio.azd', { version: '0.1.0' }, KNOWN_IDS);
     expect(results.every((r) => r.passed)).toBe(false);
+  });
+});
+
+describe('filterResolvablePackVersions', () => {
+  const stagedPack = {
+    version: '0.2.0',
+    dependencies: [
+      ...PACK_VERSION.dependencies,
+      { id: 'jongio.azd.promote', version: '>= 0.1.0' },
+    ],
+  };
+
+  it('keeps the current pack while withholding a staged dependency', () => {
+    expect(
+      filterResolvablePackVersions(
+        [PACK_VERSION, stagedPack],
+        AVAILABLE_EXTENSIONS,
+      ),
+    ).toEqual([PACK_VERSION]);
+  });
+
+  it('activates the staged pack after every dependency is installable', () => {
+    expect(
+      filterResolvablePackVersions(
+        [PACK_VERSION, stagedPack],
+        [
+          ...AVAILABLE_EXTENSIONS,
+          { id: 'jongio.azd.promote', versions: [{ version: '0.1.0' }] },
+        ],
+      ),
+    ).toEqual([PACK_VERSION, stagedPack]);
+  });
+
+  it('withholds a staged pack when a dependency is below its version floor', () => {
+    expect(
+      filterResolvablePackVersions(
+        [PACK_VERSION, stagedPack],
+        [
+          ...AVAILABLE_EXTENSIONS,
+          { id: 'jongio.azd.promote', versions: [{ version: '0.0.9' }] },
+        ],
+      ),
+    ).toEqual([PACK_VERSION]);
+  });
+
+  it('does not filter ordinary binary extension versions', () => {
+    expect(
+      filterResolvablePackVersions([BINARY_VERSION], []),
+    ).toEqual([BINARY_VERSION]);
   });
 });

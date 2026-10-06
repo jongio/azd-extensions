@@ -59,4 +59,28 @@ export const extensions: Extension[] = [
     ],
     tags: ['rest', 'api', 'http', 'developer-tools'],
   },
+  {
+    id: 'jongio.azd.promote',
+    name: 'azd promote',
+    tagline: 'Deterministic Environment Promotion',
+    heroClaim: 'moves one verified candidate through every environment safely.',
+    description:
+      'Compile V5 promotion intent into a deterministic plan with approvals, locks, durable records, verification evidence, cancellation, and exact-context resume.',
+    icon: 'rocket',
+    website: 'https://jongio.github.io/azd-promote/',
+    repository: 'https://github.com/jongio/azd-promote',
+    glowColor: 'var(--color-glow-violet)',
+    features: [
+      { icon: 'target', title: 'Deterministic Plans', desc: 'Stable actions, inputs, and fingerprints' },
+      { icon: 'shield', title: 'Fail-Closed Safety', desc: 'Approvals, locks, drift checks, cleanup' },
+      { icon: 'repeat', title: 'Durable Resume', desc: 'Exact run-context recovery' },
+      { icon: 'clipboard-list', title: 'Verification Evidence', desc: 'Run records and promoted artifacts' },
+    ],
+    scenarios: [
+      { title: 'Inspect a Plan', command: 'azd promote plan staging' },
+      { title: 'Promote a Target', command: 'azd promote staging' },
+      { title: 'Inspect Durable State', command: 'azd promote status --env staging' },
+    ],
+    tags: ['promotion', 'deployment', 'release', 'verification'],
+  },
 ]
