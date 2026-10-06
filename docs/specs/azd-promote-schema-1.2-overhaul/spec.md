@@ -309,11 +309,6 @@ promote:
     content-app:
       type: static
       path: dist/content-app
-      identityPaths:
-        - azure.yaml
-        - pnpm-lock.yaml
-      sealedPaths:
-        - '.azure/promote/verification/{target}-selected-files.json'
       liveFiles:
         - path: content-index.json
 

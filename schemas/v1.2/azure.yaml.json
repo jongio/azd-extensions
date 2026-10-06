@@ -2937,22 +2937,15 @@
           "type": "string",
           "minLength": 1
         },
-        "identityPaths": {
-          "type": "array",
-          "uniqueItems": true,
-          "items": {
-            "type": "string",
-            "minLength": 1
-          }
-        },
         "sealedPaths": {
           "type": "array",
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "minLength": 1
+            "minLength": 1,
+            "pattern": "^[^{}]+$"
           },
-          "description": "Additional files sealed into the promotion artifact identity."
+          "description": "Additional literal project-local paths sealed with the artifact. Context and parameter tokens are not expanded."
         },
         "liveFiles": {
           "type": "array",

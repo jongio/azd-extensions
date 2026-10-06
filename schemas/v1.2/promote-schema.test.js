@@ -50,6 +50,10 @@ const invalidFixtures = [
   ['implicit-basic-auth', [error('/promote/environments/dev/verificationAuth', 'oneOf')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
+  [
+    'legacy-artifact-identity-paths',
+    [additionalProperty('/promote/artifacts/site', 'identityPaths')],
+  ],
   ['legacy-catalog-concept', [additionalProperty('/promote', 'catalog')]],
   [
     'legacy-candidate',
@@ -176,6 +180,7 @@ const invalidFixtures = [
     ],
   ],
   ['string-command-invocation', [error('/promote/tasks/build-output/steps/0', 'type')]],
+  ['tokenized-sealed-path', [error('/promote/artifacts/site/sealedPaths/0', 'pattern')]],
   ['unbounded-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['unknown-nested-property', [additionalProperty('/promote/environments/dev', 'unexpected')]],
   ['unsupported-artifact-type', [error('/promote/artifacts/site/type', 'enum')]],

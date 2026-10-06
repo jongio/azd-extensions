@@ -43,7 +43,6 @@ promote:
     site:
       type: static
       path: dist/site-output
-      identityPaths: [azure.yaml, pnpm-lock.yaml]
       sealedPaths: [verification/staging-content.json]
       liveFiles:
         - path: search-index.json

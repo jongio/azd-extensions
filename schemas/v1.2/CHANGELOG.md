@@ -27,6 +27,7 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 - Provider definitions use strict type-specific `process` and `azd` schemas. Platform-specific adapters are project-owned process providers.
 - Promote-owned schema fields use lower camelCase. Promote-owned identifiers use lowercase kebab-case. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
 - The contract covers named chains, real environments, explicitly composed operations, artifacts, strict providers, reusable parameterized tasks and commands, lifecycle workflows, Git policy, inline approvals and Git snapshots, verification authentication, locks, predecessor verification imports, and live files.
+- Artifact identity is bound by the Git candidate and artifact fingerprint. The unused `identityPaths` property is rejected. `sealedPaths` accepts literal project-local paths only; context and parameter tokens are not expanded.
 - Run-record and operation-result paths remain runtime-owned. Verification commands author their own output record path, while predecessor verification imports use stable IDs instead of authored predecessor paths.
 - Public terminology uses run records, previous runs, verification, results, cleanup, changes, and inspection.
 
