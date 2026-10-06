@@ -131,6 +131,7 @@ promote:
         match: PROMOTE
         automation: allowed
       gitSnapshot:
+        remote: release-origin
         mode: publish
         recovery: manual
         refs:

@@ -2931,11 +2931,13 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["static"]
+          "enum": ["static"],
+          "description": "Artifact contract type. schema v1.2 currently supports static directory artifacts."
         },
         "path": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Project-local root directory fingerprinted, sealed, deployed, and finally reverified for this artifact."
         },
         "sealedPaths": {
           "type": "array",
@@ -2964,11 +2966,13 @@
       "properties": {
         "path": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Path relative to the artifact root whose deployed bytes must match the sealed artifact."
         },
         "urlPath": {
           "type": "string",
-          "pattern": "^/"
+          "pattern": "^/",
+          "description": "Optional absolute URL path override. When omitted, the artifact-relative path is used."
         }
       }
     },
@@ -3000,21 +3004,25 @@
       "required": ["type", "executable", "timeout"],
       "properties": {
         "type": {
-          "const": "process"
+          "const": "process",
+          "description": "Selects the provider-protocol process adapter."
         },
         "executable": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Executable launched directly without shell interpolation."
         },
         "args": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Explicit argv values. Provider context tokens are expanded fail-closed; literal braces use {{ and }}."
         },
         "workdir": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Optional project-relative process working directory."
         },
         "timeout": {
           "type": "string",
@@ -3029,17 +3037,20 @@
       "required": ["type", "timeout"],
       "properties": {
         "type": {
-          "const": "azd"
+          "const": "azd",
+          "description": "Selects framework-owned azd provision and deploy actions."
         },
         "args": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Additional arguments supplied to azd deploy."
         },
         "workdir": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Optional project-relative azd configuration root."
         },
         "timeout": {
           "type": "string",
@@ -3098,17 +3109,20 @@
         },
         "executable": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Executable launched directly without shell interpolation."
         },
         "args": {
           "type": "array",
           "items": {
             "type": "string"
-          }
+          },
+          "description": "Explicit argv values supporting command context tokens and declared scalar parameters."
         },
         "workdir": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Optional project-relative command working directory."
         },
         "runIn": {
           "type": "string",
@@ -3159,16 +3173,19 @@
       "properties": {
         "message": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Human-readable description of the target approval boundary."
         },
         "match": {
           "type": "string",
-          "minLength": 1
+          "minLength": 1,
+          "description": "Exact text an interactive operator must enter to approve the target."
         },
         "automation": {
           "type": "string",
           "enum": ["allowed", "denied"],
-          "default": "denied"
+          "default": "denied",
+          "description": "Whether --yes may grant this approval unattended. Omission defaults to denied."
         }
       }
     },
@@ -3178,11 +3195,13 @@
       "properties": {
         "worktree": {
           "type": "string",
-          "enum": ["clean", "dirtyAllowed"]
+          "enum": ["clean", "dirtyAllowed"],
+          "description": "Requires a clean worktree or explicitly permits tracked and untracked changes."
         },
         "upstream": {
           "type": "string",
-          "enum": ["published", "optional"]
+          "enum": ["published", "optional"],
+          "description": "Requires HEAD to equal its configured upstream or explicitly makes upstream publication optional."
         },
         "ref": {
           "$ref": "#/definitions/promoteGitRef"
@@ -3214,11 +3233,13 @@
       "properties": {
         "worktree": {
           "type": "string",
-          "enum": ["clean", "dirtyAllowed"]
+          "enum": ["clean", "dirtyAllowed"],
+          "description": "Optional replacement for the inherited worktree policy."
         },
         "upstream": {
           "type": "string",
-          "enum": ["published", "optional"]
+          "enum": ["published", "optional"],
+          "description": "Optional replacement for the inherited upstream policy."
         },
         "ref": {
           "$ref": "#/definitions/promoteGitRefOverride"
@@ -3255,12 +3276,14 @@
         },
         "mode": {
           "type": "string",
-          "enum": ["publish", "verify"]
+          "enum": ["publish", "verify"],
+          "description": "publish creates or advances configured refs after verification; verify only observes that refs already point to the candidate."
         },
         "recovery": {
           "type": "string",
           "enum": ["manual", "none"],
-          "default": "manual"
+          "default": "manual",
+          "description": "Recorded rollback guidance metadata. The runtime never performs automatic rollback."
         },
         "refs": {
           "type": "array",
@@ -3268,7 +3291,8 @@
           "uniqueItems": true,
           "items": {
             "$ref": "#/definitions/promoteGitSnapshotRef"
-          }
+          },
+          "description": "Branch or tag refs published or verified against the exact candidate commit."
         }
       }
     },
@@ -3327,7 +3351,8 @@
       "properties": {
         "kind": {
           "type": "string",
-          "enum": ["branch", "tag"]
+          "enum": ["branch", "tag"],
+          "description": "Selects movable branch semantics under refs/heads/ or immutable tag semantics under refs/tags/."
         },
         "ref": {
           "type": "string",
@@ -3361,7 +3386,8 @@
       "required": ["type", "username", "password"],
       "properties": {
         "type": {
-          "const": "basic"
+          "const": "basic",
+          "description": "Selects HTTP Basic authentication for generated live-file requests."
         },
         "username": {
           "$ref": "#/definitions/promoteAzdSecretReference"
@@ -3377,7 +3403,8 @@
       "required": ["type", "headers"],
       "properties": {
         "type": {
-          "const": "headers"
+          "const": "headers",
+          "description": "Selects one or more secret HTTP request headers."
         },
         "headers": {
           "type": "object",
@@ -3398,7 +3425,8 @@
       "required": ["type", "clientIdHeader", "clientId", "clientSecretHeader", "clientSecret"],
       "properties": {
         "type": {
-          "const": "serviceToken"
+          "const": "serviceToken",
+          "description": "Selects a two-header client ID and client secret authentication contract."
         },
         "clientIdHeader": {
           "type": "string",

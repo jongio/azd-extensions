@@ -432,6 +432,7 @@ describe('azure.yaml v1.2 promote contract', () => {
     expect(snapshotDefinition.required).toEqual(['mode', 'refs'])
     expect(snapshotDefinition.properties).not.toHaveProperty('purpose')
     expect(fixture.promote.environments.staging.gitSnapshot).toEqual({
+      remote: 'release-origin',
       mode: 'publish',
       recovery: 'manual',
       refs: [{ kind: 'branch', ref: 'refs/heads/environments/staging' }],
@@ -573,6 +574,24 @@ describe('azure.yaml v1.2 promote contract', () => {
     ]) {
       expect(schema.definitions[name].propertyNames.pattern)
         .toBe('^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$')
+    }
+
+    expect(findings).toEqual([])
+  })
+
+  it('documents every promote schema property', async () => {
+    const schema = await loadSchema()
+    const findings = []
+
+    for (const [name, definition] of Object.entries(schema.definitions)) {
+      if (!name.startsWith('promote') || !definition.properties) {
+        continue
+      }
+      for (const [property, value] of Object.entries(definition.properties)) {
+        if (!value.$ref && !value.description && !value.title) {
+          findings.push(`${name}.${property}`)
+        }
+      }
     }
 
     expect(findings).toEqual([])
