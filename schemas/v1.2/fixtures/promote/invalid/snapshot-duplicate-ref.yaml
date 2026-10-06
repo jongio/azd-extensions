@@ -1,0 +1,18 @@
+name: invalid-snapshot-duplicate-ref
+promote:
+  chains:
+    release:
+      targets: [prod]
+  environments:
+    prod:
+      provider: publisher
+      artifacts: [site]
+      gitSnapshot:
+        mode: publish
+        refs:
+          - { kind: tag, ref: refs/tags/releases/current }
+          - { kind: tag, ref: refs/tags/releases/current }
+  artifacts:
+    site: { type: static, path: dist }
+  providers:
+    publisher: { type: process, executable: publish, timeout: 5m }

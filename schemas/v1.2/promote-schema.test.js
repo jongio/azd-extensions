@@ -179,6 +179,15 @@ const invalidFixtures = [
       error('/promote/environments/dev/verificationAuth/password', 'type'),
     ],
   ],
+  ['snapshot-duplicate-ref', [error('/promote/environments/prod/gitSnapshot/refs', 'uniqueItems')]],
+  [
+    'snapshot-kind-ref-mismatch',
+    [error('/promote/environments/prod/gitSnapshot/refs/0/ref', 'pattern')],
+  ],
+  [
+    'snapshot-unknown-template-token',
+    [error('/promote/environments/prod/gitSnapshot/refs/0/template', 'pattern')],
+  ],
   ['string-command-invocation', [error('/promote/tasks/build-output/steps/0', 'type')]],
   ['tokenized-sealed-path', [error('/promote/artifacts/site/sealedPaths/0', 'pattern')]],
   ['unbounded-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],

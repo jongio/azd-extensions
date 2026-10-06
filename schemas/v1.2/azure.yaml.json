@@ -3261,6 +3261,7 @@
         "refs": {
           "type": "array",
           "minItems": 1,
+          "uniqueItems": true,
           "items": {
             "$ref": "#/definitions/promoteGitSnapshotRef"
           }
@@ -3279,6 +3280,46 @@
           "required": ["template"]
         }
       ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "branch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ref": {
+                "pattern": "^refs/heads/[^{}]+$"
+              },
+              "template": {
+                "pattern": "^refs/heads/(?:[^{}]|\\{gitSha\\})*\\{gitSha\\}(?:[^{}]|\\{gitSha\\})*$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "tag"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ref": {
+                "pattern": "^refs/tags/[^{}]+$"
+              },
+              "template": {
+                "pattern": "^refs/tags/(?:[^{}]|\\{gitSha\\})*\\{gitSha\\}(?:[^{}]|\\{gitSha\\})*$"
+              }
+            }
+          }
+        }
+      ],
       "properties": {
         "kind": {
           "type": "string",
@@ -3292,7 +3333,7 @@
         "template": {
           "type": "string",
           "minLength": 1,
-          "description": "Template for an external Git ref."
+          "description": "Template for an external Git ref. Templates must contain only the {gitSha} context token."
         }
       }
     },
