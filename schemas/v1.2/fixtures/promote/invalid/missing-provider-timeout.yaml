@@ -1,4 +1,4 @@
-name: minimal-promotion
+name: invalid-missing-provider-timeout
 promote:
   chains:
     release:
@@ -8,11 +8,8 @@ promote:
       provider: local-publisher
       artifacts: [site]
   artifacts:
-    site:
-      type: static
-      path: dist
+    site: { type: static, path: dist }
   providers:
     local-publisher:
       type: process
       executable: publish
-      timeout: 5m

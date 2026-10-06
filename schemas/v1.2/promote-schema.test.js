@@ -146,6 +146,7 @@ const invalidFixtures = [
   ],
   ['missing-command-timeout', [missingProperty('/promote/commands/inspect-target', 'timeout')]],
   ['missing-operation-environment', [missingProperty('/promote/operations/validate-content', 'environment')]],
+  ['missing-provider-timeout', [missingProperty('/promote/providers/local-publisher', 'timeout')]],
   ['missing-process-executable', [missingProperty('/promote/providers/local-publisher', 'executable')]],
   [
     'missing-required-structures',
@@ -169,6 +170,7 @@ const invalidFixtures = [
       additionalProperty('/promote/tasks/outer/steps/0', 'task'),
     ],
   ],
+  ['negative-provider-timeout', [error('/promote/providers/local-publisher/timeout', 'pattern')]],
   ['non-deploying-provider-override', [error('/promote/operations/validate', 'not')]],
   ['overlong-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['promote-version', [additionalProperty('/promote', 'version')]],
@@ -188,6 +190,7 @@ const invalidFixtures = [
     'snapshot-unknown-template-token',
     [error('/promote/environments/prod/gitSnapshot/refs/0/template', 'pattern')],
   ],
+  ['compound-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],
   ['string-command-invocation', [error('/promote/tasks/build-output/steps/0', 'type')]],
   ['tokenized-sealed-path', [error('/promote/artifacts/site/sealedPaths/0', 'pattern')]],
   ['unbounded-command-timeout', [error('/promote/commands/inspect-target/timeout', 'pattern')]],

@@ -52,3 +52,4 @@ promote:
       type: process
       executable: publish-site
       args: [--environment, '{environment}']
+      timeout: 30m

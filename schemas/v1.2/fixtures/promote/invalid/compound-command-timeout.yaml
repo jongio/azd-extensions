@@ -1,4 +1,4 @@
-name: minimal-promotion
+name: invalid-compound-command-timeout
 promote:
   chains:
     release:
@@ -8,11 +8,13 @@ promote:
       provider: local-publisher
       artifacts: [site]
   artifacts:
-    site:
-      type: static
-      path: dist
+    site: { type: static, path: dist }
   providers:
     local-publisher:
       type: process
       executable: publish
       timeout: 5m
+  commands:
+    inspect-target:
+      executable: inspect
+      timeout: 1m30s

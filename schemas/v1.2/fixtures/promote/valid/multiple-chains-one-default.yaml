@@ -21,3 +21,4 @@ promote:
     local-publisher:
       type: process
       executable: publish
+      timeout: 5m

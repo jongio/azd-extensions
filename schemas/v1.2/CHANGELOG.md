@@ -26,6 +26,7 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 - Git snapshot refs are fail-closed: branches use `refs/heads/`, tags use `refs/tags/`, templates support only `{gitSha}`, and duplicate declarations are rejected.
 - Target `mode` is removed. Validation uses ordinary commands plus `deploy: false` rather than a fake deployment provider.
 - Provider definitions use strict type-specific `process` and `azd` schemas. Platform-specific adapters are project-owned process providers.
+- Every provider and command requires the same positive single-unit timeout no greater than one hour; schema and runtime duration grammars are identical.
 - Promote-owned schema fields use lower camelCase. Promote-owned identifiers use lowercase kebab-case. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
 - The contract covers named chains, real environments, explicitly composed operations, artifacts, strict providers, reusable parameterized tasks and commands, lifecycle workflows, Git policy, inline approvals and Git snapshots, verification authentication, locks, predecessor verification imports, and live files.
 - Artifact identity is bound by the Git candidate and artifact fingerprint. The unused `identityPaths` property is rejected. `sealedPaths` accepts literal project-local paths only; context and parameter tokens are not expanded.
