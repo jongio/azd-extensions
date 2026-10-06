@@ -85,18 +85,22 @@ promote:
         - command: clean-output
   commands:
     build:
+      effect: none
       executable: pnpm
       args: [build, --mode, '{mode}']
       timeout: 30m
     smoke:
+      effect: inspection
       executable: pnpm
       args: [test:smoke, --suite, '{suite}']
       timeout: 15m
     validate-content:
+      effect: inspection
       executable: node
       args: [scripts/validate-content.mjs, --artifact, '{artifact}']
       timeout: 30m
     clean-output:
+      effect: none
       executable: node
       args: [scripts/clean-output.mjs]
       timeout: 5m

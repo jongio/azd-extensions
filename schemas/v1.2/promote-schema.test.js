@@ -48,11 +48,16 @@ const invalidFixtures = [
   ['empty-target-artifacts', [error('/promote/environments/dev/artifacts', 'minItems')]],
   ['flat-target-steps', [additionalProperty('/promote/environments/dev', 'steps')]],
   ['implicit-basic-auth', [error('/promote/environments/dev/verificationAuth', 'oneOf')]],
+  ['invalid-command-capture', [error('/promote/commands/inspect-target/capture', 'enum')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
   [
     'legacy-artifact-identity-paths',
     [additionalProperty('/promote/artifacts/site', 'identityPaths')],
+  ],
+  [
+    'legacy-inspection-only',
+    [additionalProperty('/promote/commands/inspect-target', 'inspectionOnly')],
   ],
   ['legacy-catalog-concept', [additionalProperty('/promote', 'catalog')]],
   [
@@ -144,6 +149,7 @@ const invalidFixtures = [
     'mixed-process-provider-fields',
     [additionalProperty('/promote/providers/local-publisher', 'config')],
   ],
+  ['missing-command-effect', [missingProperty('/promote/commands/inspect-target', 'effect')]],
   ['missing-command-timeout', [missingProperty('/promote/commands/inspect-target', 'timeout')]],
   ['missing-operation-environment', [missingProperty('/promote/operations/validate-content', 'environment')]],
   ['missing-provider-timeout', [missingProperty('/promote/providers/local-publisher', 'timeout')]],

@@ -566,10 +566,11 @@ promote:
       effect: inspection
       executable: node
       args: [scripts/verify-credentials.mjs, --required, '{required}']
-      inspectionOnly: true
+      capture: metadata-only
       timeout: 5m
 
     check-asset-store:
+      effect: inspection
       executable: node
       args: [scripts/check-resource.mjs, content-assets]
       timeout: 5m
@@ -589,21 +590,25 @@ promote:
       timeout: 10m
 
     build:
+      effect: none
       executable: node
       args: [scripts/build-content-app.mjs, --mode, '{mode}']
       timeout: 30m
 
     prune-output:
+      effect: none
       executable: node
       args: [scripts/prune-output.mjs, dist/content-app]
       timeout: 10m
 
     normalize-output:
+      effect: none
       executable: node
       args: [scripts/normalize-output.mjs, dist/content-app]
       timeout: 10m
 
     validate-content:
+      effect: inspection
       executable: node
       args:
         [
@@ -665,6 +670,7 @@ promote:
       timeout: 1h
 
     remove-unused-files:
+      effect: none
       executable: node
       args: [scripts/remove-unused-files.mjs, dist/content-app]
       timeout: 10m

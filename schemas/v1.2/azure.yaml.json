@@ -3061,7 +3061,7 @@
     "promoteCommand": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["executable", "timeout"],
+      "required": ["effect", "executable", "timeout"],
       "allOf": [
         {
           "if": {
@@ -3093,8 +3093,8 @@
       "properties": {
         "effect": {
           "type": "string",
-          "enum": ["verification", "change", "inspection"],
-          "description": "Classifies whether the command verifies state, changes external state, or performs bounded inspection."
+          "enum": ["none", "verification", "change", "inspection"],
+          "description": "Required effect classification. none permits local preparation without external state change; verification emits a structured record; change may mutate durable or external state; inspection is read-only."
         },
         "executable": {
           "type": "string",
@@ -3113,7 +3113,7 @@
         "runIn": {
           "type": "string",
           "minLength": 1,
-          "description": "Intentional cross-environment or host execution boundary. Real environment names retain their native conventions."
+          "description": "Intentional cross-environment or host execution boundary. Omit to use the target environment, name another azd environment explicitly, or use $host for direct host execution."
         },
         "variables": {
           "type": "object",
@@ -3133,8 +3133,10 @@
         "verification": {
           "$ref": "#/definitions/promoteVerification"
         },
-        "inspectionOnly": {
-          "type": "boolean"
+        "capture": {
+          "type": "string",
+          "enum": ["metadata-only"],
+          "description": "Optional output-capture policy. metadata-only records counts and status without persisting command output text."
         }
       }
     },
