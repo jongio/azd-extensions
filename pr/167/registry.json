@@ -4948,7 +4948,7 @@
     {
       "id": "jongio.azd",
       "displayName": "Azure Developer CLI Extension Pack",
-      "description": "Installs the jongio azd extensions, app and rest, in one step.",
+      "description": "Installs the jongio azd extensions in one step.",
       "versions": [
         {
           "version": "0.1.0",
