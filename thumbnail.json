@@ -3,7 +3,7 @@
   "id": "azd-extensions",
   "width": 1024,
   "height": 1024,
-  "sha256": "9ca3c5e3df962d5d68924c69109483039a6aee4e34e5f412fc7e0df54ee8c2ac",
+  "sha256": "e167d1f1f23b580986c3b9b1add5a51bda4b5d074b1b1f2690fb2ad5304ef026",
   "provider": "azure-openai",
   "model": "gpt-image-2",
   "deployment": "gpt-image-2",
@@ -11,7 +11,9 @@
   "apiVersion": "2025-04-01-preview",
   "quality": "high",
   "promptSha256": "00bddf9dbb3e487b4fc6957b70d4a80b385771af3f8a7d93f061f1e3cc723525",
-  "webpSha256": "d3cc95abed3f59de80a892b3e116c8958f20c4b0213593ec2b88e0f318f3191b",
+  "sourceSha256": "9ca3c5e3df962d5d68924c69109483039a6aee4e34e5f412fc7e0df54ee8c2ac",
+  "postProcess": "sharp-palette-16-no-dither",
+  "webpSha256": "7fbb9659e2d0ffcf5c435e2315308eb506586bce0492e03bfa5c312b50a4000a",
   "generator": "jongio/azd-extensions:scripts/generate-thumbnails.mjs",
   "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-extensions"
 }

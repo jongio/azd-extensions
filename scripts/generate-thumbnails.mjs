@@ -9,6 +9,7 @@ import { thumbnailDefinitions } from './thumbnail-definitions.mjs'
 const API_VERSION = '2025-04-01-preview'
 const MODEL = 'gpt-image-2'
 const MAX_IMAGE_BYTES = 20 * 1024 * 1024
+const POST_PROCESS = 'sharp-palette-16-no-dither'
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const extensionsRoot = dirname(repoRoot)
 const syncSiblings = process.argv.includes('--sync-siblings')
@@ -130,7 +131,14 @@ function promptUrl(definition) {
   return `https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#${definition.id}`
 }
 
-function buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256) {
+function buildThumbnailProvenance(
+  definition,
+  endpoint,
+  promptSha256,
+  sourceSha256,
+  sha256,
+  webpSha256
+) {
   return {
     schemaVersion: 1,
     id: definition.id,
@@ -144,6 +152,8 @@ function buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, we
     apiVersion: API_VERSION,
     quality: 'high',
     promptSha256,
+    sourceSha256,
+    postProcess: POST_PROCESS,
     webpSha256,
     generator: 'jongio/azd-extensions:scripts/generate-thumbnails.mjs',
     prompt: promptUrl(definition),
@@ -187,21 +197,37 @@ Object.assign(manifest, {
   endpoint,
   apiVersion: API_VERSION,
   quality: 'high',
+  postProcess: POST_PROCESS,
   generator: 'scripts/generate-thumbnails.mjs',
 })
 
 for (const definition of selectedDefinitions) {
   const pngPath = join(repoRoot, 'public', 'images', `thumb-${definition.id}.png`)
   const webpPath = join(repoRoot, 'public', 'images', `thumb-${definition.id}.webp`)
+  const sourcePath = join(
+    repoRoot,
+    'assets',
+    'thumbnail-sources',
+    `${definition.id}-gpt-image-2.png`
+  )
   console.log(
     syncExisting
       ? `Synchronizing existing ${definition.id} thumbnail...`
       : `Generating ${definition.id} with ${MODEL}...`
   )
-  const png = syncExisting
-    ? readFileSync(pngPath)
+  const sourcePng = syncExisting
+    ? existsSync(sourcePath)
+      ? readFileSync(sourcePath)
+      : readFileSync(pngPath)
     : await generateThumbnail(definition.prompt, endpoint, token)
+  if (!syncExisting || !existsSync(sourcePath)) {
+    writeAsset(sourcePath, sourcePng)
+  }
+  const png = await sharp(sourcePng)
+    .png({ palette: true, colours: 16, dither: 0, compressionLevel: 9 })
+    .toBuffer()
   const webp = await sharp(png).webp({ quality: 90, effort: 6 }).toBuffer()
+  const sourceSha256 = createHash('sha256').update(sourcePng).digest('hex')
   const sha256 = createHash('sha256').update(png).digest('hex')
   const webpSha256 = createHash('sha256').update(webp).digest('hex')
   const promptSha256 = createHash('sha256').update(definition.prompt).digest('hex')
@@ -213,8 +239,11 @@ for (const definition of selectedDefinitions) {
     repository: definition.repository,
     prompt: promptUrl(definition),
     promptSha256,
+    sourceSha256,
     sha256,
     webpSha256,
+    postProcess: POST_PROCESS,
+    source: `assets/thumbnail-sources/${definition.id}-gpt-image-2.png`,
     png: `public/images/thumb-${definition.id}.png`,
     webp: `public/images/thumb-${definition.id}.webp`,
   }
@@ -225,7 +254,14 @@ for (const definition of selectedDefinitions) {
     writeAsset(
       join(repoRoot, 'thumbnail.json'),
       `${JSON.stringify(
-        buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256),
+        buildThumbnailProvenance(
+          definition,
+          endpoint,
+          promptSha256,
+          sourceSha256,
+          sha256,
+          webpSha256
+        ),
         null,
         2
       )}\n`
@@ -240,7 +276,14 @@ for (const definition of selectedDefinitions) {
     writeAsset(
       join(targetRoot, 'thumbnail.json'),
       `${JSON.stringify(
-        buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256),
+        buildThumbnailProvenance(
+          definition,
+          endpoint,
+          promptSha256,
+          sourceSha256,
+          sha256,
+          webpSha256
+        ),
         null,
         2
       )}\n`

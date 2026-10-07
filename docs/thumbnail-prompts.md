@@ -15,15 +15,16 @@ This follows the `jongio/skills` thumbnail contract:
 
 ## Generation settings
 
-| Setting              | Value                                                                      |
-| -------------------- | -------------------------------------------------------------------------- |
-| Provider             | Azure OpenAI                                                               |
-| Deployment and model | `gpt-image-2`                                                              |
-| API version          | `2025-04-01-preview`                                                       |
-| Size                 | `1024x1024`                                                                |
-| Quality              | `high`                                                                     |
-| Authentication       | Keyless Azure CLI token for `https://cognitiveservices.azure.com`          |
-| Response             | Original `data[0].b64_json` PNG bytes; Sharp creates optimized WebP copies |
+| Setting              | Value                                                                            |
+| -------------------- | -------------------------------------------------------------------------------- |
+| Provider             | Azure OpenAI                                                                     |
+| Deployment and model | `gpt-image-2`                                                                    |
+| API version          | `2025-04-01-preview`                                                             |
+| Size                 | `1024x1024`                                                                      |
+| Quality              | `high`                                                                           |
+| Authentication       | Keyless Azure CLI token for `https://cognitiveservices.azure.com`                |
+| Response             | Original `data[0].b64_json` PNG bytes retained under `assets/thumbnail-sources/` |
+| Display post-process | Sharp 16-color indexed PNG, no dithering; optimized WebP copy                    |
 
 ## Generate
 
@@ -44,6 +45,10 @@ The generator writes:
 
 Run `pnpm thumbnails:sync` to rebuild WebP copies and synchronize the already
 accepted PNGs without making additional billed image-generation calls.
+
+The original Azure PNG is kept as non-public provenance. Display thumbnails use
+a fixed 16-color palette with dithering disabled so model-generated shading
+cannot reintroduce gradients into the catalog or extension sites.
 
 ## Shared house style
 

@@ -26,5 +26,5 @@ export interface Extension {
   features: ExtensionFeature[]
   scenarios: ExtensionScenario[]
   tags: string[]
-  glowColor: string
+  accentColor: string
 }

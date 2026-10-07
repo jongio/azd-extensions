@@ -16,7 +16,7 @@ export const extensions: Extension[] = [
     optimizedThumbnail: 'images/thumb-azd-app.webp',
     website: 'https://jongio.github.io/azd-app/',
     repository: 'https://github.com/jongio/azd-app',
-    glowColor: 'var(--color-glow-cyan)',
+    accentColor: 'var(--color-product-cyan)',
     features: [
       { icon: 'play', title: 'One-Command Start', desc: 'All services, auto-dependencies' },
       { icon: 'chart-column', title: 'Real-time Dashboard', desc: 'Live status & health checks' },
@@ -43,7 +43,7 @@ export const extensions: Extension[] = [
     optimizedThumbnail: 'images/thumb-azd-rest.webp',
     website: 'https://jongio.github.io/azd-rest/',
     repository: 'https://github.com/jongio/azd-rest',
-    glowColor: 'var(--color-glow-amber)',
+    accentColor: 'var(--color-product-amber)',
     features: [
       { icon: 'refresh-cw', title: 'Auto Auth', desc: 'Automatic scope detection & tokens' },
       { icon: 'zap', title: 'All HTTP Methods', desc: 'GET, POST, PUT, PATCH, DELETE' },
@@ -69,13 +69,13 @@ export const extensions: Extension[] = [
     tagline: 'Deterministic Environment Promotion',
     heroClaim: 'moves one verified candidate through every environment safely.',
     description:
-      'Compile V5 promotion intent into a deterministic plan with approvals, locks, durable records, verification evidence, cancellation, and exact-context resume.',
+      'Compile promotion intent into a deterministic plan with approvals, locks, durable records, verification evidence, cancellation, and exact-context resume.',
     icon: 'rocket',
     thumbnail: 'images/thumb-azd-promote.png',
     optimizedThumbnail: 'images/thumb-azd-promote.webp',
     website: 'https://jongio.github.io/azd-promote/',
     repository: 'https://github.com/jongio/azd-promote',
-    glowColor: 'var(--color-glow-violet)',
+    accentColor: 'var(--color-product-violet)',
     features: [
       {
         icon: 'target',

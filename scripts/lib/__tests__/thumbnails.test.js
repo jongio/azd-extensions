@@ -18,6 +18,7 @@ describe('extension thumbnails', () => {
       deployment: 'gpt-image-2',
       apiVersion: '2025-04-01-preview',
       quality: 'high',
+      postProcess: 'sharp-palette-16-no-dither',
     })
   })
 
@@ -61,14 +62,23 @@ describe('extension thumbnails', () => {
     it(`${id} has valid catalog assets and digest provenance`, async () => {
       const pngPath = join(repoRoot, asset.png)
       const webpPath = join(repoRoot, asset.webp)
+      const sourcePath = join(repoRoot, asset.source)
+      const source = readFileSync(sourcePath)
       const png = readFileSync(pngPath)
       const webp = readFileSync(webpPath)
+      expect(createHash('sha256').update(source).digest('hex')).toBe(asset.sourceSha256)
       expect(createHash('sha256').update(png).digest('hex')).toBe(asset.sha256)
       expect(createHash('sha256').update(webp).digest('hex')).toBe(asset.webpSha256)
+      expect(await sharp(sourcePath).metadata()).toMatchObject({
+        format: 'png',
+        width: 1024,
+        height: 1024,
+      })
       expect(await sharp(pngPath).metadata()).toMatchObject({
         format: 'png',
         width: 1024,
         height: 1024,
+        isPalette: true,
       })
       expect(await sharp(webpPath).metadata()).toMatchObject({
         format: 'webp',

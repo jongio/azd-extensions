@@ -9,7 +9,8 @@ const manifest = JSON.parse(readFileSync(join(repoRoot, 'thumbnail-manifest.json
 if (
   manifest.provider !== 'azure-openai' ||
   manifest.model !== 'gpt-image-2' ||
-  manifest.deployment !== 'gpt-image-2'
+  manifest.deployment !== 'gpt-image-2' ||
+  manifest.postProcess !== 'sharp-palette-16-no-dither'
 ) {
   throw new Error('thumbnail-manifest.json must record Azure OpenAI gpt-image-2 provenance')
 }
@@ -17,20 +18,29 @@ if (
 for (const [id, asset] of Object.entries(manifest.items)) {
   const pngPath = join(repoRoot, asset.png)
   const webpPath = join(repoRoot, asset.webp)
+  const sourcePath = join(repoRoot, asset.source)
+  const source = readFileSync(sourcePath)
   const png = readFileSync(pngPath)
   const webp = readFileSync(webpPath)
+  const sourceDigest = createHash('sha256').update(source).digest('hex')
   const digest = createHash('sha256').update(png).digest('hex')
   const webpDigest = createHash('sha256').update(webp).digest('hex')
+  if (sourceDigest !== asset.sourceSha256) {
+    throw new Error(`${id} source PNG digest does not match thumbnail-manifest.json`)
+  }
   if (digest !== asset.sha256) {
     throw new Error(`${id} PNG digest does not match thumbnail-manifest.json`)
   }
   if (webpDigest !== asset.webpSha256) {
     throw new Error(`${id} WebP digest does not match thumbnail-manifest.json`)
   }
-  for (const assetPath of [pngPath, webpPath]) {
+  for (const assetPath of [sourcePath, pngPath, webpPath]) {
     const image = await sharp(assetPath).metadata()
     if (image.width !== 1024 || image.height !== 1024) {
       throw new Error(`${id} image must be 1024x1024: ${assetPath}`)
+    }
+    if (assetPath === pngPath && image.isPalette !== true) {
+      throw new Error(`${id} display PNG must use an indexed palette`)
     }
   }
 }
