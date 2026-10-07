@@ -13,36 +13,36 @@
     "azd-extensions": {
       "repository": "azd-extensions",
       "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-extensions",
-      "promptSha256": "955d33bccb54b2cf25780ec24232edc63c2e3e702f56a7e7f0f3eefbf929831f",
-      "sha256": "882d3252c41f0815417e2ddc51491c0579524a9518f18241231d2200ea83c00e",
-      "webpSha256": "bcfbcd41c8777182b20ab79e83797c8066f5a674b89a5d0f4dcbc5fb55b03e19",
+      "promptSha256": "00bddf9dbb3e487b4fc6957b70d4a80b385771af3f8a7d93f061f1e3cc723525",
+      "sha256": "9ca3c5e3df962d5d68924c69109483039a6aee4e34e5f412fc7e0df54ee8c2ac",
+      "webpSha256": "d3cc95abed3f59de80a892b3e116c8958f20c4b0213593ec2b88e0f318f3191b",
       "png": "public/images/thumb-azd-extensions.png",
       "webp": "public/images/thumb-azd-extensions.webp"
     },
     "azd-app": {
       "repository": "azd-app",
       "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-app",
-      "promptSha256": "9c58a4c8c4cf7c9b106b91e948d92fd436303279673549e8baf711132b3b5968",
-      "sha256": "ba4c46a817ffb6afb041f50067ab4f73d0e9490904e143a6331eda1b4b307249",
-      "webpSha256": "10d16a9f0b67a8e5fa36be6dc5622210cb9d514d2f4ca3dc45173a7904ab2ca0",
+      "promptSha256": "7ab7ff808fceba7eb4b0754bbf9a38830fe13126e3b445800c93e808e32e2439",
+      "sha256": "a91cb3e34f65d3e20e6e638ec9fe254791aa313a708c68ef63d0d7759c7772b8",
+      "webpSha256": "1ccecd77c7d4c019a99ec153f7198a238059cc66393b0418d7ad83424b88c91c",
       "png": "public/images/thumb-azd-app.png",
       "webp": "public/images/thumb-azd-app.webp"
     },
     "azd-rest": {
       "repository": "azd-rest",
       "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-rest",
-      "promptSha256": "b313c567145c2ef4c134a054e1b576cf5e43bfe963a4d649d57b3aab934c436f",
-      "sha256": "5755005c29bbbf21ed50cba3482c1ce931e23a99457471b20a0bea5fc920b0f3",
-      "webpSha256": "a7abd29a4340a78a47bb1077198148f40f38dc206dbba85e76b14c540aabff5d",
+      "promptSha256": "1cee0768c80031cefce0120a78860c2faee67e54e279c33c0ae3636983cfd911",
+      "sha256": "aa9cfc5852e407f3ecca3287202f0824c849b0a79d5506f6da0a3c0e0705a101",
+      "webpSha256": "54df3d94549608d67da47e2612127b9e481c7e10111c972972675e6ab3099433",
       "png": "public/images/thumb-azd-rest.png",
       "webp": "public/images/thumb-azd-rest.webp"
     },
     "azd-promote": {
       "repository": "azd-promote",
       "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-promote",
-      "promptSha256": "cde7cc0825774fcbba4cafed55d9ff58c6b36a1b3a6b42d98919691559f93cee",
-      "sha256": "6917d8b1326491e907fbef14a1e9d44786b8e6c1d1fc8f04457cf134fb6db217",
-      "webpSha256": "d555ba9d4858801f222568a5c55453d5919048def65e72f2f90d3152928a0fd8",
+      "promptSha256": "faba0b4d669056e806103be8c6f52b10f1fa7cf89056e4d5a7ffe4cd82a32677",
+      "sha256": "d8a5d2c88411b55b68d15a337b462d13a5447c726784131b8f43c86471513142",
+      "webpSha256": "d1e8a188cfad2d8dd41a3f4b1d9a3fa757b7744c7e5d1284f8d9e23b13b331a9",
       "png": "public/images/thumb-azd-promote.png",
       "webp": "public/images/thumb-azd-promote.webp"
     }

@@ -76,7 +76,7 @@ function accessToken() {
   }).trim()
 }
 
-async function generate(prompt, endpoint, token) {
+async function generateThumbnail(prompt, endpoint, token) {
   const url = `${endpoint}/openai/deployments/${MODEL}/images/generations?api-version=${API_VERSION}`
   const response = await fetch(url, {
     method: 'POST',
@@ -101,32 +101,36 @@ async function generate(prompt, endpoint, token) {
     const body = (await response.text()).slice(0, 1000)
     throw new Error(`Azure OpenAI image generation failed with HTTP ${response.status}: ${body}`)
   }
-  const body = await response.json()
-  const encoded = body?.data?.[0]?.b64_json
+  const responseBody = await response.json()
+  const encoded = responseBody?.data?.[0]?.b64_json
   if (typeof encoded !== 'string' || encoded.length === 0) {
     throw new Error('Azure OpenAI response did not contain data[0].b64_json')
   }
-  const raw = Buffer.from(encoded, 'base64')
-  if (raw.length === 0 || raw.length > MAX_IMAGE_BYTES) {
+  const generatedPng = Buffer.from(encoded, 'base64')
+  if (generatedPng.length === 0 || generatedPng.length > MAX_IMAGE_BYTES) {
     throw new Error(`Azure OpenAI image exceeded the ${MAX_IMAGE_BYTES} byte limit`)
   }
-  const info = await sharp(raw).metadata()
-  if (info.format !== 'png' || info.width !== 1024 || info.height !== 1024) {
+  const imageMetadata = await sharp(generatedPng).metadata()
+  if (
+    imageMetadata.format !== 'png' ||
+    imageMetadata.width !== 1024 ||
+    imageMetadata.height !== 1024
+  ) {
     throw new Error('Azure OpenAI must return a 1024x1024 PNG')
   }
-  return raw
+  return generatedPng
 }
 
-function write(path, bytes) {
-  mkdirSync(dirname(path), { recursive: true })
-  writeFileSync(path, bytes)
+function writeAsset(assetPath, bytes) {
+  mkdirSync(dirname(assetPath), { recursive: true })
+  writeFileSync(assetPath, bytes)
 }
 
 function promptUrl(definition) {
   return `https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#${definition.id}`
 }
 
-function metadata(definition, endpoint, promptSha256, sha256, webpSha256) {
+function buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256) {
   return {
     schemaVersion: 1,
     id: definition.id,
@@ -196,14 +200,14 @@ for (const definition of selectedDefinitions) {
   )
   const png = syncExisting
     ? readFileSync(pngPath)
-    : await generate(definition.prompt, endpoint, token)
+    : await generateThumbnail(definition.prompt, endpoint, token)
   const webp = await sharp(png).webp({ quality: 90, effort: 6 }).toBuffer()
   const sha256 = createHash('sha256').update(png).digest('hex')
   const webpSha256 = createHash('sha256').update(webp).digest('hex')
   const promptSha256 = createHash('sha256').update(definition.prompt).digest('hex')
 
-  write(pngPath, png)
-  write(webpPath, webp)
+  writeAsset(pngPath, png)
+  writeAsset(webpPath, webp)
 
   manifest.items[definition.id] = {
     repository: definition.repository,
@@ -217,11 +221,11 @@ for (const definition of selectedDefinitions) {
 
   const targetRoot = join(extensionsRoot, definition.repository)
   if (definition.repository === 'azd-extensions') {
-    write(join(repoRoot, 'thumbnail.png'), png)
-    write(
+    writeAsset(join(repoRoot, 'thumbnail.png'), png)
+    writeAsset(
       join(repoRoot, 'thumbnail.json'),
       `${JSON.stringify(
-        metadata(definition, endpoint, promptSha256, sha256, webpSha256),
+        buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256),
         null,
         2
       )}\n`
@@ -230,13 +234,13 @@ for (const definition of selectedDefinitions) {
     if (!existsSync(targetRoot)) {
       throw new Error(`Sibling repository is missing: ${targetRoot}`)
     }
-    write(join(targetRoot, 'thumbnail.png'), png)
-    write(join(targetRoot, 'web', 'public', 'thumbnail.png'), png)
-    write(join(targetRoot, 'web', 'public', 'thumbnail.webp'), webp)
-    write(
+    writeAsset(join(targetRoot, 'thumbnail.png'), png)
+    writeAsset(join(targetRoot, 'web', 'public', 'thumbnail.png'), png)
+    writeAsset(join(targetRoot, 'web', 'public', 'thumbnail.webp'), webp)
+    writeAsset(
       join(targetRoot, 'thumbnail.json'),
       `${JSON.stringify(
-        metadata(definition, endpoint, promptSha256, sha256, webpSha256),
+        buildThumbnailProvenance(definition, endpoint, promptSha256, sha256, webpSha256),
         null,
         2
       )}\n`
@@ -244,7 +248,7 @@ for (const definition of selectedDefinitions) {
   }
 }
 
-write(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
+writeAsset(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`)
 
 console.log(
   `Generated ${selectedDefinitions.length} Azure OpenAI thumbnail${

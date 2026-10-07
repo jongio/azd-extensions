@@ -57,14 +57,14 @@ describe('extension thumbnails', () => {
     ])
   })
 
-  for (const [id, item] of Object.entries(manifest.items)) {
+  for (const [id, asset] of Object.entries(manifest.items)) {
     it(`${id} has valid catalog assets and digest provenance`, async () => {
-      const pngPath = join(repoRoot, item.png)
-      const webpPath = join(repoRoot, item.webp)
+      const pngPath = join(repoRoot, asset.png)
+      const webpPath = join(repoRoot, asset.webp)
       const png = readFileSync(pngPath)
       const webp = readFileSync(webpPath)
-      expect(createHash('sha256').update(png).digest('hex')).toBe(item.sha256)
-      expect(createHash('sha256').update(webp).digest('hex')).toBe(item.webpSha256)
+      expect(createHash('sha256').update(png).digest('hex')).toBe(asset.sha256)
+      expect(createHash('sha256').update(webp).digest('hex')).toBe(asset.webpSha256)
       expect(await sharp(pngPath).metadata()).toMatchObject({
         format: 'png',
         width: 1024,

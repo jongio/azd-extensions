@@ -14,23 +14,23 @@ if (
   throw new Error('thumbnail-manifest.json must record Azure OpenAI gpt-image-2 provenance')
 }
 
-for (const [id, item] of Object.entries(manifest.items)) {
-  const pngPath = join(repoRoot, item.png)
-  const webpPath = join(repoRoot, item.webp)
+for (const [id, asset] of Object.entries(manifest.items)) {
+  const pngPath = join(repoRoot, asset.png)
+  const webpPath = join(repoRoot, asset.webp)
   const png = readFileSync(pngPath)
   const webp = readFileSync(webpPath)
   const digest = createHash('sha256').update(png).digest('hex')
   const webpDigest = createHash('sha256').update(webp).digest('hex')
-  if (digest !== item.sha256) {
+  if (digest !== asset.sha256) {
     throw new Error(`${id} PNG digest does not match thumbnail-manifest.json`)
   }
-  if (webpDigest !== item.webpSha256) {
+  if (webpDigest !== asset.webpSha256) {
     throw new Error(`${id} WebP digest does not match thumbnail-manifest.json`)
   }
-  for (const path of [pngPath, webpPath]) {
-    const image = await sharp(path).metadata()
+  for (const assetPath of [pngPath, webpPath]) {
+    const image = await sharp(assetPath).metadata()
     if (image.width !== 1024 || image.height !== 1024) {
-      throw new Error(`${id} image must be 1024x1024: ${path}`)
+      throw new Error(`${id} image must be 1024x1024: ${assetPath}`)
     }
   }
 }
