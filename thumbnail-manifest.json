@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 1,
+  "width": 1024,
+  "height": 1024,
+  "provider": "deterministic-svg",
+  "model": "azd-extension-thumbnail-v1",
+  "renderer": "sharp@0.35.4",
+  "generator": "scripts/generate-thumbnails.mjs",
+  "items": {
+    "azd-extensions": {
+      "repository": "azd-extensions",
+      "recipe": "Three extension product cards converge into a central registry terminal with a verified status.",
+      "sha256": "1cdbf0b1d373e8e2fe3cbb373e1e239de63eceb8d19fdb18d05ada7004a9525b",
+      "png": "public/images/thumb-azd-extensions.png",
+      "webp": "public/images/thumb-azd-extensions.webp"
+    },
+    "azd-app": {
+      "repository": "azd-app",
+      "recipe": "Three heterogeneous services converge into one health-aware local development dashboard.",
+      "sha256": "65a4941d8a9e05e26d297ca7cdb6bdd7b907865032d2793ffdd68e0a35d1943f",
+      "png": "public/images/thumb-azd-app.png",
+      "webp": "public/images/thumb-azd-app.webp"
+    },
+    "azd-rest": {
+      "repository": "azd-rest",
+      "recipe": "A structured API request passes through authenticated protection into Azure and returns a formatted response.",
+      "sha256": "7ee9aaf28d6b9bff850aaa942a3c23a3a6610de5afb03ac1708dad1cc902a768",
+      "png": "public/images/thumb-azd-rest.png",
+      "webp": "public/images/thumb-azd-rest.webp"
+    },
+    "azd-promote": {
+      "repository": "azd-promote",
+      "recipe": "A verified artifact advances through three guarded environments into a durable successful run.",
+      "sha256": "966f160094089482fa760c01e3003460846fe79ed5c05bac2683f41803454f8a",
+      "png": "public/images/thumb-azd-promote.png",
+      "webp": "public/images/thumb-azd-promote.webp"
+    }
+  }
+}

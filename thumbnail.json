@@ -1,0 +1,12 @@
+{
+  "schemaVersion": 1,
+  "id": "azd-extensions",
+  "width": 1024,
+  "height": 1024,
+  "sha256": "1cdbf0b1d373e8e2fe3cbb373e1e239de63eceb8d19fdb18d05ada7004a9525b",
+  "provider": "deterministic-svg",
+  "model": "azd-extension-thumbnail-v1",
+  "renderer": "sharp@0.35.4",
+  "generator": "jongio/azd-extensions:scripts/generate-thumbnails.mjs",
+  "recipe": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-recipes.md#azd-extensions"
+}

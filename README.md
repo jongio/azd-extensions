@@ -2,6 +2,7 @@
   <img src="public/logo.png" alt="azd extensions" width="200" height="100">
   <h1>azd extensions</h1>
   <p><strong>A curated registry of Azure Developer CLI extensions</strong></p>
+  <img src="thumbnail.png" alt="Illustration of the azd extension family" width="240">
 </div>
 
 <div align="center">
@@ -167,8 +168,17 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for details on adding extensions.
 │   └── registry.json  # Extension registry (served to azd)
 └── scripts/
     ├── update-registry.js    # Aggregates extension registries
+    ├── generate-thumbnails.mjs # Generates and synchronizes extension thumbnails
     └── validate-registry.js  # Validates registry URLs and structure
 ```
+
+## Thumbnails
+
+Run `pnpm thumbnails:generate` from this repository when all four sibling
+repositories are checked out under the same `extensions` directory. The command
+generates the hub and extension thumbnails, optimized WebP catalog copies, and
+per-repository provenance metadata. See
+[the thumbnail recipes](docs/thumbnail-recipes.md).
 
 ## Resources
 

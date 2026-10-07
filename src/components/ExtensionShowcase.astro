@@ -2,7 +2,21 @@
 import type { Extension as Props } from '../types/extension';
 import Icon from '@jongio/azd-web-core/components/Icon.astro';
 
-const { name, tagline, description, icon, website, repository, features, scenarios, tags, glowColor } = Astro.props;
+const {
+  name,
+  tagline,
+  description,
+  icon,
+  thumbnail,
+  optimizedThumbnail,
+  website,
+  repository,
+  features,
+  scenarios,
+  tags,
+  glowColor,
+} = Astro.props;
+const base = import.meta.env.BASE_URL;
 ---
 
 <div
@@ -15,6 +29,18 @@ const { name, tagline, description, icon, website, repository, features, scenari
     style={`background-color: ${glowColor};`}
     aria-hidden="true"
   ></div>
+
+  <picture class="block border-b" style="border-color: var(--color-border); background-color: #ffffff;">
+    <source srcset={`${base}${optimizedThumbnail}`} type="image/webp" />
+    <img
+      src={`${base}${thumbnail}`}
+      alt=""
+      width="1024"
+      height="1024"
+      loading="lazy"
+      class="h-56 w-full object-contain p-4 sm:h-64"
+    />
+  </picture>
 
   <div class="relative p-6 sm:p-8">
     <!-- Header: icon + title + tagline + links -->

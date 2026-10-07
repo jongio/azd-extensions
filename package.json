@@ -6,10 +6,14 @@
   "packageManager": "pnpm@12.5.1+sha512.e3f305bc784a2bc89f5ad3b6138889470fae8d2af5f36b61216ec91c2c3d64089775f9de38aac331044ea40f245cb0d5666392dfdf65824e1907ef6a2c62de5f",
   "scripts": {
     "dev": "astro dev",
+    "prebuild": "pnpm thumbnails:check",
     "build": "astro build",
     "check": "astro check",
     "preview": "astro preview",
     "test": "vitest run",
+    "thumbnails:generate": "node scripts/generate-thumbnails.mjs --sync-siblings",
+    "thumbnails:generate:local": "node scripts/generate-thumbnails.mjs",
+    "thumbnails:check": "node scripts/check-thumbnails.mjs",
     "validate-registry": "node scripts/validate-registry.js",
     "validate-schema": "node scripts/validate-schema.js",
     "update-readme-versions": "node scripts/update-readme-versions.js"
@@ -27,6 +31,7 @@
     "ajv-formats": "^3.0.1",
     "prettier": "^3.9.8",
     "prettier-plugin-tailwindcss": "^0.8.1",
+    "sharp": "0.35.4",
     "tailwindcss": "^4.3.3",
     "typescript": "npm:@typescript/typescript6@^6.0.2",
     "vitest": "^5.0.1",

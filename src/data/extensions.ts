@@ -12,6 +12,8 @@ export const extensions: Extension[] = [
     description:
       'One command starts all your services with auto-dependencies, real-time dashboard, and AI-powered debugging via GitHub Copilot MCP integration.',
     icon: 'play',
+    thumbnail: 'images/thumb-azd-app.png',
+    optimizedThumbnail: 'images/thumb-azd-app.webp',
     website: 'https://jongio.github.io/azd-app/',
     repository: 'https://github.com/jongio/azd-app',
     glowColor: 'var(--color-glow-cyan)',
@@ -37,6 +39,8 @@ export const extensions: Extension[] = [
     description:
       'Make REST API calls to Azure services with automatic authentication and scope detection. No manual token management, just point at a URL and go.',
     icon: 'globe',
+    thumbnail: 'images/thumb-azd-rest.png',
+    optimizedThumbnail: 'images/thumb-azd-rest.webp',
     website: 'https://jongio.github.io/azd-rest/',
     repository: 'https://github.com/jongio/azd-rest',
     glowColor: 'var(--color-glow-amber)',
@@ -67,14 +71,28 @@ export const extensions: Extension[] = [
     description:
       'Compile V5 promotion intent into a deterministic plan with approvals, locks, durable records, verification evidence, cancellation, and exact-context resume.',
     icon: 'rocket',
+    thumbnail: 'images/thumb-azd-promote.png',
+    optimizedThumbnail: 'images/thumb-azd-promote.webp',
     website: 'https://jongio.github.io/azd-promote/',
     repository: 'https://github.com/jongio/azd-promote',
     glowColor: 'var(--color-glow-violet)',
     features: [
-      { icon: 'target', title: 'Deterministic Plans', desc: 'Stable actions, inputs, and fingerprints' },
-      { icon: 'shield', title: 'Fail-Closed Safety', desc: 'Approvals, locks, drift checks, cleanup' },
+      {
+        icon: 'target',
+        title: 'Deterministic Plans',
+        desc: 'Stable actions, inputs, and fingerprints',
+      },
+      {
+        icon: 'shield',
+        title: 'Fail-Closed Safety',
+        desc: 'Approvals, locks, drift checks, cleanup',
+      },
       { icon: 'repeat', title: 'Durable Resume', desc: 'Exact run-context recovery' },
-      { icon: 'clipboard-list', title: 'Verification Evidence', desc: 'Run records and promoted artifacts' },
+      {
+        icon: 'clipboard-list',
+        title: 'Verification Evidence',
+        desc: 'Run records and promoted artifacts',
+      },
     ],
     scenarios: [
       { title: 'Inspect a Plan', command: 'azd promote plan staging' },

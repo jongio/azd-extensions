@@ -1,0 +1,37 @@
+import { createHash } from 'node:crypto'
+import { readFileSync } from 'node:fs'
+import { dirname, join, resolve } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
+
+const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
+const manifest = JSON.parse(readFileSync(join(repoRoot, 'thumbnail-manifest.json'), 'utf8'))
+
+for (const [id, item] of Object.entries(manifest.items)) {
+  const pngPath = join(repoRoot, item.png)
+  const webpPath = join(repoRoot, item.webp)
+  const png = readFileSync(pngPath)
+  const digest = createHash('sha256').update(png).digest('hex')
+  if (digest !== item.sha256) {
+    throw new Error(`${id} PNG digest does not match thumbnail-manifest.json`)
+  }
+  for (const path of [pngPath, webpPath]) {
+    const image = await sharp(path).metadata()
+    if (image.width !== 1024 || image.height !== 1024) {
+      throw new Error(`${id} image must be 1024x1024: ${path}`)
+    }
+  }
+}
+
+const rootMetadata = JSON.parse(readFileSync(join(repoRoot, 'thumbnail.json'), 'utf8'))
+const rootBytes = readFileSync(join(repoRoot, 'thumbnail.png'))
+const rootDigest = createHash('sha256').update(rootBytes).digest('hex')
+if (
+  rootMetadata.id !== 'azd-extensions' ||
+  rootMetadata.sha256 !== rootDigest ||
+  manifest.items['azd-extensions'].sha256 !== rootDigest
+) {
+  throw new Error('azd-extensions root thumbnail metadata is out of sync')
+}
+
+console.log(`Validated ${Object.keys(manifest.items).length} extension thumbnails.`)
