@@ -2,36 +2,47 @@
   "schemaVersion": 1,
   "width": 1024,
   "height": 1024,
-  "provider": "deterministic-svg",
-  "model": "azd-extension-thumbnail-v1",
-  "renderer": "sharp@0.35.4",
+  "provider": "azure-openai",
+  "model": "gpt-image-2",
+  "deployment": "gpt-image-2",
+  "endpoint": "https://songerator-openai-images-ba70e.openai.azure.com",
+  "apiVersion": "2025-04-01-preview",
+  "quality": "high",
   "generator": "scripts/generate-thumbnails.mjs",
   "items": {
     "azd-extensions": {
       "repository": "azd-extensions",
-      "recipe": "Three extension product cards converge into a central registry terminal with a verified status.",
-      "sha256": "1cdbf0b1d373e8e2fe3cbb373e1e239de63eceb8d19fdb18d05ada7004a9525b",
+      "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-extensions",
+      "promptSha256": "955d33bccb54b2cf25780ec24232edc63c2e3e702f56a7e7f0f3eefbf929831f",
+      "sha256": "882d3252c41f0815417e2ddc51491c0579524a9518f18241231d2200ea83c00e",
+      "webpSha256": "bcfbcd41c8777182b20ab79e83797c8066f5a674b89a5d0f4dcbc5fb55b03e19",
       "png": "public/images/thumb-azd-extensions.png",
       "webp": "public/images/thumb-azd-extensions.webp"
     },
     "azd-app": {
       "repository": "azd-app",
-      "recipe": "Three heterogeneous services converge into one health-aware local development dashboard.",
-      "sha256": "65a4941d8a9e05e26d297ca7cdb6bdd7b907865032d2793ffdd68e0a35d1943f",
+      "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-app",
+      "promptSha256": "9c58a4c8c4cf7c9b106b91e948d92fd436303279673549e8baf711132b3b5968",
+      "sha256": "ba4c46a817ffb6afb041f50067ab4f73d0e9490904e143a6331eda1b4b307249",
+      "webpSha256": "10d16a9f0b67a8e5fa36be6dc5622210cb9d514d2f4ca3dc45173a7904ab2ca0",
       "png": "public/images/thumb-azd-app.png",
       "webp": "public/images/thumb-azd-app.webp"
     },
     "azd-rest": {
       "repository": "azd-rest",
-      "recipe": "A structured API request passes through authenticated protection into Azure and returns a formatted response.",
-      "sha256": "7ee9aaf28d6b9bff850aaa942a3c23a3a6610de5afb03ac1708dad1cc902a768",
+      "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-rest",
+      "promptSha256": "b313c567145c2ef4c134a054e1b576cf5e43bfe963a4d649d57b3aab934c436f",
+      "sha256": "5755005c29bbbf21ed50cba3482c1ce931e23a99457471b20a0bea5fc920b0f3",
+      "webpSha256": "a7abd29a4340a78a47bb1077198148f40f38dc206dbba85e76b14c540aabff5d",
       "png": "public/images/thumb-azd-rest.png",
       "webp": "public/images/thumb-azd-rest.webp"
     },
     "azd-promote": {
       "repository": "azd-promote",
-      "recipe": "A verified artifact advances through three guarded environments into a durable successful run.",
-      "sha256": "966f160094089482fa760c01e3003460846fe79ed5c05bac2683f41803454f8a",
+      "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-promote",
+      "promptSha256": "cde7cc0825774fcbba4cafed55d9ff58c6b36a1b3a6b42d98919691559f93cee",
+      "sha256": "6917d8b1326491e907fbef14a1e9d44786b8e6c1d1fc8f04457cf134fb6db217",
+      "webpSha256": "d555ba9d4858801f222568a5c55453d5919048def65e72f2f90d3152928a0fd8",
       "png": "public/images/thumb-azd-promote.png",
       "webp": "public/images/thumb-azd-promote.webp"
     }

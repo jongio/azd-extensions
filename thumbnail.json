@@ -3,10 +3,15 @@
   "id": "azd-extensions",
   "width": 1024,
   "height": 1024,
-  "sha256": "1cdbf0b1d373e8e2fe3cbb373e1e239de63eceb8d19fdb18d05ada7004a9525b",
-  "provider": "deterministic-svg",
-  "model": "azd-extension-thumbnail-v1",
-  "renderer": "sharp@0.35.4",
+  "sha256": "882d3252c41f0815417e2ddc51491c0579524a9518f18241231d2200ea83c00e",
+  "provider": "azure-openai",
+  "model": "gpt-image-2",
+  "deployment": "gpt-image-2",
+  "endpoint": "https://songerator-openai-images-ba70e.openai.azure.com",
+  "apiVersion": "2025-04-01-preview",
+  "quality": "high",
+  "promptSha256": "955d33bccb54b2cf25780ec24232edc63c2e3e702f56a7e7f0f3eefbf929831f",
+  "webpSha256": "bcfbcd41c8777182b20ab79e83797c8066f5a674b89a5d0f4dcbc5fb55b03e19",
   "generator": "jongio/azd-extensions:scripts/generate-thumbnails.mjs",
-  "recipe": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-recipes.md#azd-extensions"
+  "prompt": "https://github.com/jongio/azd-extensions/blob/main/docs/thumbnail-prompts.md#azd-extensions"
 }

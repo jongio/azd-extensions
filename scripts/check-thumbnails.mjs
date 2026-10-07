@@ -6,14 +6,26 @@ import sharp from 'sharp'
 
 const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 const manifest = JSON.parse(readFileSync(join(repoRoot, 'thumbnail-manifest.json'), 'utf8'))
+if (
+  manifest.provider !== 'azure-openai' ||
+  manifest.model !== 'gpt-image-2' ||
+  manifest.deployment !== 'gpt-image-2'
+) {
+  throw new Error('thumbnail-manifest.json must record Azure OpenAI gpt-image-2 provenance')
+}
 
 for (const [id, item] of Object.entries(manifest.items)) {
   const pngPath = join(repoRoot, item.png)
   const webpPath = join(repoRoot, item.webp)
   const png = readFileSync(pngPath)
+  const webp = readFileSync(webpPath)
   const digest = createHash('sha256').update(png).digest('hex')
+  const webpDigest = createHash('sha256').update(webp).digest('hex')
   if (digest !== item.sha256) {
     throw new Error(`${id} PNG digest does not match thumbnail-manifest.json`)
+  }
+  if (webpDigest !== item.webpSha256) {
+    throw new Error(`${id} WebP digest does not match thumbnail-manifest.json`)
   }
   for (const path of [pngPath, webpPath]) {
     const image = await sharp(path).metadata()

@@ -18,11 +18,11 @@
 
 ## Extensions
 
-| Extension | Description | Latest | Website |
-|-----------|-------------|--------|---------|
-| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/) |
-| [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.5.0 | [🌐](https://jongio.github.io/azd-rest/) |
-| [**azd pack**](pack/) | Installs every currently published extension in one step as `jongio.azd` | v0.1.0 | [📦](pack/README.md) |
+| Extension                                          | Description                                                                                          | Latest  | Website                                  |
+| -------------------------------------------------- | ---------------------------------------------------------------------------------------------------- | ------- | ---------------------------------------- |
+| [**azd-app**](https://github.com/jongio/azd-app)   | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/)  |
+| [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management       | v0.5.0  | [🌐](https://jongio.github.io/azd-rest/) |
+| [**azd pack**](pack/)                              | Installs every currently published extension in one step as `jongio.azd`                             | v0.1.0  | [📦](pack/README.md)                     |
 
 > **Note:** `azd exec` is now a built-in command in Azure Developer CLI v1.25.1+. No extension needed. See [azure/azure-dev#7400](https://github.com/Azure/azure-dev/pull/7400).
 >
@@ -126,21 +126,21 @@ pnpm dev
 
 ### Commands
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start dev server |
-| `pnpm build` | Build for production |
-| `pnpm preview` | Preview production build |
-| `pnpm validate-registry` | Validate registry URLs and structure |
-| `pnpm update-readme-versions` | Update README version table |
+| Command                       | Description                          |
+| ----------------------------- | ------------------------------------ |
+| `pnpm dev`                    | Start dev server                     |
+| `pnpm build`                  | Build for production                 |
+| `pnpm preview`                | Preview production build             |
+| `pnpm validate-registry`      | Validate registry URLs and structure |
+| `pnpm update-readme-versions` | Update README version table          |
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
+| Category  | Technology           |
+| --------- | -------------------- |
 | Framework | Astro 7 + TypeScript |
-| Styling | Tailwind CSS 4 |
-| CI/CD | GitHub Actions |
+| Styling   | Tailwind CSS 4       |
+| CI/CD     | GitHub Actions       |
 
 ## Registry
 
@@ -178,7 +178,7 @@ Run `pnpm thumbnails:generate` from this repository when all four sibling
 repositories are checked out under the same `extensions` directory. The command
 generates the hub and extension thumbnails, optimized WebP catalog copies, and
 per-repository provenance metadata. See
-[the thumbnail recipes](docs/thumbnail-recipes.md).
+[the exact thumbnail prompts](docs/thumbnail-prompts.md).
 
 ## Resources
 

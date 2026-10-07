@@ -13,6 +13,7 @@
     "test": "vitest run",
     "thumbnails:generate": "node scripts/generate-thumbnails.mjs --sync-siblings",
     "thumbnails:generate:local": "node scripts/generate-thumbnails.mjs",
+    "thumbnails:sync": "node scripts/generate-thumbnails.mjs --sync-siblings --sync-existing",
     "thumbnails:check": "node scripts/check-thumbnails.mjs",
     "validate-registry": "node scripts/validate-registry.js",
     "validate-schema": "node scripts/validate-schema.js",

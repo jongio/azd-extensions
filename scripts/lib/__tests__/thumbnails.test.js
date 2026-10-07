@@ -5,17 +5,30 @@ import { fileURLToPath } from 'node:url'
 import { describe, expect, it } from 'vitest'
 import sharp from 'sharp'
 import { extensions } from '../../../src/data/extensions.ts'
+import { thumbnailDefinitions } from '../../thumbnail-definitions.mjs'
 
 const repoRoot = join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..')
 const manifest = JSON.parse(readFileSync(join(repoRoot, 'thumbnail-manifest.json'), 'utf8'))
 
 describe('extension thumbnails', () => {
-  it('records deterministic non-secret provenance', () => {
+  it('records Azure OpenAI non-secret provenance', () => {
     expect(manifest).toMatchObject({
-      provider: 'deterministic-svg',
-      model: 'azd-extension-thumbnail-v1',
-      renderer: 'sharp@0.35.4',
+      provider: 'azure-openai',
+      model: 'gpt-image-2',
+      deployment: 'gpt-image-2',
+      apiVersion: '2025-04-01-preview',
+      quality: 'high',
     })
+  })
+
+  it('records every exact prompt verbatim in the prompt guide', () => {
+    const promptGuide = readFileSync(join(repoRoot, 'docs', 'thumbnail-prompts.md'), 'utf8')
+    for (const definition of thumbnailDefinitions) {
+      expect(promptGuide).toContain(definition.prompt)
+      expect(manifest.items[definition.id].promptSha256).toBe(
+        createHash('sha256').update(definition.prompt).digest('hex')
+      )
+    }
   })
 
   it('registers one catalog thumbnail for every extension', () => {
@@ -49,7 +62,9 @@ describe('extension thumbnails', () => {
       const pngPath = join(repoRoot, item.png)
       const webpPath = join(repoRoot, item.webp)
       const png = readFileSync(pngPath)
+      const webp = readFileSync(webpPath)
       expect(createHash('sha256').update(png).digest('hex')).toBe(item.sha256)
+      expect(createHash('sha256').update(webp).digest('hex')).toBe(item.webpSha256)
       expect(await sharp(pngPath).metadata()).toMatchObject({
         format: 'png',
         width: 1024,
