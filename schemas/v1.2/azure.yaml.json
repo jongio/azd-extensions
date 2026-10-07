@@ -3076,6 +3076,19 @@
       "allOf": [
         {
           "if": {
+            "required": ["result"]
+          },
+          "then": {
+            "required": ["effect"],
+            "properties": {
+              "effect": {
+                "const": "change"
+              }
+            }
+          }
+        },
+        {
+          "if": {
             "required": ["verification"]
           },
           "then": {
@@ -3106,6 +3119,11 @@
           "type": "string",
           "enum": ["none", "verification", "change", "inspection"],
           "description": "Required effect classification. none permits local preparation without external state change; verification emits a structured record; change may mutate durable or external state; inspection is read-only."
+        },
+        "result": {
+          "type": "string",
+          "const": "change",
+          "description": "Optional result classification for a command that reports a change. Valid only when effect is change; change commands may omit it."
         },
         "executable": {
           "type": "string",

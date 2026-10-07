@@ -578,6 +578,7 @@ promote:
 
     migrate-data:
       effect: change
+      result: change
       executable: node
       args: [scripts/migrate-data.mjs]
       timeout: 30m
@@ -836,10 +837,12 @@ ordered command groups are authored under `tasks`. Targets compose a
 ```yaml
 commands:
   verify-auth:
+    effect: inspection
     executable: pnpm
     args: [verify:auth, --required, '{required}']
     timeout: 5m
   build:
+    effect: none
     executable: pnpm
     args: [build, --mode, '{mode}']
     timeout: 30m
@@ -874,10 +877,16 @@ The four lifecycle groups are:
 Workflow entries use a lowercase kebab-case `task` ID. Task steps use a
 lowercase kebab-case command ID under `command`. Both invocation types accept an
 optional lowercase kebab-case `with` map of string, number, or boolean values.
-An exact task parameter placeholder such as `'{auth-required}'` preserves
-the supplied scalar type when passed into a command step. Tasks cannot
+An exact task parameter placeholder for `auth-required` preserves the supplied
+scalar type when passed into a command step. Tasks cannot
 invoke other tasks; the compiler flattens them deterministically and
 retains task identity in expanded plans.
+
+Every command declares an `effect`. A command with `effect: change` may
+optionally declare `result: change` when it reports a change result. `change`
+is the only supported result value. The `result` field is rejected for
+`none`, `inspection`, and `verification` effects, while change commands may
+omit it.
 
 ## Operation composition
 
@@ -1074,6 +1083,9 @@ Internal storage directories follow the same model and remain compiler-owned:
    - rejection of mixed-provider fields;
    - rejection of flat target steps, nested tasks, empty tasks, and bare
      string command invocations;
+   - optional `result: change` on change commands, including rejection for
+     `none`, `inspection`, and `verification` effects and rejection of other
+     result values;
    - rejection of global approvals, named snapshots, target hooks, and
      operation `target`;
    - top-level name as promotion identity;
@@ -1120,6 +1132,8 @@ Internal storage directories follow the same model and remain compiler-owned:
 - Workflow invocations require `task`; command invocations require `command`;
   optional `with` values are scalar and parameter IDs use lowercase
   kebab-case.
+- Command `result` is optional, accepts only `change`, and is valid only when
+  `effect` is `change`.
 - Operation composition text and fixtures cover every inherited and
   operation-owned field.
 - Approval and Git snapshot policy is inline with no global target list, named

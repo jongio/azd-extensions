@@ -1,0 +1,31 @@
+name: invalid-command-result-non-change-effects
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+  artifacts:
+    site: { type: static, path: dist }
+  providers:
+    publisher: { type: process, executable: publish, timeout: 5m }
+  commands:
+    prepare-local:
+      effect: none
+      result: change
+      executable: prepare
+      timeout: 5m
+    inspect-target:
+      effect: inspection
+      result: change
+      executable: inspect
+      timeout: 5m
+    verify-target:
+      effect: verification
+      result: change
+      executable: verify
+      verification:
+        path: .azure/promote/verification/dev-target.json
+      timeout: 5m

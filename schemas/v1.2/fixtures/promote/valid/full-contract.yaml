@@ -282,6 +282,7 @@ promote:
 
     migrate-data:
       effect: change
+      result: change
       executable: node
       args: [scripts/migrate-data.mjs]
       timeout: 30m

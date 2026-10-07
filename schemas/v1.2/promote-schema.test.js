@@ -38,6 +38,14 @@ const missingProperty = (instancePath, property) =>
 const invalidFixtures = [
   ['command-approval', [additionalProperty('/promote/commands/deploy', 'approval')]],
   [
+    'command-result-non-change-effects',
+    [
+      error('/promote/commands/prepare-local/effect', 'const'),
+      error('/promote/commands/inspect-target/effect', 'const'),
+      error('/promote/commands/verify-target/effect', 'const'),
+    ],
+  ],
+  [
     'camel-cased-promote-id',
     [
       error('/promote/environments/dev/provider', 'pattern'),
@@ -49,6 +57,7 @@ const invalidFixtures = [
   ['flat-target-steps', [additionalProperty('/promote/environments/dev', 'steps')]],
   ['implicit-basic-auth', [error('/promote/environments/dev/verificationAuth', 'oneOf')]],
   ['invalid-command-capture', [error('/promote/commands/inspect-target/capture', 'enum')]],
+  ['invalid-command-result', [error('/promote/commands/deploy/result', 'const')]],
   ['invalid-live-url-path', [error('/promote/artifacts/site/liveFiles/0/urlPath', 'pattern')]],
   ['invalid-target-mode', [additionalProperty('/promote/environments/dev', 'mode')]],
   [
@@ -366,6 +375,43 @@ describe('azure.yaml v1.2 promote contract', () => {
     })
     expect(fixture.promote.commands).not.toHaveProperty('verify-auth-required')
     expect(fixture.promote.commands).not.toHaveProperty('build-preview')
+  })
+
+  it('allows an optional change result only on change commands', async () => {
+    const schema = await loadSchema()
+    const fixture = await loadFixture('valid', 'full-contract')
+    const commandDefinition = schema.definitions.promoteCommand
+
+    expect(commandDefinition.required).not.toContain('result')
+    expect(commandDefinition.properties.result).toMatchObject({
+      type: 'string',
+      const: 'change',
+    })
+    expect(commandDefinition.allOf).toEqual(
+      expect.arrayContaining([
+        {
+          if: {
+            required: ['result'],
+          },
+          then: {
+            required: ['effect'],
+            properties: {
+              effect: {
+                const: 'change',
+              },
+            },
+          },
+        },
+      ])
+    )
+    expect(fixture.promote.commands['migrate-data']).toEqual({
+      effect: 'change',
+      result: 'change',
+      executable: 'node',
+      args: ['scripts/migrate-data.mjs'],
+      timeout: '30m',
+    })
+    expect(fixture.promote.commands['publish-assets']).not.toHaveProperty('result')
   })
 
   it('defines operation composition through one environment-based rule', async () => {
