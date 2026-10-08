@@ -1,0 +1,20 @@
+name: invalid-legacy-underscore-keys
+promote:
+  default_chain: release
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+      candidate:
+        require_clean: true
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

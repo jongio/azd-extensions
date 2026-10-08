@@ -1,0 +1,15 @@
+name: invalid-missing-target-bindings
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev: {}
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

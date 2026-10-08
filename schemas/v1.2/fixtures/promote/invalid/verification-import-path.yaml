@@ -1,0 +1,24 @@
+name: invalid-verification-import-path
+promote:
+  chains:
+    release:
+      targets: [dev, prod]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+    prod:
+      provider: local-publisher
+      artifacts: [site]
+      requires:
+        predecessor:
+          verifications:
+            - .azure/promote/verification/dev-content.json
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

@@ -1,0 +1,23 @@
+name: invalid-legacy-previous-run
+promote:
+  chains:
+    release:
+      targets: [dev, prod]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+    prod:
+      provider: local-publisher
+      artifacts: [site]
+      previousRun:
+        files:
+          - .azure/promote/verification/dev-content.json
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

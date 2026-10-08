@@ -1,0 +1,16 @@
+name: invalid-unsupported-provider-type
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: custom-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    custom-publisher:
+      type: cloudflareWorker

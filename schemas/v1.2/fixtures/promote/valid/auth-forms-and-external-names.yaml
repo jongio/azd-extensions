@@ -1,0 +1,55 @@
+name: auth-forms-and-external-names
+promote:
+  chains:
+    release:
+      targets: [dev-west, qa-headers, staging-service-token, prod-basic-map]
+  environments:
+    dev-west:
+      provider: local-publisher
+      artifacts: [site]
+      verificationAuth:
+        type: basic
+        username: { azd: DEV_BASIC_AUTH_USERNAME }
+        password: { azd: DEV_BASIC_AUTH_PASSWORD }
+      locks: [deployment:dev-west]
+    qa-headers:
+      provider: local-publisher
+      artifacts: [site]
+      verificationAuth:
+        type: headers
+        headers:
+          X-Access-Key: { azd: ACCESS_KEY }
+    staging-service-token:
+      provider: local-publisher
+      artifacts: [site]
+      verificationAuth:
+        type: serviceToken
+        clientIdHeader: CF-Access-Client-Id
+        clientId: { azd: CF_ACCESS_CLIENT_ID }
+        clientSecretHeader: CF-Access-Client-Secret
+        clientSecret: { azd: CF_ACCESS_CLIENT_SECRET }
+    prod-basic-map:
+      provider: local-publisher
+      artifacts: [site]
+      verificationAuth:
+        type: basic
+        username: { azd: BASIC_AUTH_USERNAME }
+        password: { azd: BASIC_AUTH_PASSWORD }
+      git:
+        ref:
+          exact: origin/release-2026-10
+          refresh: true
+  artifacts:
+    site:
+      type: static
+      path: dist/site-output
+      sealedPaths: [verification/staging-content.json]
+      liveFiles:
+        - path: search-index.json
+          urlPath: /search-index.json
+  providers:
+    local-publisher:
+      type: process
+      executable: publish-site
+      args: [--environment, '{environment}']
+      timeout: 30m

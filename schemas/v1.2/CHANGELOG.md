@@ -11,24 +11,35 @@ v1.2 is a **superset of v1.1** (which is itself a superset of v1.0). All existin
 
 ### New
 
-- **`promote`** top-level property — Configures the `azd promote` extension for orchestrating environment promotion pipelines. Sub-properties:
-  - `chain` — Ordered list of environment names forming the promotion chain (e.g., `[dev, staging, prod]`).
-  - `protected` — Environments that require explicit confirmation before promotion.
-  - `preflight` — Preflight check configuration (env_diff with ignore_keys).
-  - `database` — Database configuration for backup and migration phases, including:
-    - `connection_string.env_var` — Environment variable for the DB connection string.
-    - `backup.enabled`, `backup.retain`, `backup.max_count` — Backup settings.
-    - `schema_check` — Pre-migration schema validation (tool, command).
-    - `migrate` — Single command or multi-step migration pipeline with optional interactive confirmation.
-    - `seed` — Database seeding command with environment filtering.
-  - `deploy` — Deploy phase configuration (service filtering, groups, SWA).
-  - `purge` — CDN/cache invalidation configuration (cloudflare, azure-cdn, custom).
-  - `verify` — Post-deploy verification with health check endpoints and smoke test commands.
-  - `rollback` — Failure handling configuration (auto, pause, custom command).
-  - `hooks` — User-defined `pre-`/`post-` commands for each promotion phase (preflight, backup, migrate, provision, deploy, verify).
-  - `confirm` — Custom typed-confirmation gate before proceeding.
-  - `notifications` — Webhook notifications on promotion events (start, success, failure).
-  - `environments` — Per-environment overrides that deep-merge onto the base promote config.
+- **`promote`** top-level property configures the `azd promote` extension with a strict config-first contract.
+- The stale pre-release promote model has been replaced completely. Legacy phase-specific fields and permissive environment overrides are rejected.
+- The authored `promote` object has no independent `version`. The v1.2 `azure.yaml` schema URI is the sole public contract version.
+- Top-level `name` is the stable promotion identity. Authored `promote.project` is rejected.
+- Run-record and operation-result paths are framework-owned. Authored `promote.records` and `promote.results` are rejected.
+- Git repository policy is authored under `git`. The former `candidate` property is rejected.
+- Predecessor verification imports use stable IDs under `requires.predecessor.verifications`. The former `previousRun` property and authored predecessor verification paths are rejected.
+- Verification-authentication values use explicit `{azd: SECRET_NAME}` references. Scalar `verificationAuth: basic` defaults and raw secret names are rejected.
+- Runtime decoding enforces the same strict basic, headers, and service-token variants as JSON Schema, including empty foreign members. HTTP header names must be unique case-insensitively.
+- Reusable executable definitions are authored under `commands`; reusable ordered command groups are authored under `tasks`. Targets compose a `workflow` with `prepare`, `apply`, `verify`, and `cleanup` lifecycle groups using `{task, with}` invocations, while task steps use `{command, with}` command invocations. Tasks cannot nest.
+- Every command requires an explicit `effect`: `none`, `inspection`, `verification`, or `change`. The retired `inspectionOnly` boolean is rejected; `capture: metadata-only` expresses output-capture policy without implying effect.
+- Change commands may optionally declare `result: change`. No other result value is supported, and `result` is rejected for `none`, `inspection`, and `verification` effects.
+- Command and provider templates reject unknown or unavailable tokens and unused command parameters. Literal braces use `{{` and `}}`. Direct host execution uses the unambiguous `$host` selector.
+- Git policy composes in order from top-level `promote.git` to environment `git` to operation `git`, with recursive merging and later authored members taking precedence.
+- Named operations compose explicitly from a real environment through `environment`. Provider, artifacts, verification auth, and the environment's effective Git policy inherit according to the documented base rule; operation requirements, workflow, locks, Git snapshots, and approvals remain operation-owned. `deploy: false` explicitly preserves artifact sealing and lifecycle commands while suppressing provider expansion, operation results, deployment verification, and live-file HTTP verification.
+- Approval and Git snapshot policy is inline on environments and operations. Global approval target lists, named snapshot maps, and repeated snapshot purpose IDs are rejected.
+- Git snapshot refs are fail-closed: branches use `refs/heads/`, tags use `refs/tags/`, templates support only `{gitSha}`, and duplicate declarations are rejected.
+- Target `mode` is removed. Validation uses ordinary commands plus `deploy: false` rather than a fake deployment provider.
+- Provider definitions use strict type-specific `process` and `azd` schemas. Platform-specific adapters are project-owned process providers.
+- Every provider and command requires the same positive single-unit timeout no greater than one hour; schema and runtime duration grammars are identical.
+- Promote-owned schema fields use lower camelCase. Promote-owned identifiers use lowercase kebab-case. Real azd environment names, file paths, Git refs, lock names, external resource names, CLI flags, and environment variables retain their native conventions.
+- The contract covers named chains, real environments, explicitly composed operations, artifacts, strict providers, reusable parameterized tasks and commands, lifecycle workflows, Git policy, inline approvals and Git snapshots, verification authentication, locks, predecessor verification imports, and live files.
+- Artifact identity is bound by the Git candidate and artifact fingerprint. The unused `identityPaths` property is rejected. `sealedPaths` accepts literal project-local paths only; context and parameter tokens are not expanded.
+- Run-record and operation-result paths remain runtime-owned. Verification commands author their own output record path, while predecessor verification imports use stable IDs instead of authored predecessor paths.
+- Public terminology uses run records, previous runs, verification, results, cleanup, changes, and inspection.
+
+### Pre-release compatibility
+
+The replacement promote contract is not compatible with the stale experimental model. Runtime implementations, CLI and MCP adapters, durable-state formats, documentation, examples, and downstream configurations must adopt the final contract before claiming v1.2 compatibility.
 
 ### Preserved from v1.1
 
@@ -49,10 +60,10 @@ All core azd properties remain unchanged:
 
 ### Schema Location Change
 
-| Version | Repository | Path |
-|---------|-----------|------|
-| v1.0 | azure-dev | Built-in to azd CLI |
-| v1.1 | azd-app | `schemas/v1.1/azure.yaml.json` |
+| Version  | Repository         | Path                               |
+| -------- | ------------------ | ---------------------------------- |
+| v1.0     | azure-dev          | Built-in to azd CLI                |
+| v1.1     | azd-app            | `schemas/v1.1/azure.yaml.json`     |
 | **v1.2** | **azd-extensions** | **`schemas/v1.2/azure.yaml.json`** |
 
 Starting with v1.2, the `azd-extensions` repo is the centralized schema home. The v1.1 schema in `azd-app` remains frozen for backward compatibility.
@@ -69,4 +80,4 @@ To adopt the v1.2 schema in your `azure.yaml`, update the `$schema` reference:
 # yaml-language-server: $schema=https://raw.githubusercontent.com/jongio/azd-extensions/main/schemas/v1.2/azure.yaml.json
 ```
 
-No other changes are required — v1.2 is fully backward compatible with v1.1 and v1.0 configurations. The new `promote` property is optional.
+Existing v1.0 and v1.1 properties remain compatible. Configurations that used the unreleased experimental `promote` model must migrate to the replacement contract before release.

@@ -1,0 +1,20 @@
+name: invalid-command-result
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+  artifacts:
+    site: { type: static, path: dist }
+  providers:
+    publisher: { type: process, executable: publish, timeout: 5m }
+  commands:
+    deploy:
+      effect: change
+      result: verification
+      executable: publish
+      args: [--target, dev]
+      timeout: 30m

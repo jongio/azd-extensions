@@ -98,7 +98,7 @@ node scripts/update-registry.js
 
 ## Adding a New Extension
 
-This is the complete checklist for adding a new azd extension to this registry. Each extension lives in its own repo (e.g., `jongio/azd-myext`) and publishes its own `registry.json`. This repo aggregates them all.
+This is the complete checklist for adding a new azd extension to this registry. Each extension lives in its own repo (e.g., `username/azd-myext`) and publishes its own `registry.json`. This repo aggregates them all.
 
 ### 1. Create `registry.json` in the Extension Repo
 
@@ -151,17 +151,20 @@ export const EXTENSIONS = [
   },
   // Add your extension here:
   {
-    id: 'jongio.azd.myext',
+    id: 'example.azd.myext',
     repo: 'azd-myext',
     sourceUrl:
-      'https://raw.githubusercontent.com/jongio/azd-myext/refs/heads/main/registry.json',
+      'https://raw.githubusercontent.com/username/azd-myext/refs/heads/main/registry.json',
   },
 ];
 ```
 
 ### 3. Add Dispatch Notification to Your Release Workflow
 
-Your extension's `release.yml` should notify `azd-extensions` after a successful release so the registry updates immediately (instead of waiting for the daily cron). Add this step at the end of your release job:
+Your extension's `release.yml` should notify `azd-extensions` after a successful
+release so the registry updates immediately instead of waiting for the hourly
+poll. This notification is an optimization, not a publication dependency.
+Add this step at the end of your release job:
 
 ```yaml
     - name: Notify azd-extensions
@@ -176,7 +179,9 @@ Your extension's `release.yml` should notify `azd-extensions` after a successful
 
 ### 4. Create the `EXTENSIONS_DISPATCH_TOKEN` Secret
 
-The dispatch step requires a Personal Access Token (PAT) with permission to trigger workflows on the `azd-extensions` repo.
+The dispatch step requires a Personal Access Token (PAT) with permission to
+trigger workflows on the `azd-extensions` repo. If a repository intentionally
+uses the hourly fallback only, omit the dispatch step and this secret.
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens](https://github.com/settings/tokens?type=beta)
 2. Create a new token with:
@@ -196,6 +201,7 @@ Update the local development scripts in `scripts/` so other developers can build
 $extensions = @(
     @{ Name = "azd-app";     Id = "jongio.azd.app";     Path = Join-Path $parentDir "azd-app\cli" },
     @{ Name = "azd-rest";    Id = "jongio.azd.rest";    Path = Join-Path $parentDir "azd-rest\cli" },
+    @{ Name = "azd-promote"; Id = "jongio.azd.promote"; Path = Join-Path $parentDir "azd-promote\cli"; BuildCommand = "azd"; BuildArguments = "x build" },
     # Add your extension:
     @{ Name = "azd-myext";   Id = "jongio.azd.myext";   Path = Join-Path $parentDir "azd-myext\cli" }
 )
@@ -206,6 +212,7 @@ $extensions = @(
 $extensions = @(
     @{ Name = "app";     Color = "Green";   Path = Join-Path $parentDir "azd-app\cli" },
     @{ Name = "rest";    Color = "Yellow";  Path = Join-Path $parentDir "azd-rest\cli" },
+    @{ Name = "promote"; Color = "Magenta"; Path = Join-Path $parentDir "azd-promote\cli"; WatchCommand = "azd"; WatchArguments = "x watch" },
     # Add your extension:
     @{ Name = "myext";   Color = "Cyan";    Path = Join-Path $parentDir "azd-myext\cli" }
 )

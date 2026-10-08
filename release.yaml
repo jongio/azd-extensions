@@ -9,8 +9,8 @@
 # Tier 1 repos depend on them.
 
 # Dependency graph:
-#   azd-core (Go module) ──► azd-app, azd-rest
-#   azd-web-core (npm pkg) ─► azd-app, azd-rest, azd-extensions
+#   azd-core (Go module) ──► azd-app, azd-rest, azd-promote
+#   azd-web-core (npm pkg) ─► azd-app, azd-rest, azd-promote, azd-extensions
 #
 # Retired, do not release, do not treat as a blocker:
 #   azd-copilot  retired and archived
@@ -38,6 +38,7 @@ tiers:
         consumers:
           - azd-app
           - azd-rest
+          - azd-promote
 
       - name: azd-web-core
         github: jongio/azd-web-core
@@ -49,6 +50,7 @@ tiers:
         consumers:
           - azd-app
           - azd-rest
+          - azd-promote
           - azd-extensions
 
   # Tier 1: Consumer extensions (depend on Tier 0)
@@ -96,10 +98,29 @@ tiers:
             - package: "@jongio/azd-web-core"
               file: web/package.json
 
+      - name: azd-promote
+        github: jongio/azd-promote
+        type: go-extension
+        module: github.com/jongio/azd-promote
+        go_mod: cli/go.mod
+        extension_yaml: cli/extension.yaml
+        test: "cd {repo}/cli && go test ./..."
+        test_env:
+          GOWORK: "off"
+        release_workflow: release.yml
+        release_trigger: workflow_dispatch
+        depends_on:
+          go:
+            - package: github.com/jongio/azd-core
+              file: cli/go.mod
+          npm:
+            - package: "@jongio/azd-web-core"
+              file: web/package.json
+
       - name: azd-extensions
         github: jongio/azd-extensions
         type: astro-site
-        test: "cd {repo} && npm run build"
+        test: "cd {repo} && pnpm run build"
         release_trigger: none  # no formal release, just deploy
         depends_on:
           npm:
@@ -124,15 +145,16 @@ tiers:
 
 # Post-release verification
 # =========================
-# After all release workflows finish, each extension's release workflow
-# sends a repository_dispatch to azd-extensions, triggering the Publish
-# workflow (publish.yml). This workflow:
+# After release workflows finish, an extension may send a repository_dispatch
+# to azd-extensions for immediate publication. The hourly Publish workflow is
+# the secretless fallback. In either case, publish.yml:
 #   1. Fetches registry.json from each extension repo's main branch
 #   2. Aggregates them into public/registry.json
 #   3. Deploys to GitHub Pages at: https://jongio.github.io/azd-extensions/registry.json
 #
-# Allow ~5 minutes after the last release workflow completes for
-# the Publish workflow to run and GitHub Pages to deploy.
+# Allow up to one hour for the polling fallback, plus GitHub Actions and Pages
+# scheduling time. Configured repository_dispatch notifications normally reduce
+# this to a few minutes.
 
 post_release_verification:
   description: >
@@ -153,10 +175,13 @@ post_release_verification:
       repo: jongio/azd-app
     - id: jongio.azd.rest
       repo: jongio/azd-rest
+    - id: jongio.azd.promote
+      repo: jongio/azd-promote
 
   steps:
     # Step 1: Wait for the azd-extensions Publish workflow to complete.
-    # Each release workflow fires a repository_dispatch event.
+    # Release workflows may fire a repository_dispatch event. Otherwise wait
+    # for the hourly polling fallback.
     - name: wait-for-registry-publish
       description: >
         Verify that the azd-extensions Publish workflow has completed

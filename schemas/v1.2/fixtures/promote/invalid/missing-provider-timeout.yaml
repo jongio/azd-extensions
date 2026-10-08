@@ -1,0 +1,15 @@
+name: invalid-missing-provider-timeout
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site: { type: static, path: dist }
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

@@ -1,0 +1,493 @@
+name: full-contract
+promote:
+  chains:
+    release:
+      default: true
+      targets: [dev, staging, prod]
+
+  git:
+    worktree: clean
+    upstream: published
+
+  artifacts:
+    content-app:
+      type: static
+      path: dist/content-app
+      liveFiles:
+        - path: content-index.json
+
+  providers:
+    content-publisher:
+      type: process
+      executable: node
+      args:
+        [
+          scripts/publish-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+          --result,
+          '{result}',
+        ]
+      workdir: .
+      timeout: 30m
+    azure-fallback:
+      type: azd
+      args: [--all]
+      workdir: infra
+      timeout: 30m
+
+  tasks:
+    access-preflight:
+      steps:
+        - command: verify-auth
+          with: { required: '{auth-required}' }
+        - command: check-asset-store
+    build-output:
+      steps:
+        - command: build
+          with: { mode: '{build-mode}' }
+        - command: prune-output
+        - command: normalize-output
+    data-change:
+      steps:
+        - command: migrate-data
+    asset-publish:
+      steps:
+        - command: publish-assets
+        - command: configure-asset-cors
+    output-verification:
+      steps:
+        - command: verify-data
+        - command: verify-offline-output
+        - command: select-files
+    live-verification:
+      steps:
+        - command: run-smoke-tests
+          with: { suite: '{smoke-suite}' }
+        - command: verify-live-site
+    cleanup-output:
+      steps:
+        - command: remove-unused-files
+    publisher-approval:
+      steps:
+        - command: verify-publisher-approval
+    production-release-change:
+      steps:
+        - command: prepare-production-data
+        - command: prepare-production-release
+    deployment-input-verification:
+      steps:
+        - command: verify-deployment-inputs
+    published-content-verification:
+      steps:
+        - command: verify-published-content
+    prepared-content-verification:
+      steps:
+        - command: verify-prepared-content
+    content-input-verification:
+      steps:
+        - command: verify-content-inputs
+    deployment-validation:
+      steps:
+        - command: validate-content
+
+  environments:
+    dev:
+      provider: content-publisher
+      artifacts: [content-app]
+      git:
+        worktree: dirtyAllowed
+      verificationAuth:
+        type: basic
+        username: { azd: DEV_BASIC_AUTH_USERNAME }
+        password: { azd: DEV_BASIC_AUTH_PASSWORD }
+      workflow:
+        prepare:
+          - task: access-preflight
+            with: { auth-required: false }
+          - task: build-output
+            with: { build-mode: release }
+        apply:
+          - task: data-change
+          - task: asset-publish
+        verify:
+          - task: output-verification
+          - task: live-verification
+            with: { smoke-suite: fast }
+        cleanup:
+          - task: cleanup-output
+
+    staging:
+      provider: content-publisher
+      artifacts: [content-app]
+      verificationAuth:
+        type: basic
+        username: { azd: STAGING_BASIC_AUTH_USERNAME }
+        password: { azd: STAGING_BASIC_AUTH_PASSWORD }
+      approval:
+        message: Approve the exact staging candidate
+        match: PROMOTE
+        automation: allowed
+      gitSnapshot:
+        remote: release-origin
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/staging
+      workflow:
+        prepare:
+          - task: access-preflight
+            with: { auth-required: true }
+          - task: build-output
+            with: { build-mode: release }
+        apply:
+          - task: data-change
+          - task: asset-publish
+        verify:
+          - task: output-verification
+          - task: live-verification
+            with: { smoke-suite: full }
+        cleanup:
+          - task: cleanup-output
+
+    prod:
+      provider: content-publisher
+      artifacts: [content-app]
+      git:
+        worktree: clean
+        ref:
+          integratedInto: origin/main
+          refresh: true
+      requires:
+        predecessor:
+          verifications: [staging-content, staging-routing]
+      approval:
+        message: Approve the exact production candidate
+        match: PROMOTE
+        automation: allowed
+      gitSnapshot:
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: tag
+            template: refs/tags/releases/{gitSha}
+      workflow:
+        prepare:
+          - task: publisher-approval
+          - task: access-preflight
+            with: { auth-required: true }
+          - task: build-output
+            with: { build-mode: release }
+        apply:
+          - task: production-release-change
+        verify:
+          - task: output-verification
+          - task: deployment-input-verification
+          - task: live-verification
+            with: { smoke-suite: full }
+          - task: published-content-verification
+        cleanup:
+          - task: cleanup-output
+
+  operations:
+    publish-content:
+      environment: prod
+      locks: [content:production, deployment:production]
+      approval:
+        message: Approve publishing the reviewed content
+        match: PUBLISH
+        automation: denied
+      gitSnapshot:
+        mode: publish
+        recovery: manual
+        refs:
+          - kind: tag
+            template: refs/tags/content/{gitSha}
+      workflow:
+        prepare:
+          - task: prepared-content-verification
+          - task: access-preflight
+            with: { auth-required: true }
+          - task: build-output
+            with: { build-mode: release }
+        verify:
+          - task: output-verification
+          - task: content-input-verification
+          - task: live-verification
+            with: { smoke-suite: full }
+          - task: published-content-verification
+        cleanup:
+          - task: cleanup-output
+
+    validate-content:
+      environment: prod
+      deploy: false
+      locks: [content:production-candidate]
+      workflow:
+        prepare:
+          - task: access-preflight
+            with: { auth-required: true }
+          - task: build-output
+            with: { build-mode: preview }
+        verify:
+          - task: output-verification
+          - task: deployment-validation
+        cleanup:
+          - task: cleanup-output
+
+    activate-content:
+      environment: prod
+      locks: [content:production, deployment:production]
+      approval:
+        message: Approve activation of the exact candidate
+        match: ACTIVATE
+        automation: denied
+      gitSnapshot:
+        mode: verify
+        recovery: manual
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/production
+      workflow:
+        prepare:
+          - task: access-preflight
+            with: { auth-required: true }
+          - task: build-output
+            with: { build-mode: release }
+        verify:
+          - task: output-verification
+          - task: content-input-verification
+          - task: live-verification
+            with: { smoke-suite: full }
+          - task: published-content-verification
+        cleanup:
+          - task: cleanup-output
+
+  commands:
+    verify-auth:
+      effect: inspection
+      executable: node
+      args: [scripts/verify-credentials.mjs, --required, '{required}']
+      capture: metadata-only
+      timeout: 5m
+
+    check-asset-store:
+      effect: inspection
+      executable: node
+      args: [scripts/check-resource.mjs, content-assets]
+      timeout: 5m
+
+    migrate-data:
+      effect: change
+      result: change
+      executable: node
+      args: [scripts/migrate-data.mjs]
+      timeout: 30m
+
+    verify-data:
+      effect: verification
+      executable: node
+      args: [scripts/verify-data.mjs, --record, '.azure/promote/verification/{target}-data.json']
+      verification:
+        path: '.azure/promote/verification/{target}-data.json'
+      timeout: 10m
+
+    build:
+      effect: none
+      executable: node
+      args: [scripts/build-content-app.mjs, --mode, '{mode}']
+      timeout: 30m
+
+    prune-output:
+      effect: none
+      executable: node
+      args: [scripts/prune-output.mjs, dist/content-app]
+      timeout: 10m
+
+    normalize-output:
+      effect: none
+      executable: node
+      args: [scripts/normalize-output.mjs, dist/content-app]
+      timeout: 10m
+
+    validate-content:
+      effect: inspection
+      executable: node
+      args:
+        [
+          scripts/validate-content-app.mjs,
+          --artifact,
+          '{artifact}',
+          --environment,
+          '{environment}',
+        ]
+      timeout: 30m
+
+    verify-offline-output:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-offline-output.mjs,
+          --record,
+          '.azure/promote/verification/{target}-offline-output.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-offline-output.json'
+      timeout: 10m
+
+    publish-assets:
+      effect: change
+      executable: node
+      args:
+        [
+          scripts/publish-assets.mjs,
+          --source,
+          public/assets,
+          --target,
+          https://assets.example.invalid,
+          --export-dir,
+          dist/content-app,
+          --skip-existing,
+        ]
+      timeout: 1h
+
+    select-files:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/select-files.mjs,
+          --source,
+          public/assets,
+          --target,
+          https://assets.example.invalid,
+          --dry-run,
+          --export-dir,
+          dist/content-app,
+          --selection-record,
+          '.azure/promote/verification/{target}-selected-files.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-selected-files.json'
+      timeout: 1h
+
+    remove-unused-files:
+      effect: none
+      executable: node
+      args: [scripts/remove-unused-files.mjs, dist/content-app]
+      timeout: 10m
+
+    configure-asset-cors:
+      effect: change
+      executable: node
+      args: [scripts/configure-asset-cors.mjs, content-assets]
+      timeout: 10m
+
+    run-smoke-tests:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/run-smoke-tests.mjs,
+          --suite,
+          '{suite}',
+          --record,
+          '.azure/promote/verification/{target}-smoke.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-smoke.json'
+      timeout: 15m
+
+    verify-live-site:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-live-site.mjs,
+          --record,
+          '.azure/promote/verification/{target}-live-site.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-live-site.json'
+      timeout: 15m
+
+    prepare-production-data:
+      effect: change
+      executable: node
+      args: [scripts/prepare-production-data.mjs]
+      timeout: 30m
+
+    verify-publisher-approval:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-publisher-approval.mjs,
+          --record,
+          '.azure/promote/verification/{target}-publisher-approval.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-publisher-approval.json'
+      timeout: 5m
+
+    prepare-production-release:
+      effect: change
+      executable: node
+      args: [scripts/prepare-production-release.mjs]
+      timeout: 30m
+
+    verify-deployment-inputs:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-deployment-inputs.mjs,
+          --record,
+          '.azure/promote/verification/{target}-deployment-inputs.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-deployment-inputs.json'
+      timeout: 10m
+
+    verify-published-content:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-published-content.mjs,
+          --record,
+          '.azure/promote/verification/{target}-published-content.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-published-content.json'
+      timeout: 10m
+
+    verify-prepared-content:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-prepared-content.mjs,
+          --record,
+          '.azure/promote/verification/{target}-prepared-content.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-prepared-content.json'
+      timeout: 10m
+
+    verify-content-inputs:
+      effect: verification
+      executable: node
+      args:
+        [
+          scripts/verify-content-inputs.mjs,
+          --record,
+          '.azure/promote/verification/{target}-content-inputs.json',
+        ]
+      verification:
+        path: '.azure/promote/verification/{target}-content-inputs.json'
+      timeout: 10m

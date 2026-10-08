@@ -1,0 +1,19 @@
+name: invalid-legacy-promote-records
+promote:
+  chains:
+    release:
+      targets: [dev]
+  records:
+    path: .azure/promote/records/{target}.json
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

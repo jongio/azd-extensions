@@ -3,7 +3,7 @@
     {
       "id": "jongio.azd",
       "displayName": "Azure Developer CLI Extension Pack",
-      "description": "Installs the jongio azd extensions, app and rest, in one step.",
+      "description": "Installs the jongio azd extensions in one step.",
       "versions": [
         {
           "version": "0.1.0",
@@ -24,6 +24,32 @@
             {
               "id": "jongio.azd.rest",
               "version": ">= 0.5.0"
+            }
+          ]
+        },
+        {
+          "version": "0.2.0",
+          "requiredAzdVersion": ">= 1.29.0",
+          "usage": "azd extension install jongio.azd",
+          "examples": [
+            {
+              "name": "install",
+              "description": "Install every jongio azd extension in one step",
+              "usage": "azd extension install jongio.azd"
+            }
+          ],
+          "dependencies": [
+            {
+              "id": "jongio.azd.app",
+              "version": ">= 0.20.0"
+            },
+            {
+              "id": "jongio.azd.rest",
+              "version": ">= 0.5.0"
+            },
+            {
+              "id": "jongio.azd.promote",
+              "version": ">= 0.1.0"
             }
           ]
         }

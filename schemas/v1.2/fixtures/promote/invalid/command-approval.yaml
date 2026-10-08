@@ -1,0 +1,32 @@
+name: invalid-command-approval
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+      workflow:
+        apply:
+          - task: deployment
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+  tasks:
+    deployment:
+      steps:
+        - command: deploy
+  commands:
+    deploy:
+      effect: change
+      executable: publish
+      timeout: 30m
+      approval:
+        message: Approve deployment
+        match: DEPLOY

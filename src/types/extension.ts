@@ -19,10 +19,12 @@ export interface Extension {
   heroClaim: string
   description: string
   icon: IconName
+  thumbnail: string
+  optimizedThumbnail: string
   website: string
   repository: string
   features: ExtensionFeature[]
   scenarios: ExtensionScenario[]
   tags: string[]
-  glowColor: string
+  accentColor: string
 }

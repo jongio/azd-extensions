@@ -1,0 +1,21 @@
+name: invalid-legacy-candidate
+promote:
+  chains:
+    release:
+      targets: [dev]
+  candidate:
+    worktree: clean
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+      candidate:
+        upstream: published
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

@@ -5,8 +5,17 @@ import StepCard from '@jongio/azd-web-core/components/StepCard.astro';
 import InstallTabs from '@jongio/azd-web-core/components/InstallTabs.astro';
 import ExtensionShowcase from '../components/ExtensionShowcase.astro';
 import { extensions } from '../data/extensions';
+import registry from '../../public/registry.json';
 import '../styles/global.css';
 
+const publishedExtensionIds = new Set(
+  registry.extensions
+    .filter((extension) => extension.versions?.length > 0)
+    .map((extension) => extension.id),
+);
+const visibleExtensions = extensions.filter((extension) =>
+  publishedExtensionIds.has(extension.id),
+);
 
 const installAzdTabs = [
   {
@@ -26,7 +35,7 @@ const installAzdTabs = [
   },
 ];
 
-const metaDescription = `Extensions that give the Azure Developer CLI new abilities. ${extensions
+const metaDescription = `Extensions that give the Azure Developer CLI new abilities. ${visibleExtensions
   .map((ext) => `${ext.name} ${ext.heroClaim}`)
   .join(' ')}`
 ---
@@ -41,7 +50,7 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
 >
   <Fragment slot="head">
     <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self'; font-src 'self' https://fonts.gstatic.com; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'none';" />
-    <meta name="keywords" content={`Azure, Azure Developer CLI, azd, azd extensions, ${extensions.map((ext) => ext.name).join(', ')}, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, REST API`} />
+    <meta name="keywords" content={`Azure, Azure Developer CLI, azd, azd extensions, ${visibleExtensions.map((ext) => ext.name).join(', ')}, Azure CLI, developer tools, Jon Gallant, jongio, Azure authentication, local development, REST API`} />
     <meta name="robots" content="index, follow" />
     <link rel="icon" type="image/svg+xml" href="/azd-extensions/favicon.svg" />
     <link rel="icon" type="image/svg+xml" sizes="192x192" href="/azd-extensions/favicon-192.svg" />
@@ -61,17 +70,10 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
     })} />
   </Fragment>
 
-  <!-- Animated background glows -->
-  <div class="pointer-events-none fixed inset-0 overflow-hidden" aria-hidden="true">
-    <div class="animate-pulse-glow absolute -top-40 -left-40 h-80 w-80 rounded-full opacity-20 blur-[100px]" style="background-color: var(--color-glow-cyan);"></div>
-    <div class="animate-pulse-glow absolute top-1/3 -right-40 h-96 w-96 rounded-full opacity-15 blur-[120px]" style="background-color: var(--color-glow-violet); animation-delay: 2s;"></div>
-    <div class="animate-pulse-glow absolute -bottom-40 left-1/3 h-72 w-72 rounded-full opacity-10 blur-[100px]" style="background-color: var(--color-glow-emerald); animation-delay: 4s;"></div>
-  </div>
-
   <!-- Custom Hub Header with personal branding -->
   <header
-    class="sticky top-0 z-50 border-b backdrop-blur"
-    style="background-color: color-mix(in srgb, var(--color-surface) 85%, transparent); border-color: var(--color-border);"
+    class="sticky top-0 z-50 border-b"
+    style="background-color: var(--color-surface); border-color: var(--color-border);"
   >
     <div class="mx-auto flex max-w-[1280px] items-center justify-between px-[var(--space-6)] py-[var(--space-3)]">
       <div class="flex items-center gap-[var(--space-2)]">
@@ -133,8 +135,7 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
         </a>
       </div>
     </div>
-    <!-- Gradient accent line -->
-    <div class="h-px" style="background: linear-gradient(90deg, var(--color-primary), var(--color-accent), var(--color-primary));" aria-hidden="true"></div>
+    <div class="h-px" style="background-color: var(--color-primary);" aria-hidden="true"></div>
   </header>
 
   <script>
@@ -162,31 +163,18 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
   </script>
 
   <main id="main-content" class="relative flex-1">
-    <!-- Hero Section with sparkle badge and bold extension names -->
+    <!-- Hero Section -->
     <section class="relative overflow-hidden px-[var(--space-6)] py-[var(--space-20)] text-center">
-      <div
-        class="pointer-events-none absolute inset-0"
-        style="background: radial-gradient(ellipse 60% 50% at 50% 40%, color-mix(in srgb, var(--color-primary) 8%, transparent), transparent);"
-        aria-hidden="true"
-      ></div>
-
       <div class="relative mx-auto max-w-3xl">
-        <!-- Sparkle badge -->
-        <a
-          href="https://github.com/jongio"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="mb-[var(--space-8)] inline-flex items-center gap-2.5 rounded-full px-5 py-2 text-base font-medium transition-all"
-          style="border: 1px solid color-mix(in srgb, var(--color-glow-cyan) 30%, transparent); background-color: color-mix(in srgb, var(--color-glow-cyan) 10%, transparent); color: var(--color-glow-cyan); text-decoration: none;"
-        >
-          <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-glow-cyan);"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/><path d="M5 3v4"/><path d="M19 17v4"/><path d="M3 5h4"/><path d="M17 19h4"/></svg>
-          Azure Developer CLI Extensions by Jon Gallant
-        </a>
+        <p class="mb-[var(--space-8)] text-sm font-semibold" style="color: var(--color-primary);">
+          Azure Developer CLI extensions by
+          <a href="https://github.com/jongio" target="_blank" rel="noopener noreferrer">Jon Gallant</a>
+        </p>
 
         <h1
           class="mb-[var(--space-4)] text-4xl font-bold leading-tight sm:text-5xl"
         >
-          Superpowers for <span class="text-gradient-animated">azd</span>
+          Extensions for <span style="color: var(--color-primary);">azd</span>
         </h1>
 
         <p
@@ -194,7 +182,7 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
           style="color: var(--color-text-muted);"
         >
           Extensions that give the Azure Developer CLI new abilities.{' '}
-          {extensions.map((ext, i) => (
+          {visibleExtensions.map((ext, i) => (
             <>
               {i > 0 && ' '}
               <strong style="color: var(--color-text);">{ext.name}</strong>
@@ -203,11 +191,22 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
           ))}
         </p>
 
+        <picture class="mx-auto mb-[var(--space-8)] block max-w-md">
+          <source srcset="/azd-extensions/images/thumb-azd-extensions.webp" type="image/webp" />
+          <img
+            src="/azd-extensions/images/thumb-azd-extensions.png"
+            alt="Azure Developer CLI extension cards converging into a verified registry"
+            width="1024"
+            height="1024"
+            class="block h-auto w-full"
+          />
+        </picture>
+
         <div class="flex flex-col items-center justify-center gap-[var(--space-4)] sm:flex-row">
           <a
             href="#extensions"
             class="inline-flex items-center gap-2 rounded-[var(--radius-md)] px-6 py-3 font-semibold transition-all hover:brightness-110"
-            style="background: linear-gradient(135deg, var(--color-primary), var(--color-accent)); color: #ffffff !important; text-decoration: none;"
+            style="background-color: var(--color-primary); color: #ffffff !important; text-decoration: none;"
           >
             See the Extensions
             <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
@@ -229,16 +228,16 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
       <section id="extensions" class="scroll-mt-24">
         <div class="mb-[var(--space-12)] text-center">
           <h2 class="mb-[var(--space-4)] text-2xl sm:text-3xl">
-            The <span class="text-gradient">Extensions</span>
+            Extensions
           </h2>
           <p style="color: var(--color-text-muted); font-size: var(--azd-text-base);" class="mx-auto max-w-2xl">
-            Built to solve real problems. Battle-tested with comprehensive security scanning,
-            cross-platform support, and extensive documentation.
+            Local service orchestration, authenticated Azure API calls, and deterministic
+            environment promotion distributed through one registry.
           </p>
         </div>
 
         <div class="mb-[var(--space-20)] grid gap-[var(--space-8)] md:grid-cols-2">
-          {extensions.map((ext) => (
+          {visibleExtensions.map((ext) => (
             <ExtensionShowcase {...ext} />
           ))}
         </div>
@@ -250,13 +249,10 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
           class="relative overflow-hidden rounded-[var(--radius-lg)] border p-[var(--space-8)]"
           style="background-color: var(--color-surface); border-color: var(--color-border);"
         >
-          <!-- Background glow -->
-          <div class="pointer-events-none absolute -top-20 -right-20 h-60 w-60 rounded-full opacity-10 blur-[80px]" style="background-color: var(--color-glow-violet);" aria-hidden="true"></div>
-
           <div class="relative mx-auto max-w-3xl">
             <div class="mb-[var(--space-8)] text-center">
               <h2 class="mb-[var(--space-4)] text-2xl sm:text-3xl">
-                Get Started in <span class="text-gradient">30 Seconds</span>
+                Install the extensions
               </h2>
               <p style="color: var(--color-text-muted);">
                 Install every extension with a single command
@@ -288,12 +284,12 @@ const metaDescription = `Extensions that give the Azure Developer CLI new abilit
               />
               <div class="-mt-[var(--space-4)] flex flex-col gap-[var(--space-3)]">
                 <p class="text-sm font-semibold" style="color: var(--color-text-muted);">Install all</p>
-                <CodeBlock code={`azd extension install ${extensions.map((ext) => ext.id).join(' ')}`} />
+                <CodeBlock code="azd extension install jongio.azd" />
 
                 <div class="border-t pt-[var(--space-4)]" style="border-color: var(--color-border);">
                   <p class="mb-[var(--space-3)] text-sm font-semibold" style="color: var(--color-text-muted);">Or install individually</p>
                   <div class="flex flex-col gap-[var(--space-2)]">
-                    {extensions.map((ext) => (
+                    {visibleExtensions.map((ext) => (
                       <CodeBlock code={`azd extension install ${ext.id}`} />
                     ))}
                   </div>

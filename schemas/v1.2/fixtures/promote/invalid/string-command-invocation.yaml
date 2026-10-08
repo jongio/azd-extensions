@@ -1,0 +1,28 @@
+name: invalid-string-command-invocation
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+      workflow:
+        prepare:
+          - task: build-output
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+  tasks:
+    build-output:
+      steps: [build]
+  commands:
+    build:
+      executable: pnpm
+      args: [build]
+      timeout: 30m

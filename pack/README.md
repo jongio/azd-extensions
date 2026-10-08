@@ -20,7 +20,7 @@ of attaching it to a library or CLI release it has nothing to do with.
 | `extension.yaml` | Source of truth. What `azd x pack` and `azd x publish` read. |
 | `registry.json` | The registry entry, merged into `public/registry.json` by `scripts/update-registry.js`. |
 
-`registry.json` is checked in rather than generated. The other three extensions
+`registry.json` is checked in rather than generated. The three product extensions
 publish theirs from their own repos as part of a release that uploads binaries;
 this one has no binaries to upload, so there is no release to hang it off.
 
@@ -45,6 +45,16 @@ asking people to be careful.
 The three extensions release together but not always in lockstep. An exact pin
 would force a pack release for every patch to any one of them, so dependencies
 declare a minimum and let azd resolve upward.
+
+## Staged promote activation
+
+Pack v0.1.0 installs app and rest. Pack v0.2.0 also installs promote, but the
+registry aggregator withholds any pack version whose dependencies do not have
+an installable version in the generated registry. While the promote repository
+or release artifacts are private, v0.1.0 remains the latest published pack.
+After the public promote release is reachable, v0.2.0 activates automatically
+on the next hourly registry poll without changing the meaning of the already
+published v0.1.0 entry.
 
 ## Known upstream inconsistency
 

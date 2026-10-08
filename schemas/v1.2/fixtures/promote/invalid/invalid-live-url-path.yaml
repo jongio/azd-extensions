@@ -1,0 +1,20 @@
+name: invalid-live-url-path
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+      liveFiles:
+        - path: search-index.json
+          urlPath: search-index.json
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

@@ -11,7 +11,7 @@
  * scripts or the UI showcase. Those scripts run `mage build` and `azd x build`
  * against a sibling source repo, and the pack has neither source nor a binary.
  * The showcase presents products; the pack is an install convenience for the
- * three products already there, not a fourth one.
+ * products already there, not a separate product.
  */
 
 export const EXTENSIONS = [
@@ -28,7 +28,16 @@ export const EXTENSIONS = [
       'https://raw.githubusercontent.com/jongio/azd-rest/refs/heads/main/registry.json',
   },
   {
-    // The extension pack. Unlike the three above it has no source repo of its
+    // This source remains unavailable while azd-promote is private. The
+    // aggregator tolerates that state and withholds pack versions whose
+    // dependencies are not yet installable.
+    id: 'jongio.azd.promote',
+    repo: 'azd-promote',
+    sourceUrl:
+      'https://raw.githubusercontent.com/jongio/azd-promote/refs/heads/main/registry.json',
+  },
+  {
+    // The extension pack. Unlike the products above it has no source repo of its
     // own, because it has no code: it is a dependency list and nothing else.
     // It lives here, in the registry repo, so it is versioned alongside the
     // registry that serves it rather than bolted onto a library release.

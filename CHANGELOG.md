@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Initial release of azd extensions registry website
-- Astro 6 with TypeScript
+- Astro 7 with TypeScript
 - Astro build system with static site generation
 - Tailwind CSS 4 styling
 - GitHub Actions CI/CD pipeline
@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Extension showcase component
 - Getting started guide
 - Responsive design for all screen sizes
+- Staged azd-promote registry, showcase, release, and extension-pack activation
+- Dependency-aware pack version filtering so unreleased extensions cannot break the public pack
 
 ### Features
 

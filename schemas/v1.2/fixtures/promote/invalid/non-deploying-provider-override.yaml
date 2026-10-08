@@ -1,0 +1,25 @@
+name: invalid-non-deploying-provider-override
+promote:
+  chains:
+    release:
+      targets: [prod]
+  environments:
+    prod:
+      provider: publisher
+      artifacts: [site]
+  operations:
+    validate:
+      environment: prod
+      deploy: false
+      provider: validator
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      executable: publish
+    validator:
+      type: process
+      executable: validate
