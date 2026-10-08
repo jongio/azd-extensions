@@ -3225,22 +3225,30 @@
           "$ref": "#/definitions/promoteGitRef"
         }
       },
-      "description": "Git repository policy expressed as worktree, upstream, and exact ref semantic states. The promote-level policy is the base. Environment-authored members recursively merge into that base, including ref members. Omitted members inherit and authored members replace the same member."
+      "description": "Git repository policy expressed as worktree, upstream, and ref relationship semantic states. The promote-level policy is the base. Environment-authored members recursively merge into that base, including ref members. Omitted members inherit and authored relationship members replace the inherited relationship."
     },
     "promoteGitRef": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["exact"],
+      "oneOf": [
+        {"required": ["exact"]},
+        {"required": ["integratedInto"]}
+      ],
       "properties": {
         "exact": {
           "type": "string",
           "minLength": 1,
           "description": "Exact Git ref that must resolve to HEAD. Git ref syntax is not restricted to lower camelCase."
         },
+        "integratedInto": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Git ref that must contain HEAD as an ancestor, preserving the exact candidate tested in earlier environments."
+        },
         "refresh": {
           "type": "boolean",
           "default": false,
-          "description": "Refreshes the ref remote before comparison when the ref names a remote."
+          "description": "Refreshes the selected exact or integratedInto ref remote before comparison when the ref names a remote."
         }
       }
     },
@@ -3269,11 +3277,17 @@
       "type": "object",
       "additionalProperties": false,
       "minProperties": 1,
+      "not": {"required": ["exact", "integratedInto"]},
       "properties": {
         "exact": {
           "type": "string",
           "minLength": 1,
           "description": "Optional replacement for the base exact Git ref."
+        },
+        "integratedInto": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional replacement requiring the candidate commit to be contained in this Git ref."
         },
         "refresh": {
           "type": "boolean",

@@ -455,7 +455,7 @@ promote:
       git:
         worktree: clean
         ref:
-          exact: origin/main
+          integratedInto: origin/main
           refresh: true
       requires:
         predecessor:
@@ -808,7 +808,7 @@ git:
   worktree: clean # clean | dirtyAllowed
   upstream: published # published | optional
   ref:
-    exact: origin/main
+    integratedInto: origin/main
     refresh: true
 ```
 
@@ -816,7 +816,11 @@ git:
 - `worktree: dirtyAllowed` replaces `allow_dirty: true`.
 - `upstream: published` means `HEAD` equals its configured upstream.
 - `ref.exact` requires the exact ref commit.
+- `ref.integratedInto` preserves the current candidate and requires it to be an
+  ancestor of the configured ref, so a normally merged staging candidate can
+  advance without acquiring a new SHA.
 - `ref.refresh` fetches the named remote before comparison.
+- `ref.exact` and `ref.integratedInto` are mutually exclusive.
 - Invalid combinations are structurally impossible or explicitly rejected.
 
 Git policy composes in one ordered sequence:

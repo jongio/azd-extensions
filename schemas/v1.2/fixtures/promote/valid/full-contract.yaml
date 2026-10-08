@@ -159,7 +159,7 @@ promote:
       git:
         worktree: clean
         ref:
-          exact: origin/main
+          integratedInto: origin/main
           refresh: true
       requires:
         predecessor:

@@ -332,6 +332,30 @@ describe('azure.yaml v1.2 promote contract', () => {
     }
   })
 
+  it('requires exactly one Git ref relationship', async () => {
+    const validate = await compileSchema()
+    const fixture = await loadFixture('valid', 'full-contract')
+    const prodRef = fixture.promote.environments.prod.git.ref
+
+    expect(prodRef).toEqual({
+      integratedInto: 'origin/main',
+      refresh: true,
+    })
+    expect(validate(fixture), JSON.stringify(validate.errors, null, 2)).toBe(true)
+
+    prodRef.exact = 'origin/main'
+    expect(validate(fixture)).toBe(false)
+    expect(validate.errors).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          instancePath: '/promote/environments/prod/git/ref',
+          keyword: 'not',
+        }),
+      ])
+    )
+
+  })
+
   it('uses reusable tasks, parameterized commands, and explicit lifecycle groups', async () => {
     const schema = await loadSchema()
     const fixture = await loadFixture('valid', 'full-contract')
