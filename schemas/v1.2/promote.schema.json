@@ -1,0 +1,1055 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://raw.githubusercontent.com/jongio/azd-extensions/main/schemas/v1.2/promote.schema.json",
+  "$ref": "#/definitions/promoteConfig",
+  "definitions": {
+    "promoteConfig": {
+      "type": "object",
+      "title": "Environment promotion configuration",
+      "description": "Configures chains, environments, operations, artifacts, strict providers, reusable workflow tasks, reusable parameterized commands, ordered Git policy composition, inline approvals and Git snapshots, and predecessor verification imports. Project identity and framework state paths are derived by azd promote.",
+      "additionalProperties": false,
+      "required": [
+        "chains",
+        "environments",
+        "artifacts",
+        "providers"
+      ],
+      "properties": {
+        "chains": {
+          "$ref": "#/definitions/promoteChains"
+        },
+        "environments": {
+          "$ref": "#/definitions/promoteEnvironments"
+        },
+        "operations": {
+          "$ref": "#/definitions/promoteOperations"
+        },
+        "artifacts": {
+          "$ref": "#/definitions/promoteArtifacts"
+        },
+        "providers": {
+          "$ref": "#/definitions/promoteProviders"
+        },
+        "tasks": {
+          "$ref": "#/definitions/promoteTasks"
+        },
+        "commands": {
+          "$ref": "#/definitions/promoteCommands"
+        },
+        "git": {
+          "$ref": "#/definitions/promoteGit"
+        }
+      }
+    },
+    "promoteChains": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteChain"
+      },
+      "description": "Named lowercase kebab-case promotion chains. A single chain is selected automatically. When multiple chains exist, runtime validation requires exactly one chain with default set to true."
+    },
+    "promoteEnvironments": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteTarget"
+      },
+      "description": "Promotion targets keyed by real azd environment name. Environment names are externally owned and may contain hyphens."
+    },
+    "promoteOperations": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteOperation"
+      },
+      "description": "Named lowercase kebab-case operations bound to real azd environments."
+    },
+    "promoteArtifacts": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteArtifact"
+      },
+      "description": "Artifact definitions keyed by lowercase kebab-case identifiers."
+    },
+    "promoteProviders": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteProvider"
+      },
+      "description": "Provider definitions keyed by lowercase kebab-case identifiers."
+    },
+    "promoteTasks": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteTask"
+      },
+      "description": "Reusable ordered command-step groups keyed by lowercase kebab-case identifiers. Tasks cannot invoke other tasks."
+    },
+    "promoteCommands": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteCommand"
+      },
+      "description": "Reusable bounded command definitions keyed by lowercase kebab-case identifiers. One definition may be invoked repeatedly with different scalar parameters."
+    },
+    "promoteGit": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "worktree": {
+          "type": "string",
+          "enum": [
+            "clean",
+            "dirtyAllowed"
+          ],
+          "description": "Requires a clean worktree or explicitly permits tracked and untracked changes."
+        },
+        "upstream": {
+          "type": "string",
+          "enum": [
+            "published",
+            "optional"
+          ],
+          "description": "Requires HEAD to equal its configured upstream or explicitly makes upstream publication optional."
+        },
+        "ref": {
+          "$ref": "#/definitions/promoteGitRef"
+        }
+      },
+      "description": "Git repository policy expressed as worktree, upstream, and ref relationship semantic states. The promote-level policy is the base. Environment-authored members recursively merge into that base, including ref members. Omitted members inherit and authored relationship members replace the inherited relationship."
+    },
+    "promoteChain": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "targets"
+      ],
+      "properties": {
+        "default": {
+          "type": "boolean",
+          "description": "Selects this chain for zero-argument promotion. Runtime validation requires exactly one default when multiple chains are authored."
+        },
+        "targets": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "Ordered real azd environment names or named operation identifiers. Environment names retain their native naming conventions."
+        }
+      }
+    },
+    "promoteTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "provider",
+        "artifacts"
+      ],
+      "properties": {
+        "provider": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case provider identifier."
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "description": "Lowercase kebab-case artifact identifiers used by this target."
+        },
+        "verificationAuth": {
+          "$ref": "#/definitions/promoteVerificationAuth"
+        },
+        "requires": {
+          "$ref": "#/definitions/promoteRequirements"
+        },
+        "workflow": {
+          "$ref": "#/definitions/promoteWorkflow"
+        },
+        "locks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "External lock names. Lock naming is provider-defined and is not restricted to lower camelCase."
+        },
+        "gitSnapshot": {
+          "$ref": "#/definitions/promoteGitSnapshot"
+        },
+        "git": {
+          "$ref": "#/definitions/promoteGitOverride"
+        },
+        "approval": {
+          "$ref": "#/definitions/promoteApproval"
+        }
+      }
+    },
+    "promoteOperation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "environment"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "deploy"
+            ],
+            "properties": {
+              "deploy": {
+                "const": false
+              }
+            }
+          },
+          "then": {
+            "not": {
+              "required": [
+                "provider"
+              ]
+            }
+          }
+        }
+      ],
+      "description": "A named target composed from one real azd environment. The operation inherits provider, artifacts, verificationAuth, and git from that environment. Authored provider, artifacts, and verificationAuth replace the inherited value. Authored git merges recursively by property, including ref fields. Requirements, workflow, locks, gitSnapshot, and approval are operation-owned and are never inherited. By default the selected provider deploys every artifact. Setting deploy to false explicitly suppresses provider expansion, operation-result creation, deployment verification, and live-file HTTP verification while preserving artifact sealing and workflow tasks. No other implicit composition occurs.",
+      "properties": {
+        "environment": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Real azd environment used as the operation execution context and composition base."
+        },
+        "deploy": {
+          "type": "boolean",
+          "default": true,
+          "description": "Whether the inherited or replacement provider deploys the selected artifacts. Set to false for validation-only operations that still seal artifacts and run lifecycle commands."
+        },
+        "provider": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Optional lowercase kebab-case provider identifier that replaces the base environment provider. It cannot be authored when deploy is false."
+        },
+        "artifacts": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "description": "Optional lowercase kebab-case artifact identifiers that replace the base environment artifacts."
+        },
+        "verificationAuth": {
+          "$ref": "#/definitions/promoteVerificationAuth"
+        },
+        "requires": {
+          "$ref": "#/definitions/promoteRequirements"
+        },
+        "workflow": {
+          "$ref": "#/definitions/promoteWorkflow"
+        },
+        "locks": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "External lock names. Lock naming is provider-defined and is not restricted to lower camelCase."
+        },
+        "gitSnapshot": {
+          "$ref": "#/definitions/promoteGitSnapshot"
+        },
+        "git": {
+          "$ref": "#/definitions/promoteGitOverride"
+        },
+        "approval": {
+          "$ref": "#/definitions/promoteApproval"
+        }
+      }
+    },
+    "promoteArtifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "path"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "static"
+          ],
+          "description": "Artifact contract type. schema v1.2 currently supports static directory artifacts."
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Project-local root directory fingerprinted, sealed, deployed, and finally reverified for this artifact."
+        },
+        "sealedPaths": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[^{}]+$"
+          },
+          "description": "Additional literal project-local paths sealed with the artifact. Context and parameter tokens are not expanded."
+        },
+        "liveFiles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/promoteLiveFile"
+          },
+          "description": "Deployed files whose bytes must match the sealed artifact after the apply and verify lifecycles complete."
+        }
+      }
+    },
+    "promoteProvider": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/promoteProcessProvider"
+        },
+        {
+          "$ref": "#/definitions/promoteAzdProvider"
+        }
+      ],
+      "description": "Strict provider definition selected by its type discriminator. Fields from different provider types cannot be mixed."
+    },
+    "promoteTask": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "steps"
+      ],
+      "properties": {
+        "steps": {
+          "$ref": "#/definitions/promoteCommandInvocations"
+        }
+      }
+    },
+    "promoteCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "effect",
+        "executable",
+        "timeout"
+      ],
+      "allOf": [
+        {
+          "if": {
+            "required": [
+              "result"
+            ]
+          },
+          "then": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "const": "change"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "verification"
+            ]
+          },
+          "then": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "const": "verification"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "required": [
+              "effect"
+            ],
+            "properties": {
+              "effect": {
+                "const": "verification"
+              }
+            }
+          },
+          "then": {
+            "required": [
+              "verification"
+            ]
+          }
+        }
+      ],
+      "properties": {
+        "effect": {
+          "type": "string",
+          "enum": [
+            "none",
+            "verification",
+            "change",
+            "inspection"
+          ],
+          "description": "Required effect classification. none permits local preparation without external state change; verification emits a structured record; change may mutate durable or external state; inspection is read-only."
+        },
+        "result": {
+          "type": "string",
+          "const": "change",
+          "description": "Optional result classification for a command that reports a change. Valid only when effect is change; change commands may omit it."
+        },
+        "executable": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Executable launched directly without shell interpolation."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit argv values supporting command context tokens and declared scalar parameters."
+        },
+        "workdir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional project-relative command working directory."
+        },
+        "runIn": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Intentional cross-environment or host execution boundary. Omit to use the target environment, name another azd environment explicitly, or use $host for direct host execution."
+        },
+        "variables": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[A-Za-z_][A-Za-z0-9_]*$"
+          },
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "Environment variables supplied to the command process."
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^(?:(?:[1-9]|[1-9][0-9]|[1-9][0-9]{2}|[12][0-9]{3}|3[0-5][0-9]{2}|3600)s|(?:[1-9]|[1-5][0-9]|60)m|1h)$",
+          "description": "Positive single-unit duration no greater than one hour."
+        },
+        "verification": {
+          "$ref": "#/definitions/promoteVerification"
+        },
+        "capture": {
+          "type": "string",
+          "enum": [
+            "metadata-only"
+          ],
+          "description": "Optional output-capture policy. metadata-only records counts and status without persisting command output text."
+        }
+      }
+    },
+    "promoteGitRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "oneOf": [
+        {
+          "required": [
+            "exact"
+          ]
+        },
+        {
+          "required": [
+            "integratedInto"
+          ]
+        }
+      ],
+      "properties": {
+        "exact": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact Git ref that must resolve to HEAD. Git ref syntax is not restricted to lower camelCase."
+        },
+        "integratedInto": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Git ref that must contain HEAD as an ancestor, preserving the exact candidate tested in earlier environments."
+        },
+        "refresh": {
+          "type": "boolean",
+          "default": false,
+          "description": "Refreshes the selected exact or integratedInto ref remote before comparison when the ref names a remote."
+        }
+      }
+    },
+    "promoteVerificationAuth": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/promoteBasicVerificationAuth"
+        },
+        {
+          "$ref": "#/definitions/promoteHeadersVerificationAuth"
+        },
+        {
+          "$ref": "#/definitions/promoteServiceTokenVerificationAuth"
+        }
+      ],
+      "description": "Authentication for compiler-generated HTTP live-file verification. Secrets are resolved through explicit references in the target azd environment; this policy does not authenticate arbitrary commands or provider processes."
+    },
+    "promoteRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "predecessor"
+      ],
+      "properties": {
+        "predecessor": {
+          "$ref": "#/definitions/promotePredecessorRequirements"
+        }
+      }
+    },
+    "promoteWorkflow": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "prepare": {
+          "$ref": "#/definitions/promoteTaskInvocations"
+        },
+        "apply": {
+          "$ref": "#/definitions/promoteTaskInvocations"
+        },
+        "verify": {
+          "$ref": "#/definitions/promoteTaskInvocations"
+        },
+        "cleanup": {
+          "$ref": "#/definitions/promoteTaskInvocations"
+        }
+      },
+      "description": "Ordered reusable task invocations grouped by explicit prepare, apply, verify, and cleanup lifecycles. Targets invoke tasks rather than individual commands."
+    },
+    "promoteGitSnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mode",
+        "refs"
+      ],
+      "description": "Inline Git snapshot policy owned by one environment or operation. Its purpose is derived from that owning environment or operation, so no separate snapshot identifier or purpose is authored.",
+      "properties": {
+        "remote": {
+          "type": "string",
+          "minLength": 1,
+          "description": "External Git remote name. Remote naming is not restricted to lower camelCase."
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "publish",
+            "verify"
+          ],
+          "description": "publish creates or advances configured refs after verification; verify only observes that refs already point to the candidate."
+        },
+        "recovery": {
+          "type": "string",
+          "enum": [
+            "manual",
+            "none"
+          ],
+          "default": "manual",
+          "description": "Recorded rollback guidance metadata. The runtime never performs automatic rollback."
+        },
+        "refs": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/definitions/promoteGitSnapshotRef"
+          },
+          "description": "Branch or tag refs published or verified against the exact candidate commit."
+        }
+      }
+    },
+    "promoteGitOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+        "worktree": {
+          "type": "string",
+          "enum": [
+            "clean",
+            "dirtyAllowed"
+          ],
+          "description": "Optional replacement for the inherited worktree policy."
+        },
+        "upstream": {
+          "type": "string",
+          "enum": [
+            "published",
+            "optional"
+          ],
+          "description": "Optional replacement for the inherited upstream policy."
+        },
+        "ref": {
+          "$ref": "#/definitions/promoteGitRefOverride"
+        }
+      },
+      "description": "Partial environment or operation Git override recursively merged into the effective parent Git policy."
+    },
+    "promoteApproval": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "message",
+        "match"
+      ],
+      "properties": {
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Human-readable description of the target approval boundary."
+        },
+        "match": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact text an interactive operator must enter to approve the target."
+        },
+        "automation": {
+          "type": "string",
+          "enum": [
+            "allowed",
+            "denied"
+          ],
+          "default": "denied",
+          "description": "Whether --yes may grant this approval unattended. Omission defaults to denied."
+        }
+      }
+    },
+    "promoteLiveFile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path relative to the artifact root whose deployed bytes must match the sealed artifact."
+        },
+        "urlPath": {
+          "type": "string",
+          "pattern": "^/",
+          "description": "Optional absolute URL path override. When omitted, the artifact-relative path is used."
+        }
+      }
+    },
+    "promoteProcessProvider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "executable",
+        "timeout"
+      ],
+      "properties": {
+        "type": {
+          "const": "process",
+          "description": "Selects the provider-protocol process adapter."
+        },
+        "executable": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Executable launched directly without shell interpolation."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Explicit argv values. Provider context tokens are expanded fail-closed; literal braces use {{ and }}."
+        },
+        "workdir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional project-relative process working directory."
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^(?:(?:[1-9]|[1-9][0-9]|[1-9][0-9]{2}|[12][0-9]{3}|3[0-5][0-9]{2}|3600)s|(?:[1-9]|[1-5][0-9]|60)m|1h)$",
+          "description": "Positive single-unit duration no greater than one hour."
+        }
+      }
+    },
+    "promoteAzdProvider": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "timeout"
+      ],
+      "properties": {
+        "type": {
+          "const": "azd",
+          "description": "Selects framework-owned azd provision and deploy actions."
+        },
+        "args": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Additional arguments supplied to azd deploy."
+        },
+        "workdir": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional project-relative azd configuration root."
+        },
+        "timeout": {
+          "type": "string",
+          "pattern": "^(?:(?:[1-9]|[1-9][0-9]|[1-9][0-9]{2}|[12][0-9]{3}|3[0-5][0-9]{2}|3600)s|(?:[1-9]|[1-5][0-9]|60)m|1h)$",
+          "description": "Positive single-unit duration no greater than one hour."
+        }
+      }
+    },
+    "promoteCommandInvocations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/promoteCommandInvocation"
+      }
+    },
+    "promoteVerification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Path to the structured verification record produced by this command."
+        }
+      }
+    },
+    "promoteBasicVerificationAuth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "username",
+        "password"
+      ],
+      "properties": {
+        "type": {
+          "const": "basic",
+          "description": "Selects HTTP Basic authentication for generated live-file requests."
+        },
+        "username": {
+          "$ref": "#/definitions/promoteAzdSecretReference"
+        },
+        "password": {
+          "$ref": "#/definitions/promoteAzdSecretReference"
+        }
+      }
+    },
+    "promoteHeadersVerificationAuth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "headers"
+      ],
+      "properties": {
+        "type": {
+          "const": "headers",
+          "description": "Selects one or more secret HTTP request headers."
+        },
+        "headers": {
+          "type": "object",
+          "minProperties": 1,
+          "propertyNames": {
+            "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$"
+          },
+          "additionalProperties": {
+            "$ref": "#/definitions/promoteAzdSecretReference"
+          },
+          "description": "Maps external HTTP header names to explicit azd secret references. Header names must also be unique case-insensitively at runtime."
+        }
+      }
+    },
+    "promoteServiceTokenVerificationAuth": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "clientIdHeader",
+        "clientId",
+        "clientSecretHeader",
+        "clientSecret"
+      ],
+      "properties": {
+        "type": {
+          "const": "serviceToken",
+          "description": "Selects a two-header client ID and client secret authentication contract."
+        },
+        "clientIdHeader": {
+          "type": "string",
+          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
+          "description": "HTTP header carrying the resolved client ID. It must differ case-insensitively from clientSecretHeader."
+        },
+        "clientId": {
+          "$ref": "#/definitions/promoteAzdSecretReference"
+        },
+        "clientSecretHeader": {
+          "type": "string",
+          "pattern": "^[!#$%&'*+.^_`|~0-9A-Za-z-]+$",
+          "description": "HTTP header carrying the resolved client secret. It must differ case-insensitively from clientIdHeader."
+        },
+        "clientSecret": {
+          "$ref": "#/definitions/promoteAzdSecretReference"
+        }
+      }
+    },
+    "promotePredecessorRequirements": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "verifications"
+      ],
+      "properties": {
+        "verifications": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+          },
+          "description": "Stable lowercase kebab-case verification identifiers imported from the exact predecessor run record. The compiler owns their filesystem paths."
+        }
+      }
+    },
+    "promoteTaskInvocations": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/definitions/promoteTaskInvocation"
+      }
+    },
+    "promoteGitSnapshotRef": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "kind"
+      ],
+      "oneOf": [
+        {
+          "required": [
+            "ref"
+          ]
+        },
+        {
+          "required": [
+            "template"
+          ]
+        }
+      ],
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "branch"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ref": {
+                "pattern": "^refs/heads/[^{}]+$"
+              },
+              "template": {
+                "pattern": "^refs/heads/(?:[^{}]|\\{gitSha\\})*\\{gitSha\\}(?:[^{}]|\\{gitSha\\})*$"
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "tag"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "ref": {
+                "pattern": "^refs/tags/[^{}]+$"
+              },
+              "template": {
+                "pattern": "^refs/tags/(?:[^{}]|\\{gitSha\\})*\\{gitSha\\}(?:[^{}]|\\{gitSha\\})*$"
+              }
+            }
+          }
+        }
+      ],
+      "properties": {
+        "kind": {
+          "type": "string",
+          "enum": [
+            "branch",
+            "tag"
+          ],
+          "description": "Selects movable branch semantics under refs/heads/ or immutable tag semantics under refs/tags/."
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Exact external Git ref. Git ref syntax is not restricted to lower camelCase."
+        },
+        "template": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Template for an external Git ref. Templates must contain only the {gitSha} context token."
+        }
+      }
+    },
+    "promoteGitRefOverride": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "not": {
+        "required": [
+          "exact",
+          "integratedInto"
+        ]
+      },
+      "properties": {
+        "exact": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional replacement for the base exact Git ref."
+        },
+        "integratedInto": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Optional replacement requiring the candidate commit to be contained in this Git ref."
+        },
+        "refresh": {
+          "type": "boolean",
+          "description": "Optional replacement for the base ref refresh behavior."
+        }
+      }
+    },
+    "promoteCommandInvocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "command"
+      ],
+      "properties": {
+        "command": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case reusable command identifier."
+        },
+        "with": {
+          "$ref": "#/definitions/promoteCommandParameters"
+        }
+      }
+    },
+    "promoteAzdSecretReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "azd"
+      ],
+      "properties": {
+        "azd": {
+          "type": "string",
+          "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
+          "description": "Name of an azd environment value that must be resolved as a secret."
+        }
+      }
+    },
+    "promoteTaskInvocation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "task"
+      ],
+      "properties": {
+        "task": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$",
+          "description": "Lowercase kebab-case reusable task identifier."
+        },
+        "with": {
+          "$ref": "#/definitions/promoteCommandParameters"
+        }
+      }
+    },
+    "promoteCommandParameters": {
+      "type": "object",
+      "minProperties": 1,
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$"
+      },
+      "additionalProperties": {
+        "$ref": "#/definitions/promoteCommandParameterValue"
+      },
+      "description": "Lowercase kebab-case scalar parameters supplied to one reusable command invocation."
+    },
+    "promoteCommandParameterValue": {
+      "type": [
+        "string",
+        "number",
+        "boolean"
+      ]
+    }
+  }
+}

@@ -1,0 +1,19 @@
+name: invalid-legacy-artifact-identity-paths
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+      identityPaths: [azure.yaml]
+  providers:
+    publisher:
+      type: process
+      executable: publish
+      timeout: 5m

@@ -1,0 +1,29 @@
+name: invalid-legacy-change-lifecycle
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+      workflow:
+        change:
+          - task: asset-publish
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      executable: publish
+  tasks:
+    asset-publish:
+      steps:
+        - command: upload
+  commands:
+    upload:
+      effect: change
+      executable: upload
+      timeout: 5m

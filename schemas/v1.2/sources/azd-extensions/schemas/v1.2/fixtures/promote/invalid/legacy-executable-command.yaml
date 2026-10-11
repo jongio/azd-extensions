@@ -1,0 +1,21 @@
+name: invalid-legacy-executable-command
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      command: publish
+  commands:
+    build:
+      command: build
+      timeout: 5m

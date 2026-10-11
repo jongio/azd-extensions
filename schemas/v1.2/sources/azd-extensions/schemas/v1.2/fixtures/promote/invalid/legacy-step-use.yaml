@@ -1,0 +1,28 @@
+name: invalid-legacy-step-use
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+      workflow:
+        prepare:
+          - task: file-prep
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      executable: publish
+  tasks:
+    file-prep:
+      steps:
+        - use: build
+  commands:
+    build:
+      executable: build
+      timeout: 5m

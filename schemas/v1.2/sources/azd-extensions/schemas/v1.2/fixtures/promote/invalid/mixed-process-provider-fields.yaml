@@ -1,0 +1,18 @@
+name: invalid-mixed-process-provider-fields
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+      config: workers/site/wrangler.jsonc

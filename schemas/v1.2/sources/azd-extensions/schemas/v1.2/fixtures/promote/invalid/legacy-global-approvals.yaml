@@ -1,0 +1,21 @@
+name: invalid-legacy-global-approvals
+promote:
+  chains:
+    release:
+      targets: [dev]
+  approvals:
+    targets: [dev]
+    message: Approve dev
+    match: PROMOTE
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish

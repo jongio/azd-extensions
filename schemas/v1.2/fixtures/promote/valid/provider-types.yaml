@@ -1,0 +1,28 @@
+name: provider-types
+promote:
+  chains:
+    release:
+      targets: [process-env, azd-env]
+  environments:
+    process-env:
+      provider: process-publisher
+      artifacts: [site]
+    azd-env:
+      provider: azd-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist/site
+  providers:
+    process-publisher:
+      type: process
+      executable: publish-site
+      args: [--artifact, '{artifact}', --result, '{result}']
+      workdir: .
+      timeout: 15m
+    azd-publisher:
+      type: azd
+      args: [--all]
+      workdir: infra
+      timeout: 30m

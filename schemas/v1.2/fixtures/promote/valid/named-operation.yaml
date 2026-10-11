@@ -1,0 +1,106 @@
+name: named-promotion-operation
+promote:
+  chains:
+    release:
+      targets: [prod]
+  git:
+    worktree: clean
+    upstream: published
+    ref:
+      exact: origin/main
+      refresh: false
+  environments:
+    prod:
+      provider: publisher
+      artifacts: [site]
+      verificationAuth:
+        type: headers
+        headers:
+          X-Release-Token: { azd: RELEASE_TOKEN }
+      git:
+        ref:
+          refresh: true
+      approval:
+        message: Approve production promotion
+        match: PROMOTE
+      gitSnapshot:
+        mode: publish
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/production
+      workflow:
+        prepare:
+          - task: build-output
+            with: { mode: release }
+        verify:
+          - task: smoke-tests
+            with: { suite: full }
+        cleanup:
+          - task: cleanup-output
+  operations:
+    validate-content:
+      environment: prod
+      deploy: false
+      git:
+        worktree: dirtyAllowed
+        ref:
+          refresh: false
+      locks: [content:production-candidate]
+      workflow:
+        prepare:
+          - task: build-output
+            with: { mode: preview }
+        verify:
+          - task: smoke-tests
+            with: { suite: fast }
+          - task: content-validation
+        cleanup:
+          - task: cleanup-output
+  artifacts:
+    site:
+      type: static
+      path: dist
+      sealedPaths:
+        - .azure/promote/verification/validate-content-selected-files.json
+  providers:
+    publisher:
+      type: process
+      executable: node
+      args: [scripts/publish-content.mjs, --artifact, '{artifact}', --result, '{result}']
+      timeout: 30m
+  tasks:
+    build-output:
+      steps:
+        - command: build
+          with: { mode: '{mode}' }
+    smoke-tests:
+      steps:
+        - command: smoke
+          with: { suite: '{suite}' }
+    content-validation:
+      steps:
+        - command: validate-content
+    cleanup-output:
+      steps:
+        - command: clean-output
+  commands:
+    build:
+      effect: none
+      executable: pnpm
+      args: [build, --mode, '{mode}']
+      timeout: 30m
+    smoke:
+      effect: inspection
+      executable: pnpm
+      args: [test:smoke, --suite, '{suite}']
+      timeout: 15m
+    validate-content:
+      effect: inspection
+      executable: node
+      args: [scripts/validate-content.mjs, --artifact, '{artifact}']
+      timeout: 30m
+    clean-output:
+      effect: none
+      executable: node
+      args: [scripts/clean-output.mjs]
+      timeout: 5m

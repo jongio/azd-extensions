@@ -1,0 +1,24 @@
+name: multiple-promotion-chains
+promote:
+  chains:
+    release:
+      default: true
+      targets: [dev-west, staging]
+    preview:
+      targets: [dev-west]
+  environments:
+    dev-west:
+      provider: local-publisher
+      artifacts: [site]
+    staging:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist/site-output
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+      timeout: 5m

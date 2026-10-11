@@ -1,0 +1,31 @@
+name: invalid-nested-task
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+      workflow:
+        prepare:
+          - task: outer
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      executable: publish
+  tasks:
+    outer:
+      steps:
+        - task: inner
+    inner:
+      steps:
+        - command: build
+  commands:
+    build:
+      executable: build
+      timeout: 5m

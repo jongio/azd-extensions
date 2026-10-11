@@ -1,0 +1,29 @@
+name: invalid-legacy-target-policy-names
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: publisher
+      artifacts: [site]
+      auth:
+        type: basic
+        username: { azd: BASIC_AUTH_USERNAME }
+        password: { azd: BASIC_AUTH_PASSWORD }
+      snapshot:
+        mode: publish
+        refs:
+          - kind: branch
+            ref: refs/heads/environments/dev
+      requires:
+        previous:
+          verifications: [review]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    publisher:
+      type: process
+      executable: publish
