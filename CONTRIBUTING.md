@@ -13,8 +13,19 @@ pnpm dev
 
 ### Prerequisites
 
-- Node.js 20+
-- pnpm 9+
+- Node.js 22.12+ (22.x), 24.x, or 26+
+- The pnpm version pinned in `package.json` (currently 12.10.1)
+
+### Dependency Maintenance
+
+Use pnpm for this repository, including its lockfile. Third-party releases must
+age for three days before resolution (`minimumReleaseAge: 4320` in
+`pnpm-workspace.yaml`); the first-party `@jongio/azd-web-core` exception remains.
+Security overrides list their advisory and removal condition beside the pin.
+Resolve changes with `pnpm install --ignore-scripts` first and inspect the changed
+packages before allowing lifecycle scripts. Validate a clean frozen install,
+build, typecheck, tests, and offline schema/registry checks in a disposable,
+credential-free container with networking disabled during script execution.
 
 ## Development Commands
 
