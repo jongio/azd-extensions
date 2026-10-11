@@ -36,12 +36,15 @@ export function createSchemaValidator(directory) {
     path, schema: JSON.parse(readFileSync(path, 'utf8')),
   })).filter(({ schema }) => schema.$schema);
   const known = new Map();
+  const identities = new Map();
+  const pending = new Map();
   const dialects = new Set(['http://json-schema.org/draft-07/schema#', 'https://json-schema.org/draft/2019-09/schema']);
   for (const { path, schema } of resources) {
     if (!dialects.has(schema.$schema)) throw new Error(`Unsupported dialect in ${path}: ${schema.$schema}`);
     if (!schema.$id) throw new Error(`Missing schema ID: ${path}`);
     if (known.has(schema.$id)) throw new Error(`Duplicate schema ID: ${schema.$id}`);
     known.set(schema.$id, dialectResource(schema));
+    identities.set(schema.$id, JSON.stringify(schema));
   }
   const loadSchema = async (uri) => {
     const schema = known.get(uri);
@@ -57,12 +60,25 @@ export function createSchemaValidator(directory) {
     resources,
     async compile(schema) {
       if (!dialects.has(schema.$schema)) throw new Error(`Unsupported dialect: ${schema.$schema}`);
+      const identity = JSON.stringify(schema);
+      if (schema.$id && identities.has(schema.$id) && identities.get(schema.$id) !== identity) {
+        throw new Error(`Conflicting schema content for ID: ${schema.$id}`);
+      }
       const engine = schema.$schema.includes('2019-09') ? modern : draft;
       if (!engine.validateSchema(schema)) throw new Error(`Invalid metaschema: ${engine.errorsText()}`);
-      const registered = known.get(schema.$id);
-      const resource = registered && JSON.stringify(schema) === JSON.stringify(resources.find((item) => item.schema.$id === schema.$id).schema)
-        ? registered : dialectResource(schema);
-      return engine.getSchema(schema.$id) || engine.compileAsync(resource);
+      const resource = known.get(schema.$id) || dialectResource(schema);
+      if (!schema.$id) return engine.compileAsync(resource);
+      identities.set(schema.$id, identity);
+      if (pending.has(schema.$id)) return pending.get(schema.$id);
+      const cached = engine.getSchema(schema.$id);
+      if (cached) return cached;
+      const compilation = engine.compileAsync(resource);
+      pending.set(schema.$id, compilation);
+      try {
+        return await compilation;
+      } finally {
+        pending.delete(schema.$id);
+      }
     },
   };
 }

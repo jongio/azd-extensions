@@ -105,6 +105,41 @@ describe('versioned compatibility contract', () => {
     }
   });
 
+  it('rejects changed registered content before or after compilation', async () => {
+    for (const compileFirst of [false, true]) {
+      const registry = createSchemaValidator(directory);
+      const schema = read('azure.yaml.json');
+      if (compileFirst) await registry.compile(schema);
+      for (const name of [{ const: 'different-name' }, { $ref: 'https://example.test/not-registered' }]) {
+        const changed = structuredClone(schema);
+        changed.properties.name = name;
+        await expect(registry.compile(changed)).rejects.toThrow('Conflicting schema content for ID');
+      }
+      const original = await registry.compile(schema);
+      expect(original({ name: 'example' })).toBe(true);
+      expect(await registry.compile(structuredClone(schema))).toBe(original);
+    }
+  });
+
+  it('preserves identical concurrent compilation and rejects conflicting custom identities', async () => {
+    const registry = createSchemaValidator(directory);
+    const schema = {
+      $schema: 'https://json-schema.org/draft/2019-09/schema',
+      $id: 'https://example.test/concurrent',
+      $ref: read('azure.yaml.json').$id,
+    };
+    const first = registry.compile(schema);
+    const second = registry.compile(structuredClone(schema));
+    await expect(registry.compile({ ...schema, $ref: 'https://example.test/not-registered' }))
+      .rejects.toThrow('Conflicting schema content for ID');
+    const [compiled, repeated] = await Promise.all([first, second]);
+    expect(repeated).toBe(compiled);
+    expect(compiled({ name: 'example' })).toBe(true);
+    expect(await registry.compile(structuredClone(schema))).toBe(compiled);
+    await expect(registry.compile({ ...schema, const: 'different-name' }))
+      .rejects.toThrow('Conflicting schema content for ID');
+  });
+
   it('checks bounded promote command durations against the actual fragment', () => {
     const document = parse(readFileSync(join(directory, 'fixtures', 'promote', 'valid', 'minimal.yaml'), 'utf8'));
     for (const timeout of ['1s', '3600s', '60m', '1h']) {
