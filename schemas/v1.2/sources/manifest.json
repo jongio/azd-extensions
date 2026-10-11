@@ -1,0 +1,767 @@
+[
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "schemas/v1.0/azure.yaml.json",
+    "file": "sources/azure-dev/schemas/v1.0/azure.yaml.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/schemas/v1.0/azure.yaml.json",
+    "blob": "f7a7c9b5895676bdb4d5743737efe53db32e37b6",
+    "sha256": "ff8d40d0d84c4b5ab1a934e61553c8ce985a05da63e63c59f6abcd58ab73b998"
+  },
+  {
+    "repo": "jongio/azd-app",
+    "commit": "a052d020ec1237ddbf922dfe6baa87e0a6b52b37",
+    "path": "schemas/v1.1/azure.yaml.json",
+    "file": "sources/azd-app/schemas/v1.1/azure.yaml.json",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-app/a052d020ec1237ddbf922dfe6baa87e0a6b52b37/schemas/v1.1/azure.yaml.json",
+    "blob": "fbb72aec90c71aa62934f128e71d404bf3265d7a",
+    "sha256": "e9b1a51134697f9ce6ad060a7a3e7f9c0a9c8f934b08f1a670178fbb51f341f3"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/azure.yaml.json",
+    "file": "sources/azd-extensions/schemas/v1.2/azure.yaml.json",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/azure.yaml.json",
+    "blob": "f7e8f0a5c9ae90e2a7a641a63c822b0d14fcf56d",
+    "sha256": "2fba9f10361d08d80b3f50910c54180e02ca521e8c342ccb3ce36470a809e43a"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/azure.ai.agent.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/azure.ai.agent.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/azure.ai.agent.json",
+    "blob": "e486a47de8b854f728e78d285b9a27be1dfbafc8",
+    "sha256": "97c247ddd8291bd09ee48bc862e93eeeee6bcfaa52a0b5d818b15cdafa5fce16"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.projects/schemas/azure.ai.project.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.projects/schemas/azure.ai.project.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.projects/schemas/azure.ai.project.json",
+    "blob": "9d2ec486285942a1949c7abdcb21e963ea29113b",
+    "sha256": "8ab10ba8ea092d546705d3ca48a99366a4d6c1febdaccffdd7ab0a61c9fc9589"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.connections/schemas/azure.ai.connection.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.connections/schemas/azure.ai.connection.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.connections/schemas/azure.ai.connection.json",
+    "blob": "831ee68087fb9e3574d9fb0d8b964e5aad998688",
+    "sha256": "6facb4da31039940fadb17c4c606cbe5677641e30ef2d18570a53bee6ac4b760"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.toolboxes/schemas/azure.ai.toolbox.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.toolboxes/schemas/azure.ai.toolbox.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.toolboxes/schemas/azure.ai.toolbox.json",
+    "blob": "08c300a8254a7a492efe536f3ae211c6ad868605",
+    "sha256": "3396747402393d2ced612ebb7de76273c3fbce16b4d777d4f4db51f1e554732b"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.skills/schemas/azure.ai.skill.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.skills/schemas/azure.ai.skill.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.skills/schemas/azure.ai.skill.json",
+    "blob": "077c0f1cf3799c5e7e69517e26cac955ac797e4f",
+    "sha256": "78a2628587ddd528d930c4c3da74da79163295d6fa162030fef570f9b8241626"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.routines/schemas/azure.ai.routine.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.routines/schemas/azure.ai.routine.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.routines/schemas/azure.ai.routine.json",
+    "blob": "d4f72ec59c7eb641a37d391b0f1a520bafadeb53",
+    "sha256": "0b00597d4db293cc9c9262c7ef736d2f0abcf04ec575feee01d262717fa3729e"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/microsoft.foundry.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/microsoft.foundry.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/microsoft.foundry.json",
+    "blob": "362478cbcc7e153c0ac3e8f15a27291becf87088",
+    "sha256": "c4f07046413c233de669b89d29556f8bbcdb860205138d18f66eadd7ca9d97fa"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Deployment.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Deployment.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Deployment.json",
+    "blob": "de370c7ea5c364d857d2b3f34ee615145ec2d1fd",
+    "sha256": "13d9972f120ded69c892723767fc8e95d4d6d44f9314676a6fdd0f130d2907f7"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Connection.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Connection.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Connection.json",
+    "blob": "ba9c65e42adce4c493e99abbe90074ffca13fefc",
+    "sha256": "f96cf6a1d71281659e2cf53ccde47c3899f8caa5c4ca6e29c7a5450b313fc252"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Toolbox.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Toolbox.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Toolbox.json",
+    "blob": "5f08b37d4cbb87417a9ad10a92ab479e0124a25b",
+    "sha256": "9ee78f35485c0706445643495b5f936b3a9d75e659fa12609e2cd57ca7d67966"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Skill.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Skill.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Skill.json",
+    "blob": "02b77b20c9bf577abd12b4aee6eea16829339716",
+    "sha256": "6756319bc3970a89ef789a27c3f9f962d1f02aaf5caa3d9933ee2bfc6767c737"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Routine.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Routine.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Routine.json",
+    "blob": "c5559a3cb2a82960cd68d8251a728f73f3f36091",
+    "sha256": "c35b4b156764d92d1683a2ab4506175f844178938fe8e5b3e102695c49677065"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/Agent.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/Agent.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/Agent.json",
+    "blob": "84431ed5780663614dd572dc2a6a82aa1f6032f9",
+    "sha256": "4b0788993917a2b62a69fc25fee18fe53981bd90ee020a341b77b9072bd1c604"
+  },
+  {
+    "repo": "Azure/azure-dev",
+    "commit": "3440050737c18537ae6cdbd1d64b98c594c495ad",
+    "path": "cli/azd/extensions/azure.ai.agents/schemas/FileRef.json",
+    "file": "sources/azure-dev/cli/azd/extensions/azure.ai.agents/schemas/FileRef.json",
+    "uri": "https://raw.githubusercontent.com/Azure/azure-dev/3440050737c18537ae6cdbd1d64b98c594c495ad/cli/azd/extensions/azure.ai.agents/schemas/FileRef.json",
+    "blob": "b004897250bbf210f94fe3da0e35d8cd877fbb60",
+    "sha256": "286d1e0283d24279e4cee0343b625d5e864befe4e100caa253256c5e75f1b5f8"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/camel-cased-promote-id.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/camel-cased-promote-id.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/camel-cased-promote-id.yaml",
+    "blob": "905a7d082d993431cb3c1f5667d6a042a76b5029",
+    "sha256": "3b4b9f2fdf5d6d58366576e5f82739ce5ab329ca17696ae122383b1056b44b2e"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/command-approval.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/command-approval.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/command-approval.yaml",
+    "blob": "09c754dc1eba24900323b23753ca082654a5f915",
+    "sha256": "d61138fbfcfe105b21e28256d53ada65fa23538cfcc7c3c3a4d5758677a975aa"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/command-result-non-change-effects.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/command-result-non-change-effects.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/command-result-non-change-effects.yaml",
+    "blob": "d3fc8773664cef4f8be2744a0d4dce04d130df24",
+    "sha256": "6aca56ac695900074a4d8d25dc19a9713d03a4885ccce6b1a13c92de6d700443"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/compound-command-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/compound-command-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/compound-command-timeout.yaml",
+    "blob": "d3add46e32cda31fe55d9cde268253b578312f16",
+    "sha256": "92707d2c8d73d902aee069864af7b484afd5f25e00763a3e428d3f59ab1c3eae"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/empty-target-artifacts.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/empty-target-artifacts.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/empty-target-artifacts.yaml",
+    "blob": "1cb789825509b226d821d3316a77f57092171036",
+    "sha256": "a5e3a4a7dbe6e3a8d72efc08f5a7ba9a7f2f3d3276ab5d3f55eed01c683ae6c5"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/empty-task.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/empty-task.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/empty-task.yaml",
+    "blob": "cfb2d71b3517153a3f3d7cf82403f032f89168ce",
+    "sha256": "45fc1f185d7dea86205db4195ae561e3daaa01bf7d47252c176dc1286bc5c653"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/flat-target-steps.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/flat-target-steps.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/flat-target-steps.yaml",
+    "blob": "5ac8f5028a0fc68f1641775bc61491e2b02a05f8",
+    "sha256": "e2461bee3bffad6c7be4bda154131cda9de553f51353405fb6d521cd234c2581"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/implicit-basic-auth.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/implicit-basic-auth.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/implicit-basic-auth.yaml",
+    "blob": "05e26de788f85770edd0f7c738fd413763afe8cf",
+    "sha256": "e01cbd37f96201dbce321c7eb3943a6871666a29dfa5156d3a298972d297610b"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/invalid-command-capture.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/invalid-command-capture.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/invalid-command-capture.yaml",
+    "blob": "943a32d5c78cea821fff61a35484edb7f2c884d3",
+    "sha256": "7d36a10186a11349b4f24bcf108ebd1151600b4941d18a99c337d15d934a1cbd"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/invalid-command-result.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/invalid-command-result.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/invalid-command-result.yaml",
+    "blob": "82fd6676019531729d4ddb524c676d023cd9231f",
+    "sha256": "b0c9661e34a7f86a2e4d33a951f388eee1c77f705ef33f0e96121a0096e4d6fb"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/invalid-live-url-path.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/invalid-live-url-path.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/invalid-live-url-path.yaml",
+    "blob": "8bf05fea53f4582b194b54295b27be8da02c6e99",
+    "sha256": "1fc6d9c96f8a3763acda8cdafe286c7d8db3856f9737956b3e08ca96feba7c84"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/invalid-target-mode.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/invalid-target-mode.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/invalid-target-mode.yaml",
+    "blob": "8ce239d75a78dd3c6319c558c728e1c11960707c",
+    "sha256": "3b7a891508866ef036a22522d3c1666bfc6685ffa2c739b4454194a4924d4c22"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-artifact-identity-paths.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-artifact-identity-paths.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-artifact-identity-paths.yaml",
+    "blob": "e21344a41da285e0758a39ea633bc647c282349f",
+    "sha256": "7423281d79e3a72bc3f460bdfec5f72fe1f000bdcbf67dc0fc0b898b4f91f203"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-candidate.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-candidate.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-candidate.yaml",
+    "blob": "48b865796f1deff39f049d76c1cdcabb94416c68",
+    "sha256": "d1303617b9751af47ee0e21e3b8663824000ba15157dadd5165e4b5e117049cf"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-catalog-concept.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-catalog-concept.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-catalog-concept.yaml",
+    "blob": "8ec3e8961962d2324690cdb52430a3c61c36a239",
+    "sha256": "f721866b203483c7b8bde212ccbc90bfb58336fd657bc1aac704baae98787a48"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-change-lifecycle.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-change-lifecycle.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-change-lifecycle.yaml",
+    "blob": "f584a8ab806710978226ef0ad862a9e049069e71",
+    "sha256": "f4c21971b277a0f71d57287b393ebd1a7bae2c4bb3a1c88ddd7603653cb7efe1"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-executable-command.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-executable-command.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-executable-command.yaml",
+    "blob": "76485e915390ba4d1fdfe9b266dfca009c152f88",
+    "sha256": "a454e09bdd892515ffd91b96dc92949c727dc0c4982bc8cc6e72c381ca1b9210"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-global-approvals.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-global-approvals.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-global-approvals.yaml",
+    "blob": "fc3d2ef6b61854ed6a4d83e1b0a5a48e100a03c1",
+    "sha256": "0762a68cc998035ebc7ba0b2122d9ab09df98146c9da98bd676aca596cad26f4"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-inspection-only.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-inspection-only.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-inspection-only.yaml",
+    "blob": "ba3b3dba47dc62db0e437da6cc8fa9c6c7fdaa15",
+    "sha256": "9e3dd16a2b8941ffb17f5affbe8ed784fba07cca7b01edcd096d1eb44fdcfd23"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-named-snapshots.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-named-snapshots.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-named-snapshots.yaml",
+    "blob": "115e450aacdedef4df62b3e88caf452793cd7a03",
+    "sha256": "7cd56e7e3bdcbf5c0e6ea59afe57210ee882969b5c45a4f3d743db7318d54c39"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-operation-target.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-operation-target.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-operation-target.yaml",
+    "blob": "45b1a87c9a9fb2889bc9175b93c8a0d51e511523",
+    "sha256": "8250e4cc3aac6558d09c5372f257ae5ffd7bee935b161ede17ae00c8e47f794e"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-phase-fields.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-phase-fields.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-phase-fields.yaml",
+    "blob": "18e73756ec8204b728a208467dcd2fc30f2b9ba1",
+    "sha256": "3d91416536ca9f7d4b524bd7df87b0e112693bad86db87ae1f3ca1e273126698"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-previous-run.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-previous-run.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-previous-run.yaml",
+    "blob": "87a5093d6b091b86a4d0f7f7796abbe60cc7a730",
+    "sha256": "5bf5e64a24c840e51120f90fb86734a3f68825cb918f8b657bb41b645847f83c"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-promote-hooks.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-promote-hooks.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-promote-hooks.yaml",
+    "blob": "edb8a2f272e6c6178fd0ea548b4c2aa04f1bd44b",
+    "sha256": "7fb5e107327b96bce7d00b181cfdc761fcae1a5fb5af11553473bef7e08bb9e4"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-promote-project.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-promote-project.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-promote-project.yaml",
+    "blob": "83bde5272d02da9e8606f1fc3b47e18a259ec4d1",
+    "sha256": "c6e6b5a2e2f4826275eaa5198dd04cba6f7164e7b179d85a70453b42a8326cc7"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-promote-records.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-promote-records.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-promote-records.yaml",
+    "blob": "982132cfac279882fb62970604f5996e866fb9a3",
+    "sha256": "08a8fa7fd14647feabfae2ef09453b532af5f6e9448982780386e74e7fa2a15a"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-promote-results.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-promote-results.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-promote-results.yaml",
+    "blob": "1823d95173e8a9b9d665c969da432884204f7eb8",
+    "sha256": "7cfe5c142c2215f93d33bb38d0abbe973af7c4f05506b1a062633eea741b86d7"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-section-terminology.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-section-terminology.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-section-terminology.yaml",
+    "blob": "4d8c08e5fae775ceccbc81deba2f07497446ec8a",
+    "sha256": "a5dbebe3f1b207c87a5a46a74216be7c8b2556aecc1eff563e725a4c23369416"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-step-use.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-step-use.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-step-use.yaml",
+    "blob": "31319c3c40047b1a1b8fd1145d768dba42e13776",
+    "sha256": "2ffd23f6160877ff997651bc9711993565f5d054ff7230d2cf4c267bd191cdb1"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-target-hooks.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-target-hooks.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-target-hooks.yaml",
+    "blob": "02b122aac903dba4f9ad2686c2b41895d7a46ddb",
+    "sha256": "a16c2faad24231b928fe47710277b2c37cce2f1ca1bf0275380526080a14d39f"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-target-policy-names.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-target-policy-names.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-target-policy-names.yaml",
+    "blob": "7fdb92dfa4686f6553821e96e831627aa6e288ce",
+    "sha256": "de4d5cee7c7f9be0818fcb246b3366ef919f3da4c84bf41c40c3f8a3050dc3d5"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/legacy-underscore-keys.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/legacy-underscore-keys.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/legacy-underscore-keys.yaml",
+    "blob": "2fb44d0720a8d88aace88d42ee0c56b80af34f95",
+    "sha256": "ca6a38455a9716a98d17653bc0d8417c0d9d4d9754b15c41ec34f0cd9ad4f7ca"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-command-effect.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-command-effect.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-command-effect.yaml",
+    "blob": "f319d370fef53d10f333c7f06a083bfa3457a4d5",
+    "sha256": "36cb1c5302f4eaffbfd66e0ba581c2430c9a0e6b7dfb33cc7862f02f5c228cfe"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-command-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-command-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-command-timeout.yaml",
+    "blob": "634f4d8257087ac0493b2c97d3c4a29bf52f10aa",
+    "sha256": "00d23337c589cae3ba4555fd4da20707db06454e9fc39f6fb853a7a4f7d239c1"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-operation-environment.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-operation-environment.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-operation-environment.yaml",
+    "blob": "8e5fae34b83f0645c14fcaf6c48fc7e63786bd7d",
+    "sha256": "15d4d7803659ce63e8c80fc7f8f811965e84864c1c6aa2ca025110820270856b"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-process-executable.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-process-executable.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-process-executable.yaml",
+    "blob": "f31c937d3be50b2d2848bc3c41421e410d0f48a4",
+    "sha256": "10d5fe724e4a821794b5cb271cade5dc06f2bdea902c9b95e6957c4c99b49de4"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-provider-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-provider-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-provider-timeout.yaml",
+    "blob": "48d46aeeefa0d9c2e0780a0d7ce11a003721ce04",
+    "sha256": "15c6f1172dbe998c3704e73cb24b9fc3385fb18b307ea1a0448ad9cd2bde558c"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-required-structures.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-required-structures.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-required-structures.yaml",
+    "blob": "287f5963777e563ced940e77a395dbdd7704e4b9",
+    "sha256": "cb017977a7b876ea677de405d2367cd4abfb64dc5e79fd72623990dd13e88ead"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/missing-target-bindings.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/missing-target-bindings.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/missing-target-bindings.yaml",
+    "blob": "6a8954bfe149c3de898b6547526b9e10da4ad5c1",
+    "sha256": "863717c2e8020dc983d8185711693c3d3434841593e4381584cc35f1eb97057b"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/mixed-azd-provider-fields.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/mixed-azd-provider-fields.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/mixed-azd-provider-fields.yaml",
+    "blob": "af4d9f7bbf056b0c67de6c16f538ad018d592467",
+    "sha256": "ee939645945557dfdda955c70ea60d5401cb72d2ad77b7e607a8ec10352dd413"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/mixed-process-provider-fields.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/mixed-process-provider-fields.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/mixed-process-provider-fields.yaml",
+    "blob": "88aff2f26aad034d985444ceed69c7fd5946fb25",
+    "sha256": "bac47e5d3913913615f563b6f8d9323881359c55525ae027e3840a4985dc6e02"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/negative-provider-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/negative-provider-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/negative-provider-timeout.yaml",
+    "blob": "a6883a87378dea3a78310a5d32d1ac03cea9e755",
+    "sha256": "2e206ccebaaa697bcbf92264f5732b0a9a083f23cd35e7a9e414186d74e8aeaf"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/nested-task.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/nested-task.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/nested-task.yaml",
+    "blob": "64ceece4ff2ed50d8abe81957f81eafa8b3e6eea",
+    "sha256": "0b9ffb64f31853bdd7cc370284a976ce5b84a6a072b5fde58eb6d435d1936f06"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/non-deploying-provider-override.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/non-deploying-provider-override.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/non-deploying-provider-override.yaml",
+    "blob": "1351f7509f73e7d2b9283ee5982c12f011a6dbc0",
+    "sha256": "106f8ddff4994219763eab62a78c1c1118b9eb781c24b5e46913e63e83c95c01"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/overlong-command-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/overlong-command-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/overlong-command-timeout.yaml",
+    "blob": "316542959fa24a4ade951997288d2965e4d93abb",
+    "sha256": "e6eb467635a299f02ff52e214b158ff9f276f8680452a3ccfa22c548426a667f"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/promote-version.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/promote-version.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/promote-version.yaml",
+    "blob": "6dc2c911d8babc1b71358936b314e4794507bb16",
+    "sha256": "2db22160611546e2d280530d5e9134cc5ebc029031d5e256b54ac7a86a012167"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/raw-auth-secret.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/raw-auth-secret.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/raw-auth-secret.yaml",
+    "blob": "94db19684a8491088a90a7982d587d15aeb362db",
+    "sha256": "ef5522d05da13983635b2261ca445972a8646f90572694455ec8e54ff5d543c9"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/snapshot-duplicate-ref.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/snapshot-duplicate-ref.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/snapshot-duplicate-ref.yaml",
+    "blob": "e48446c76838a2b09a001734391d541646211332",
+    "sha256": "82e5221b0d5a0aaa0d76e828d9959ff8ca89bdd9a9a68e9a531501e1ecca10d6"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/snapshot-kind-ref-mismatch.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/snapshot-kind-ref-mismatch.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/snapshot-kind-ref-mismatch.yaml",
+    "blob": "dd7e35ca9bfd7c3bb8381ce22df3ffa2d26f762e",
+    "sha256": "96268482a230efdb30f08ddb92082733d68557624202bd19fd156c7ea8e1f838"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/snapshot-unknown-template-token.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/snapshot-unknown-template-token.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/snapshot-unknown-template-token.yaml",
+    "blob": "0662f7727815d49fed02dcc386f79772bff369b1",
+    "sha256": "844f5d0d67b2aed39d87c5ebaa551e7389e6d599526a45e572778639947d9e5b"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/string-command-invocation.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/string-command-invocation.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/string-command-invocation.yaml",
+    "blob": "c28a582fcc19b63a9e1dc8e3c5e66dead6f87160",
+    "sha256": "9ed43ff04196d73f0346488d476304c5e133aee7c250cc14950932c720589d20"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/tokenized-sealed-path.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/tokenized-sealed-path.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/tokenized-sealed-path.yaml",
+    "blob": "9720187e92b5cc51ec6d007639bb492c28eb8b1d",
+    "sha256": "9499a626ae321877925903baf3714a4b966a68a594d7bf11a07b8a532913264e"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/unbounded-command-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/unbounded-command-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/unbounded-command-timeout.yaml",
+    "blob": "9ff30d12e3d08372d227e20f391ae12d652fbdaf",
+    "sha256": "e68d4437cd2819894d111b67c5f99902f900afa8673130580e1e2a493ecc3f85"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/unknown-nested-property.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/unknown-nested-property.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/unknown-nested-property.yaml",
+    "blob": "6a3d1b2696ffbbb135d60aaff17a152b22e72592",
+    "sha256": "be6dd240a0fc7a062b1cda3feaf07671f79141fdd61c28115ad8815f1a46f290"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/unsupported-artifact-type.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/unsupported-artifact-type.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/unsupported-artifact-type.yaml",
+    "blob": "b1bb9ba42c4f2ce6a426d86123d0502fcecd59e6",
+    "sha256": "7db82443bc921424ad3401dc6af640027ee9c70fc14b5e4ae52bc268c1687edb"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/unsupported-provider-type.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/unsupported-provider-type.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/unsupported-provider-type.yaml",
+    "blob": "a8e230b8ac784c3ee64edc9e492e693fa9f01f34",
+    "sha256": "ce49135c49ff39d72d7cc930d2cb45932dc5da03c53053be6117d13a60f22372"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/verification-effect-without-record.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/verification-effect-without-record.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/verification-effect-without-record.yaml",
+    "blob": "74cff1a54d2ef644c0fefcb64ce0959506481b69",
+    "sha256": "0034eaa35a317b57d2ac84c215d21126ffae38ad3063103f61b12eb1f80d2e65"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/verification-import-path.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/verification-import-path.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/verification-import-path.yaml",
+    "blob": "a7c281e501878a6e008eb3fe53d3787512856da7",
+    "sha256": "c5c85c5a446b3c6ed2a528a0677976960a6c59ad3a3f44507738e816a03adc9e"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/verification-without-effect.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/verification-without-effect.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/verification-without-effect.yaml",
+    "blob": "10dd59cc632b8837524848e6b460f01e526c5530",
+    "sha256": "614a918d1f3d93d042c8524d23d1de1d9fc8e23e0ff11b8eb7957e8d510ec052"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/invalid/zero-command-timeout.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/invalid/zero-command-timeout.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/invalid/zero-command-timeout.yaml",
+    "blob": "b90502b43aa040986621f3975de4042642def5dd",
+    "sha256": "763532f9ac2e760f318baa03a12d198c913b94a96fa5c39f18818edae731e176"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/auth-forms-and-external-names.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/auth-forms-and-external-names.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/auth-forms-and-external-names.yaml",
+    "blob": "6327864c947cfabd03a07feddef8e96a6575b0ab",
+    "sha256": "15fa397ff9ec0eb03d7c4048e3c934d22c999703f3eeb2e576a020add1f30f3c"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/full-contract.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/full-contract.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/full-contract.yaml",
+    "blob": "5099c9040816eeef2f15d73f12eaa198b058f275",
+    "sha256": "82807f6e60f412f8490ec166250bc69a44699c359c0f7676c51035bb325c20a1"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/minimal.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/minimal.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/minimal.yaml",
+    "blob": "fd1fd0e78f0dbf5120fdf53106f6e4b1a8f2c3d5",
+    "sha256": "f461dec5443a1b359dcfcf8d25225315d85348dc18a86ff7b47795f484b171c5"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/multiple-chains-one-default.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/multiple-chains-one-default.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/multiple-chains-one-default.yaml",
+    "blob": "9c1725a25198ef9e6c0e3fa8b283c7776d1b966c",
+    "sha256": "a55ab1c57e85f2dae02cf277f8e7e26803869a138fad5aa72130fdb0a285ceb1"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/named-operation.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/named-operation.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/named-operation.yaml",
+    "blob": "e5ceed156e161d38bbe5667e1bb98dae805d79a9",
+    "sha256": "5e50da0611237739d090c7ebdb9be8ff645acdc9ee041acc14ce5ca935f45bf3"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/fixtures/promote/valid/provider-types.yaml",
+    "file": "sources/azd-extensions/schemas/v1.2/fixtures/promote/valid/provider-types.yaml",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/fixtures/promote/valid/provider-types.yaml",
+    "blob": "71b7edd95dd0e2871332593090ceee3529abd1ce",
+    "sha256": "ba75005719b8e36941e717df8b0ae4ecd4a439c446a5891dbdc83c1a278d7e21"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "docs/specs/azd-promote-schema-1.2-overhaul/spec.md",
+    "file": "sources/azd-extensions/docs/specs/azd-promote-schema-1.2-overhaul/spec.md",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/docs/specs/azd-promote-schema-1.2-overhaul/spec.md",
+    "blob": "2faa7b93c1d9de95c8d3c7c67242bbd2aebf8001",
+    "sha256": "6dc03622c4c3e7a6766647aa40ef9f8128b887f43b8f2e09e4bca60456ec9635"
+  },
+  {
+    "repo": "jongio/azd-extensions",
+    "commit": "7dbee487cc96ad8650ce4c9285972b68b82775dc",
+    "path": "schemas/v1.2/promote-schema.test.js",
+    "file": "sources/azd-extensions/schemas/v1.2/promote-schema.test.js.txt",
+    "uri": "https://raw.githubusercontent.com/jongio/azd-extensions/7dbee487cc96ad8650ce4c9285972b68b82775dc/schemas/v1.2/promote-schema.test.js",
+    "blob": "a45c4ba6e9728e51ea8e0a00548718c73c8b3ec7",
+    "sha256": "d9e0959b51af115636d11056b1f58c96ddd4071a21a122a7ec7cd6a1d21064a1"
+  }
+]

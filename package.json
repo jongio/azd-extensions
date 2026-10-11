@@ -12,6 +12,9 @@
     "test": "vitest run",
     "validate-registry": "node scripts/validate-registry.js",
     "validate-schema": "node scripts/validate-schema.js",
+    "generate-schema-v12": "node scripts/generate-v12-schema.js",
+    "check-schema-v12": "node scripts/generate-v12-schema.js --check",
+    "test-schema-v12": "vitest run schemas/v1.2/schema.test.js schemas/v1.2/promote-schema.test.js",
     "update-readme-versions": "node scripts/update-readme-versions.js"
   },
   "dependencies": {

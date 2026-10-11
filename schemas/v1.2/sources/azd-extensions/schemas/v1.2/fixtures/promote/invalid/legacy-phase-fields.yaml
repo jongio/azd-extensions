@@ -1,0 +1,24 @@
+name: invalid-legacy-phase-fields
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+  chain: release
+  protected: [prod]
+  database: {}
+  deploy: {}
+  purge: {}
+  rollback: {}
+  notifications: {}

@@ -64,6 +64,9 @@ jobs:
       - name: Validate schema
         run: pnpm run validate-schema --offline
 
+      - name: Verify generated compatibility schema
+        run: pnpm run check-schema-v12
+
       - name: Validate registry
         run: pnpm run validate-registry --offline
 

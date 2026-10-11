@@ -1,0 +1,23 @@
+name: invalid-missing-operation-environment
+promote:
+  chains:
+    release:
+      targets: [prod]
+  environments:
+    prod:
+      provider: local-publisher
+      artifacts: [site]
+  operations:
+    validate-content:
+      provider: validator
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+    validator:
+      type: process
+      executable: validate

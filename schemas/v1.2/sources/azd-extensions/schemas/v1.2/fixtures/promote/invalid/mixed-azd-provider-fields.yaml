@@ -1,0 +1,17 @@
+name: invalid-mixed-azd-provider-fields
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: azure-publisher
+      artifacts: [site]
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    azure-publisher:
+      type: azd
+      executable: azd

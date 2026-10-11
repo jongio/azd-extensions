@@ -1,0 +1,369 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Azure AI Agent Service Target Configuration",
+  "description": "Custom configuration for the Azure AI Agent Service target",
+  "type": "object",
+  "properties": {
+    "container": {
+      "$ref": "#/definitions/ContainerSettings"
+    },
+    "deployments": {
+      "type": "array",
+      "description": "List of model deployments.",
+      "items": { "$ref": "#/definitions/Deployment" }
+    },
+    "resources": {
+      "type": "array",
+      "description": "List of external resources for agent execution.",
+      "items": { "$ref": "#/definitions/Resource" }
+    },
+    "toolConnections": {
+      "type": "array",
+      "description": "List of tool connections to external services (MCP tools, A2A, custom APIs) created during provisioning.",
+      "items": { "$ref": "#/definitions/ToolConnection" }
+    },
+    "toolboxes": {
+      "type": "array",
+      "description": "List of toolboxes (Foundry Toolsets) to deploy.",
+      "items": { "$ref": "#/definitions/Toolbox" }
+    },
+    "connections": {
+      "type": "array",
+      "description": "List of project connections to create via Bicep provisioning.",
+      "items": { "$ref": "#/definitions/Connection" }
+    },
+    "memoryStores": {
+      "type": "array",
+      "description": "List of Foundry memory stores to provision (create-if-not-exists) during deployment. Memory stores let agents retain context across sessions via the memory_search tool.",
+      "items": { "$ref": "#/definitions/MemoryStore" }
+    },
+    "startupCommand": {
+      "type": "string",
+      "description": "Command to start the agent server (e.g., 'python main.py'). Used by 'azd ai agent run' for local development."
+    },
+    "kind": {
+      "type": "string",
+      "description": "The agent kind. 'hosted' for a containerized/code agent; 'prompt-voice' for a declarative (managed) speech-to-speech voice agent.",
+      "enum": ["hosted", "prompt-voice"]
+    },
+    "modelType": {
+      "type": "string",
+      "description": "Voice agent (kind: prompt-voice) model-inference mode. 'managed' uses a Voice Live-hosted model; 'self_deployed' (BYOM) references an existing Foundry model deployment.",
+      "enum": ["managed", "self_deployed"]
+    },
+    "model": {
+      "type": "object",
+      "description": "Voice agent (kind: prompt-voice) speech-to-speech model (e.g. id: gpt-realtime).",
+      "properties": {
+        "id": { "type": "string", "minLength": 1, "pattern": "\\S", "description": "Model name for managed mode (e.g. 'gpt-realtime') or existing Foundry deployment name for self_deployed mode." }
+      },
+      "required": ["id"],
+      "additionalProperties": true
+    },
+    "instructions": {
+      "type": "string",
+      "description": "Voice agent (kind: prompt-voice) system prompt for the assistant."
+    },
+    "voice": {
+      "type": "string",
+      "description": "Voice agent (kind: prompt-voice) output voice name (e.g. 'en-US-Ava:DragonHDLatestNeural' for an Azure Neural voice, or 'alloy' for an OpenAI realtime voice)."
+    },
+    "store": {
+      "type": "boolean",
+      "description": "Voice agent (kind: prompt-voice) server-side logging toggle (transcript + per-turn audio). Defaults to false when omitted."
+    },
+    "name": {
+      "type": "string",
+      "description": "The agent name."
+    },
+    "displayName": {
+      "type": "string",
+      "description": "Optional human-friendly display name for the agent."
+    },
+    "description": {
+      "type": "string",
+      "description": "Optional description of the agent."
+    },
+    "metadata": {
+      "type": "object",
+      "description": "Optional metadata key-value pairs for the agent.",
+      "additionalProperties": true
+    },
+    "protocols": {
+      "type": "array",
+      "description": "Invocation protocols the agent implements (e.g., responses, invocations, invocations_ws, a2a).",
+      "items": { "$ref": "#/definitions/ProtocolVersionRecord" }
+    },
+    "agentEndpoint": {
+      "type": "object",
+      "description": "Agent endpoint configuration (protocols, version selection, auth).",
+      "additionalProperties": true
+    },
+    "agentCard": {
+      "type": "object",
+      "description": "A2A discovery metadata for the agent.",
+      "additionalProperties": true
+    },
+    "codeConfiguration": {
+      "$ref": "#/definitions/CodeConfiguration"
+    },
+    "sessionConfiguration": {
+      "$ref": "#/definitions/SessionConfiguration"
+    },
+    "policies": {
+      "type": "array",
+      "description": "Governance policies attached to the agent (e.g., Responsible AI).",
+      "items": { "$ref": "#/definitions/Policy" }
+    },
+    "inputSchema": {
+      "type": "object",
+      "description": "Optional input schema for the agent.",
+      "additionalProperties": true
+    },
+    "outputSchema": {
+      "type": "object",
+      "description": "Optional output schema for the agent.",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true,
+  "allOf": [
+    {
+      "$comment": "A prompt-voice agent must declare a speech-to-speech model; the deploy path rejects a voice service whose model.id is missing. Keep editor/schema validation aligned with that runtime requirement.",
+      "if": {
+        "properties": {
+          "kind": { "const": "prompt-voice" }
+        },
+        "required": ["kind"]
+      },
+      "then": {
+        "required": ["model"]
+      }
+    }
+  ],
+  "definitions": {
+    "ProtocolVersionRecord": {
+      "type": "object",
+      "description": "A protocol the agent implements, with its version.",
+      "properties": {
+        "protocol": { "type": "string", "description": "Protocol name (e.g., 'responses', 'invocations', 'invocations_ws', 'a2a')." },
+        "version": { "type": "string", "description": "Protocol version." }
+      },
+      "required": ["protocol"],
+      "additionalProperties": false
+    },
+    "CodeConfiguration": {
+      "type": "object",
+      "description": "Code deploy configuration. When present, the agent is deployed from source (ZIP) instead of a container image.",
+      "properties": {
+        "runtime": { "type": "string", "description": "Runtime identifier (e.g., 'python_3_12', 'dotnet_9')." },
+        "entryPoint": { "type": "string", "description": "Entry point for the agent source." },
+        "dependencyResolution": { "type": "string", "description": "Dependency resolution mode (e.g., 'bundled', 'remote_build')." }
+      },
+      "required": ["runtime", "entryPoint"],
+      "additionalProperties": false
+    },
+    "SessionConfiguration": {
+      "type": "object",
+      "description": "Optional hosted-agent session runtime settings. When omitted, the service applies its defaults (idle timeout 900 seconds).",
+      "properties": {
+        "idleTimeoutSeconds": {
+          "type": "integer",
+          "description": "Idle duration in seconds before a session's sandbox is suspended. Range 300–3600 (inclusive). Defaults to 900 when omitted.",
+          "minimum": 300,
+          "maximum": 3600
+        }
+      },
+      "additionalProperties": false
+    },
+    "Policy": {
+      "type": "object",
+      "description": "A safety or governance policy attached to the agent.",
+      "properties": {
+        "type": { "type": "string", "description": "Policy type (e.g., 'rai_policy')." },
+        "raiPolicyName": { "type": "string", "description": "ARM resource ID of the RAI policy (for type 'rai_policy')." }
+      },
+      "required": ["type"],
+      "additionalProperties": false
+    },
+    "ContainerSettings": {
+      "type": "object",
+      "description": "Container configuration for the Azure AI Agent Service target",
+      "properties": {
+        "resources": {
+          "$ref": "#/definitions/ResourceSettings"
+        }
+      },
+      "additionalProperties": false
+    },
+    "ResourceSettings": {
+      "type": "object",
+      "description": "Resource configuration for the Azure AI Agent Service target",
+      "properties": {
+        "memory": {
+          "type": "string",
+          "description": "Memory allocation (e.g., '1Gi', '512Mi')",
+          "pattern": "^[0-9]+(\\.[0-9]+)?(Ki|Mi|Gi|Ti|Pi|Ei|k|M|G|T|P|E)?$"
+        },
+        "cpu": {
+          "type": "string",
+          "description": "CPU allocation (e.g., '1', '500m')",
+          "pattern": "^[0-9]+(\\.[0-9]+)?m?$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "Deployment": {
+      "type": "object",
+      "description": "A single model deployment.",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the model deployment." },
+        "model": { "$ref": "#/definitions/DeploymentModel" },
+        "sku": { "$ref": "#/definitions/DeploymentSku" }
+      },
+      "required": ["name", "model", "sku"],
+      "additionalProperties": false
+    },
+    "DeploymentModel": {
+      "type": "object",
+      "description": "Model configuration for a model deployment.",
+      "properties": {
+        "name": { "type": "string", "description": "Model name." },
+        "format": { "type": "string", "description": "Model format." },
+        "version": { "type": "string", "description": "Model version." }
+      },
+      "required": ["name", "format", "version"],
+      "additionalProperties": false
+    },
+    "DeploymentSku": {
+      "type": "object",
+      "description": "SKU configuration for a deployment.",
+      "properties": {
+        "name": { "type": "string", "description": "SKU name." },
+        "capacity": { "type": "integer", "description": "SKU capacity." }
+      },
+      "required": ["name", "capacity"],
+      "additionalProperties": false
+    },
+    "Resource": {
+      "type": "object",
+      "description": "External resource for agent execution.",
+      "properties": {
+        "resource": { "type": "string", "description": "Resource identifier." },
+        "connectionName": { "type": "string", "description": "Connection name for the resource." }
+      },
+      "required": ["resource", "connectionName"],
+      "additionalProperties": false
+    },
+    "ToolConnection": {
+      "type": "object",
+      "description": "A connection to an external service (MCP tool, A2A, custom API) created via Bicep during provisioning.",
+      "properties": {
+        "name": { "type": "string", "description": "Connection name used as project_connection_id in toolbox tools." },
+        "category": { "type": "string", "description": "Connection category (e.g., 'RemoteTool')." },
+        "target": { "type": "string", "description": "Target endpoint URL for the connection." },
+        "authType": {
+          "type": "string",
+          "description": "Authentication type for the connection.",
+          "enum": ["AAD", "AccessKey", "AccountKey", "ApiKey", "CustomKeys", "ManagedIdentity", "None", "OAuth2", "PAT", "ServicePrincipal", "UsernamePassword", "ProjectManagedIdentity", "UserEntraToken", "AgenticIdentityToken"]
+        },
+        "credentials": {
+          "type": "object",
+          "description": "Credentials for the connection. Values may contain ${ENV_VAR} references resolved at provision time."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata for the connection.",
+          "additionalProperties": { "type": "string" }
+        }
+      },
+      "required": ["name", "category", "target", "authType"],
+      "additionalProperties": false
+    },
+    "Toolbox": {
+      "type": "object",
+      "description": "A reusable collection of tools deployed as a Foundry Toolset.",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the toolbox." },
+        "description": { "type": "string", "description": "Description of the toolbox." },
+        "tools": {
+          "type": "array",
+          "description": "List of tools in the toolbox. Each tool is an object with properties passed to the Foundry Toolsets API.",
+          "items": { "type": "object" }
+        }
+      },
+      "required": ["name", "tools"],
+      "additionalProperties": false
+    },
+    "Connection": {
+      "type": "object",
+      "description": "A project connection matching the Bicep ConnectionPropertiesV2 spec.",
+      "properties": {
+        "name": { "type": "string", "description": "Connection name.", "pattern": "^[a-zA-Z0-9][a-zA-Z0-9_-]{2,32}$" },
+        "category": { "type": "string", "description": "Connection category (e.g., 'CustomKeys', 'AzureOpenAI', 'CognitiveSearch', 'RemoteTool')." },
+        "target": { "type": "string", "description": "Target endpoint URL for the connection." },
+        "authType": {
+          "type": "string",
+          "description": "Authentication type.",
+          "enum": ["AAD", "AccessKey", "AccountKey", "AgenticIdentity", "AgenticIdentityToken", "ApiKey", "CustomKeys", "ManagedIdentity", "None", "OAuth2", "PAT", "SAS", "ServicePrincipal", "UsernamePassword", "UserEntraToken", "ProjectManagedIdentity"]
+        },
+        "credentials": {
+          "type": "object",
+          "description": "Authentication credentials. Structure depends on authType."
+        },
+        "metadata": {
+          "type": "object",
+          "description": "Additional metadata as key-value pairs.",
+          "additionalProperties": { "type": "string" }
+        },
+        "authorizationUrl": { "type": "string", "description": "OAuth2 authorization endpoint URL (required for OAuth2 authType)." },
+        "tokenUrl": { "type": "string", "description": "OAuth2 token endpoint URL (required for OAuth2 authType)." },
+        "refreshUrl": { "type": "string", "description": "OAuth2 token refresh URL (optional for OAuth2 authType)." },
+        "scopes": {
+          "type": "array",
+          "description": "OAuth2 scopes to request (optional for OAuth2 authType).",
+          "items": { "type": "string" }
+        },
+        "audience": { "type": "string", "description": "Token audience for AAD/ProjectManagedIdentity/AgenticIdentity/AgenticIdentityToken/UserEntraToken auth types." },
+        "connectorName": { "type": "string", "description": "Connector name for Oauth2 auth type." },
+        "expiryTime": { "type": "string", "description": "Connection expiry time." },
+        "isSharedToAll": { "type": "boolean", "description": "Whether the connection is shared to all users." },
+        "sharedUserList": {
+          "type": "array",
+          "description": "List of users the connection is shared with.",
+          "items": { "type": "string" }
+        },
+        "peRequirement": { "type": "string", "description": "Private endpoint requirement." },
+        "peStatus": { "type": "string", "description": "Private endpoint status." },
+        "useWorkspaceManagedIdentity": { "type": "boolean", "description": "Whether to use workspace managed identity." },
+        "error": { "type": "string", "description": "Error information." }
+      },
+      "required": ["name", "category", "target", "authType"],
+      "additionalProperties": false
+    },
+    "MemoryStore": {
+      "type": "object",
+      "description": "A Foundry memory store provisioned (create-if-not-exists) during deployment. Backs the agent's memory_search tool so the agent can retain context across sessions.",
+      "properties": {
+        "name": { "type": "string", "description": "Name of the memory store." },
+        "description": { "type": "string", "description": "Description of the memory store." },
+        "chatModel": { "type": "string", "description": "Chat model deployment name used by the memory store (must exist in the Foundry project)." },
+        "embeddingModel": { "type": "string", "description": "Embedding model deployment name used by the memory store (must exist in the Foundry project)." },
+        "options": {
+          "type": "object",
+          "description": "Optional extraction and retention settings for the memory store.",
+          "properties": {
+            "chatSummaryEnabled": { "type": "boolean", "description": "Enable rolling chat-summary memory." },
+            "userProfileEnabled": { "type": "boolean", "description": "Enable durable user-profile memory." },
+            "proceduralMemoryEnabled": { "type": "boolean", "description": "Enable procedural (how-to) memory." },
+            "defaultTtlSeconds": { "type": "integer", "description": "Default time-to-live (seconds) for new memory entries. 0 means no expiration." },
+            "userProfileDetails": { "type": "string", "description": "Guidance on what user-profile information the agent should retain or avoid." }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": ["name", "chatModel", "embeddingModel"],
+      "additionalProperties": false
+    }
+  }
+}

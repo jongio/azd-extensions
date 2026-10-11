@@ -1,0 +1,29 @@
+name: invalid-verification-effect-without-record
+promote:
+  chains:
+    release:
+      targets: [dev]
+  environments:
+    dev:
+      provider: local-publisher
+      artifacts: [site]
+      workflow:
+        verify:
+          - task: target-verification
+  artifacts:
+    site:
+      type: static
+      path: dist
+  providers:
+    local-publisher:
+      type: process
+      executable: publish
+  tasks:
+    target-verification:
+      steps:
+        - command: verify-target
+  commands:
+    verify-target:
+      effect: verification
+      executable: pnpm
+      timeout: 5m
