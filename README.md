@@ -19,7 +19,7 @@
 
 | Extension | Description | Latest | Website |
 |-----------|-------------|--------|---------|
-| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.20.0 | [🌐](https://jongio.github.io/azd-app/) |
+| [**azd-app**](https://github.com/jongio/azd-app) | Run Azure apps locally with auto-dependencies, real-time dashboard, and AI-powered debugging via MCP | v0.21.0 | [🌐](https://jongio.github.io/azd-app/) |
 | [**azd-rest**](https://github.com/jongio/azd-rest) | Make authenticated REST API calls to Azure with automatic scope detection and token management | v0.5.0 | [🌐](https://jongio.github.io/azd-rest/) |
 | [**azd pack**](pack/) | Installs both of the above in one step as `jongio.azd` | v0.1.0 | [📦](pack/README.md) |
 
