@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" fill="none">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#06b6d4"/>
+      <stop offset="50%" style="stop-color:#8b5cf6"/>
+      <stop offset="100%" style="stop-color:#10b981"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" rx="32" fill="#0a0a0f"/>
+  <!-- Terminal window dots -->
+  <circle cx="40" cy="40" r="8" fill="#ef4444"/>
+  <circle cx="70" cy="40" r="8" fill="#eab308"/>
+  <circle cx="100" cy="40" r="8" fill="#22c55e"/>
+  <!-- Chevron prompt -->
+  <path d="M40 100L70 130L40 160" stroke="url(#grad)" stroke-width="14" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  <!-- Cursor line -->
+  <rect x="85" y="115" width="72" height="16" rx="4" fill="url(#grad)"/>
+</svg>
