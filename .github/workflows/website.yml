@@ -25,9 +25,7 @@ concurrency:
   cancel-in-progress: true
 
 permissions:
-  contents: write
-  pull-requests: write
-  packages: read
+  contents: read
 
 jobs:
   # Build job - runs for all triggers except PR closed
@@ -35,6 +33,9 @@ jobs:
     if: github.event.action != 'closed'
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read
+      packages: read
     steps:
       - name: Checkout
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -67,8 +68,8 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           # Update astro.config.mjs for PR preview paths
-          sed -i "s|site: 'https://jongio.github.io/azd-extensions/'|site: 'https://jongio.github.io/azd-extensions/pr/${{ env.PR_NUMBER }}/'|g" astro.config.mjs
-          sed -i "s|base: '/azd-extensions/'|base: '/azd-extensions/pr/${{ env.PR_NUMBER }}/'|g" astro.config.mjs
+          sed -i "s|site: 'https://jongio.github.io/azd-extensions/'|site: 'https://jongio.github.io/azd-extensions/pr/$PR_NUMBER/'|g" astro.config.mjs
+          sed -i "s|base: '/azd-extensions/'|base: '/azd-extensions/pr/$PR_NUMBER/'|g" astro.config.mjs
           pnpm build
 
       - name: Upload production artifact
@@ -92,6 +93,9 @@ jobs:
     if: github.event_name != 'pull_request'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
     steps:
       - name: Checkout gh-pages
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -130,6 +134,10 @@ jobs:
     if: github.event_name == 'pull_request' && github.event.action != 'closed'
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout gh-pages
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -151,8 +159,8 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
           touch .nojekyll
-          git add .nojekyll pr/${{ env.PR_NUMBER }}
-          git commit -m "Deploy PR #${{ env.PR_NUMBER }} preview" --allow-empty
+          git add .nojekyll "pr/$PR_NUMBER"
+          git commit -m "Deploy PR #$PR_NUMBER preview" --allow-empty
           git push origin gh-pages
 
       - name: Comment PR with preview URL
@@ -201,6 +209,10 @@ jobs:
   cleanup-preview:
     if: github.event_name == 'pull_request' && github.event.action == 'closed'
     runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: write
+      pull-requests: write
     steps:
       - name: Checkout gh-pages
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -215,13 +227,13 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           
-          if [ -d "pr/${{ env.PR_NUMBER }}" ]; then
-            git rm -rf pr/${{ env.PR_NUMBER }}
-            git commit -m "Cleanup PR #${{ env.PR_NUMBER }} preview"
+          if [ -d "pr/$PR_NUMBER" ]; then
+            git rm -rf "pr/$PR_NUMBER"
+            git commit -m "Cleanup PR #$PR_NUMBER preview"
             git push origin gh-pages
-            echo "Cleaned up preview for PR #${{ env.PR_NUMBER }}"
+            echo "Cleaned up preview for PR #$PR_NUMBER"
           else
-            echo "No preview found for PR #${{ env.PR_NUMBER }}"
+            echo "No preview found for PR #$PR_NUMBER"
           fi
 
       - name: Update PR comment
