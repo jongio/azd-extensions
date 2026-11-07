@@ -20,6 +20,10 @@ on:
       - '.cspell.json'
       - '.github/workflows/spellcheck.yml'
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: read
 
