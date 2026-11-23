@@ -1,1 +1,0 @@
-import{t as e}from"./clipboard.D_OVW_uN.js";var t=null;function n(){t?.abort(),t=e(document,{selector:`[data-copy-code]`,getText:e=>e.closest(`div`)?.querySelector(`pre`)?.textContent||``})}n(),document.addEventListener(`astro:page-load`,n);
